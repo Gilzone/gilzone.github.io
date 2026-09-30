@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Edwin's Projects</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+
+  /* ---- password gate ---- */
+  #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+  .card h1 { margin: 0 0 8px; font-size: 28px; }
+  .card p { margin: 0 0 24px; color: #9aa7c2; font-size: 15px; }
+  .card input { width: 100%; padding: 14px 16px; font-size: 18px; border-radius: 10px; border: 1px solid #2a3652; background: #0f1420; color: #fff; outline: none; }
+  .card input:focus { border-color: #4f7cff; }
+  .card button { margin-top: 14px; width: 100%; padding: 14px; font-size: 17px; font-weight: 600; border: 0; border-radius: 10px; background: #4f7cff; color: #fff; cursor: pointer; }
+  .card button:hover { background: #3d68f0; }
+  .err { color: #ff7b7b; min-height: 22px; margin-top: 10px; font-size: 14px; }
+  .shake { animation: shake .35s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+  /* ---- gallery ---- */
+  #gallery { max-width: 1000px; margin: 0 auto; padding: 40px 24px 64px; }
+  #gallery header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
+  #gallery h1 { margin: 0; font-size: 30px; }
+  #gallery header span { color: #9aa7c2; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .proj { display: block; text-decoration: none; color: inherit; background: #182032; border: 1px solid #2a3652; border-radius: 14px; padding: 26px 22px; transition: transform .15s, border-color .15s; }
+  .proj:hover { transform: translateY(-3px); border-color: #4f7cff; }
+  .proj h2 { margin: 0 0 8px; font-size: 20px; }
+  .proj p { margin: 0; color: #9aa7c2; font-size: 14.5px; line-height: 1.5; }
+  .proj .open { display: inline-block; margin-top: 14px; color: #7ea2ff; font-weight: 600; font-size: 14px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card" id="gateCard">
+    <h1>&#x1F512; Edwin's Projects</h1>
+    <p>Enter the password to continue</p>
+    <form id="gateForm">
+      <input type="password" id="pw" placeholder="Password" autocomplete="off" autofocus />
+      <button type="submit">Unlock</button>
+    </form>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="gallery" hidden>
+  <header>
+    <h1>&#x1F4C1; My Projects</h1>
+    <span id="count"></span>
+  </header>
+  <div class="grid">
+    <a class="proj" href="projects/sample/">
+      <h2>Sample Project</h2>
+      <p>A demo page showing how projects are organized. It will be replaced by your real projects.</p>
+      <span class="open">Open &rarr;</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// SHA-256 hash of the site password. The plain password is never stored in this file.
+const PASS_HASH = "19b48ff276093e436231866b6ec77a837a6c4bc4da5dac589b0346ea469fabbf";
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function unlock() {
+  document.getElementById("gate").hidden = true;
+  const g = document.getElementById("gallery");
+  g.hidden = false;
+  try { sessionStorage.setItem("edwin_unlocked", "1"); } catch (e) {}
+  document.getElementById("count").textContent =
+    document.querySelectorAll(".proj").length + " project(s)";
+}
+
+try {
+  if (sessionStorage.getItem("edwin_unlocked") === "1") unlock();
+} catch (e) {}
+
+document.getElementById("gateForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const pw = document.getElementById("pw").value;
+  const err = document.getElementById("err");
+  if ((await sha256Hex(pw)) === PASS_HASH) {
+    err.textContent = "";
+    unlock();
+  } else {
+    err.textContent = "Wrong password \u2014 try again.";
+    const c = document.getElementById("gateCard");
+    c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+  }
+});
+</script>
+</body>
+</html>
