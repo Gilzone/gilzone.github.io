@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chess for Pre-K — Day 4: Pawn Power!</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero .kicker { display: inline-block; background: #eef0ff; color: #2b3a9e; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; letter-spacing: 1px; }
+  header.hero h1 { margin: 10px 0 6px; font-size: 32px; }
+  header.hero p { margin: 0; color: #5b6472; font-size: 16px; }
+  .card { background: #fff; border: 1px solid #e6e8ee; border-radius: 18px; padding: 22px; margin: 22px 0; box-shadow: 0 2px 10px rgba(20,30,60,.05); }
+  h2.part { margin: 0 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: #5b6472; font-size: 15px; }
+  .teacher { background: #fff8e6; border: 2px dashed #d9a400; border-radius: 14px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #7a5c00; }
+  .secrets { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; }
+  .secret { background: #f6f7fb; border: 2px solid #e6e8ee; border-radius: 12px; padding: 10px 14px; font-size: 14px; max-width: 240px; text-align: center; }
+  .secret b { display: block; margin-bottom: 2px; }
+  #p1msg { text-align: center; font-size: 17px; font-weight: 700; min-height: 52px; margin: 4px 0 8px; color: #2b3a9e; }
+
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; container-type: inline-size; }
+  .sq { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); font-size: 9cqw; min-width: 0; user-select: none; }
+  .sq.light { background: #f0d9b5; } .sq.dark { background: #b58863; }
+  .sq .pc { transition: transform .12s; }
+  .sq .pc.mine { cursor: pointer; }
+  .sq .pc.mine:hover { transform: scale(1.12); }
+  .sq.mv { cursor: pointer; }
+  .sq.mv::after { content: ""; position: absolute; width: 26%; height: 26%; border-radius: 50%; background: rgba(43,107,255,.55); pointer-events: none; }
+  .sq.foe { cursor: pointer; }
+  .sq.foe::after { content: ""; position: absolute; inset: 4%; border: 4px solid rgba(255,60,60,.85); border-radius: 50%; pointer-events: none; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.12); } }
+  .sq.crownline { box-shadow: inset 0 6px 0 0 gold; }
+  .sq.crowned .pc { animation: crown .8s; }
+  @keyframes crown { 0% { transform: scale(1); } 50% { transform: scale(1.6) rotate(-10deg); } 100% { transform: scale(1); } }
+
+  #promo { display: none; text-align: center; background: #fffbe6; border: 2px solid gold; border-radius: 14px; padding: 16px; margin: 12px auto; max-width: 480px; }
+  #promo.show { display: block; }
+  #promo h3 { margin: 0 0 4px; font-size: 20px; }
+  #promo p { margin: 0 0 10px; color: #5b6472; font-size: 14px; }
+  #promo .pick { display: flex; gap: 10px; justify-content: center; }
+  #promo .pick button { font-size: 40px; background: #fff; border: 2px solid #e6e8ee; border-radius: 12px; padding: 6px 14px; cursor: pointer; font-family: inherit; }
+  #promo .pick button:active { transform: scale(.92); }
+
+  #gmsg { text-align: center; font-size: 20px; font-weight: 800; min-height: 60px; margin: 10px 0 4px; }
+  #gstars { text-align: center; font-size: 34px; letter-spacing: 6px; min-height: 48px; overflow-wrap: anywhere; }
+  #gprog { text-align: center; color: #5b6472; font-size: 14px; margin-bottom: 4px; }
+  .btnrow { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button.big { padding: 13px 34px; font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #2b6bff; border: 0; border-radius: 12px; box-shadow: 0 4px 0 #1a46b0; cursor: pointer; font-family: inherit; }
+  button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a46b0; }
+  button.big.green { background: #31a24c; box-shadow: 0 4px 0 #237a38; }
+  nav.days { display: flex; justify-content: space-between; margin-top: 26px; font-size: 15px; font-weight: 600; }
+  nav.days a { color: #2b6bff; text-decoration: none; }
+  footer { margin-top: 40px; color: #8a93a6; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+  <header class="hero">
+    <span class="kicker">CHESS FOR PRE-K</span>
+    <h1>Day 4: Pawn Power! &#x2659;</h1>
+    <p>The littlest piece is hiding three superpowers.</p>
+  </header>
+
+  <div class="teacher">&#x1F4E2; <b>Teacher:</b> the gold line is the finish. March the pawn all the way up and watch what happens!</div>
+
+  <div class="card">
+    <h2 class="part">Part 1 &mdash; The pawn's secrets</h2>
+    <p class="partsub">Tap the pawn, then tap a glowing dot to march it.</p>
+    <div class="secrets">
+      <div class="secret"><b>&#x1F45F; Big first step</b>From its start, the pawn may march 1 or 2 squares.</div>
+      <div class="secret"><b>&#x1F37D; Diagonal gobble</b>Pawns gobble one square diagonal \u2014 never straight!</div>
+      <div class="secret"><b>&#x1F451; The crown</b>Reach the far end and the pawn becomes any big piece!</div>
+    </div>
+    <div id="p1msg"></div>
+    <div class="board" id="board1"></div>
+    <div id="promo">
+      <h3>&#x1F451; The pawn earned a crown!</h3>
+      <p>Pick what the pawn becomes:</p>
+      <div class="pick" id="promopick"></div>
+    </div>
+    <div class="btnrow"><button class="big" id="preset">NEW PAWN</button></div>
+  </div>
+
+  <div class="card">
+    <h2 class="part">Part 2 &mdash; Game: race to the crown!</h2>
+    <p class="partsub">March each pawn to the gold line and crown it.</p>
+    <div id="gprog"></div>
+    <div class="board" id="board2"></div>
+    <div id="gpromo" style="display:none;text-align:center;background:#fffbe6;border:2px solid gold;border-radius:14px;padding:16px;margin:12px auto;max-width:480px">
+      <h3 style="margin:0 0 4px;font-size:20px">&#x1F451; Crown time!</h3>
+      <p style="margin:0 0 10px;color:#5b6472;font-size:14px">Pick what the pawn becomes:</p>
+      <div class="pick" id="gpromopick" style="display:flex;gap:10px;justify-content:center"></div>
+    </div>
+    <div id="gmsg"></div>
+    <div id="gstars"></div>
+    <div class="btnrow"><button class="big green" id="gstart" style="display:none">PLAY AGAIN</button></div>
+  </div>
+
+  <nav class="days">
+    <a href="../chess-prek-day3/">&larr; Day 3: Gobble Up!</a>
+    <a href="../chess-prek-day5/">Day 5: Save the King! &rarr;</a>
+  </nav>
+
+  <footer>Day 4 of Chess for Pre-K &mdash; made for Edwin&rsquo;s class.</footer>
+</div>
+
+<script>
+var WP = "\u2659", BP = "\u265F";
+var PROMO = [["\u2655", "Queen"], ["\u2656", "Rook"], ["\u2657", "Bishop"], ["\u2658", "Knight"]];
+function inB(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+function makeBoard(el) {
+  el.innerHTML = "";
+  var cells = [];
+  for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+    var d = document.createElement("div");
+    d.className = "sq " + (((r + c) % 2 === 0) ? "light" : "dark");
+    if (r === 0) d.classList.add("crownline");
+    el.appendChild(d); cells.push(d);
+  }
+  return cells;
+}
+function cellAt(cells, r, c) { return cells[r * 8 + c]; }
+function clearMarks(cells) { cells.forEach(function (d) { d.classList.remove("mv", "foe", "crowned"); }); }
+function putP(cells, r, c, glyph, mine) {
+  var s = cellAt(cells, r, c);
+  s.innerHTML = "";
+  var sp = document.createElement("span");
+  sp.className = "pc" + (mine ? " mine" : "");
+  sp.textContent = glyph; sp.style.color = "#1a1a1a";
+  s.appendChild(sp);
+  return sp;
+}
+function pawnMoves(r, c) {
+  var o = [];
+  if (inB(r - 1, c)) o.push([r - 1, c]);
+  if (r === 6 && inB(r - 2, c)) o.push([r - 2, c]);
+  return o;
+}
+function pawnCaps(r, c) {
+  var o = [];
+  [[r - 1, c - 1], [r - 1, c + 1]].forEach(function (m) { if (inB(m[0], m[1])) o.push(m); });
+  return o;
+}
+
+/* ---------- Part 1 ---------- */
+var b1 = makeBoard(document.getElementById("board1"));
+var P = { r: 6, c: 3 };
+var foe = { r: 3, c: 2 };
+var p1msg = document.getElementById("p1msg");
+
+function drawP1() {
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b1);
+  putP(b1, P.r, P.c, WP, true);
+  if (foe) putP(b1, foe.r, foe.c, BP, false);
+  p1msg.textContent = P.r === 0 ? "" : "Tap the pawn to march it to the gold line!";
+  cellAt(b1, P.r, P.c).onclick = showMovesP1;
+}
+function showMovesP1() {
+  clearMarks(b1);
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  putP(b1, P.r, P.c, WP, true);
+  if (foe) putP(b1, foe.r, foe.c, BP, false);
+  pawnMoves(P.r, P.c).forEach(function (m) {
+    var t = cellAt(b1, m[0], m[1]);
+    t.classList.add("mv");
+    (function (mr, mc) {
+      t.onclick = function () {
+        P = { r: mr, c: mc };
+        if (foe && foe.r === mr && foe.c === mc) foe = null;
+        if (P.r === 0) return promoteP1();
+        drawP1();
+      };
+    })(m[0], m[1]);
+  });
+  pawnCaps(P.r, P.c).forEach(function (m) {
+    if (foe && foe.r === m[0] && foe.c === m[1]) {
+      var t = cellAt(b1, m[0], m[1]);
+      t.classList.add("foe");
+      t.onclick = function () {
+        foe = null;
+        P = { r: m[0], c: m[1] };
+        p1msg.textContent = "Yum! Pawns gobble diagonal!";
+        if (P.r === 0) return promoteP1();
+        setTimeout(drawP1, 700);
+      };
+    }
+  });
+  cellAt(b1, P.r, P.c).onclick = showMovesP1;
+}
+function promoteP1() {
+  drawP1();
+  cellAt(b1, 0, P.c).classList.add("crowned");
+  p1msg.textContent = "\uD83C\uDF89; The pawn reached the crown!";
+  var box = document.getElementById("promo");
+  box.classList.add("show");
+  var pk = document.getElementById("promopick");
+  pk.innerHTML = "";
+  PROMO.forEach(function (pr) {
+    var b = document.createElement("button");
+    b.textContent = pr[0];
+    b.onclick = function () {
+      putP(b1, 0, P.c, pr[0], false);
+      cellAt(b1, 0, P.c).classList.add("crowned");
+      p1msg.textContent = "\uD83D\uDC51; The pawn became a " + pr[1] + "!";
+      box.classList.remove("show");
+    };
+    pk.appendChild(b);
+  });
+}
+document.getElementById("preset").onclick = function () {
+  document.getElementById("promo").classList.remove("show");
+  P = { r: 6, c: 3 }; foe = { r: 3, c: 2 };
+  drawP1();
+};
+drawP1();
+
+/* ---------- Part 2: game ---------- */
+var b2 = makeBoard(document.getElementById("board2"));
+var G = { round: 0, total: 3, stars: 0, pr: 6, pc: 3, live: false };
+var gmsg = document.getElementById("gmsg");
+
+function gStart() {
+  G.round = 0; G.stars = 0; G.live = true;
+  document.getElementById("gstart").style.display = "none";
+  document.getElementById("gstars").textContent = "";
+  document.getElementById("gpromo").style.display = "none";
+  gRound();
+}
+function gRound() {
+  if (G.round >= G.total) return gEnd();
+  G.round++;
+  document.getElementById("gprog").textContent = "Pawn " + G.round + " of " + G.total;
+  G.pr = 4 + Math.floor(Math.random() * 3);
+  G.pc = Math.floor(Math.random() * 8);
+  G.live = true;
+  drawG();
+  gmsg.textContent = "Tap the pawn!";
+  cellAt(b2, G.pr, G.pc).onclick = showMovesG;
+}
+function drawG() {
+  b2.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b2);
+  putP(b2, G.pr, G.pc, WP, true);
+}
+function showMovesG() {
+  if (!G.live) return;
+  clearMarks(b2);
+  drawG();
+  pawnMoves(G.pr, G.pc).forEach(function (m) {
+    var t = cellAt(b2, m[0], m[1]);
+    t.classList.add("mv");
+    (function (mr, mc) {
+      t.onclick = function () {
+        G.pr = mr; G.pc = mc;
+        if (G.pr === 0) return promoteG();
+        drawG();
+        cellAt(b2, G.pr, G.pc).onclick = showMovesG;
+      };
+    })(m[0], m[1]);
+  });
+  cellAt(b2, G.pr, G.pc).onclick = showMovesG;
+}
+function promoteG() {
+  drawG();
+  cellAt(b2, 0, G.pc).classList.add("crowned");
+  G.live = false;
+  gmsg.textContent = "\uD83C\uDF89; Crown time!";
+  var box = document.getElementById("gpromo");
+  box.style.display = "block";
+  var pk = document.getElementById("gpromopick");
+  pk.innerHTML = "";
+  PROMO.forEach(function (pr) {
+    var b = document.createElement("button");
+    b.textContent = pr[0];
+    b.style.cssText = "font-size:40px;background:#fff;border:2px solid #e6e8ee;border-radius:12px;padding:6px 14px;cursor:pointer;font-family:inherit";
+    b.onclick = function () {
+      putP(b2, 0, G.pc, pr[0], false);
+      cellAt(b2, 0, G.pc).classList.add("crowned");
+      box.style.display = "none";
+      G.stars++;
+      document.getElementById("gstars").textContent = "\u2B50".repeat(G.stars);
+      gmsg.textContent = "A new " + pr[1] + "! \u2B50";
+      setTimeout(gRound, 1300);
+    };
+    pk.appendChild(b);
+  });
+}
+function gEnd() {
+  G.live = false;
+  document.getElementById("gprog").textContent = "";
+  gmsg.innerHTML = "\uD83C\uDF89; You crowned " + G.stars + " out of " + G.total + " pawns! \uD83C\uDF89;";
+  document.getElementById("gstart").style.display = "";
+}
+document.getElementById("gstart").addEventListener("click", gStart);
+gStart();
+</script>
+</body>
+</html>
