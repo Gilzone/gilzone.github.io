@@ -3,45 +3,99 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Edwin's Projects</title>
+<title>Edwin's Projects — Interactive Lessons</title>
 <style>
-  :root { color-scheme: dark; }
+  :root { color-scheme: light; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; }
 
   /* ---- password gate ---- */
-  #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .card { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
-  .card h1 { margin: 0 0 8px; font-size: 28px; }
-  .card p { margin: 0 0 24px; color: #9aa7c2; font-size: 15px; }
-  .card input { width: 100%; padding: 14px 16px; font-size: 18px; border-radius: 10px; border: 1px solid #2a3652; background: #0f1420; color: #fff; outline: none; }
-  .card input:focus { border-color: #4f7cff; }
-  .card button { margin-top: 14px; width: 100%; padding: 14px; font-size: 17px; font-weight: 600; border: 0; border-radius: 10px; background: #4f7cff; color: #fff; cursor: pointer; }
-  .card button:hover { background: #3d68f0; }
-  .err { color: #ff7b7b; min-height: 22px; margin-top: 10px; font-size: 14px; }
+  #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+          background: linear-gradient(160deg, #eef3ff 0%, #ffffff 55%, #fff4ec 100%); }
+  .gcard { background: #fff; border: 1px solid #e6e9f0; border-radius: 20px; padding: 44px 38px; width: 100%;
+           max-width: 400px; text-align: center; box-shadow: 0 16px 48px rgba(23,32,46,.10); }
+  .gcard h1 { margin: 0 0 8px; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .gcard p { margin: 0 0 24px; color: #5c6675; font-size: 15px; }
+  .gcard input { width: 100%; padding: 14px 16px; font-size: 18px; border-radius: 12px; border: 1.5px solid #dfe3ec;
+                 background: #f7f8fc; color: #17202e; outline: none; }
+  .gcard input:focus { border-color: #2b6bff; background: #fff; }
+  .gcard button { margin-top: 14px; width: 100%; padding: 14px; font-size: 17px; font-weight: 700; border: 0;
+                  border-radius: 999px; background: #2b6bff; color: #fff; cursor: pointer; }
+  .gcard button:hover { background: #1f58e0; }
+  .err { color: #d33f3f; min-height: 22px; margin-top: 10px; font-size: 14px; }
   .shake { animation: shake .35s; }
   @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-  /* ---- gallery ---- */
-  #gallery { max-width: 1000px; margin: 0 auto; padding: 40px 24px 64px; }
-  #gallery header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
-  #gallery h1 { margin: 0; font-size: 30px; }
-  #gallery header span { color: #9aa7c2; font-size: 14px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-  .proj { display: block; text-decoration: none; color: inherit; background: #182032; border: 1px solid #2a3652; border-radius: 14px; padding: 26px 22px; transition: transform .15s, border-color .15s; }
-  .proj:hover { transform: translateY(-3px); border-color: #4f7cff; }
-  .proj h2 { margin: 0 0 8px; font-size: 20px; }
-  .proj p { margin: 0; color: #9aa7c2; font-size: 14.5px; line-height: 1.5; }
-  .proj .open { display: inline-block; margin-top: 14px; color: #7ea2ff; font-weight: 600; font-size: 14px; }
+  /* ---- site ---- */
+  #site { display: block; }
+  nav.top { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+            border-bottom: 1px solid #eef0f5; }
+  nav.top .inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-weight: 800; font-size: 18px; letter-spacing: -0.01em; text-decoration: none; color: #17202e; }
+  .brand span { color: #2b6bff; }
+  nav.top a.link { color: #5c6675; text-decoration: none; font-weight: 600; font-size: 15px; }
+  nav.top a.link:hover { color: #17202e; }
+
+  .hero { max-width: 1080px; margin: 0 auto; padding: 72px 24px 40px; text-align: center; }
+  .badge { display: inline-block; background: #eaf0ff; color: #2b6bff; font-weight: 700; font-size: 13px;
+           letter-spacing: .06em; text-transform: uppercase; padding: 8px 16px; border-radius: 999px; margin-bottom: 20px; }
+  .hero h1 { margin: 0 0 16px; font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; }
+  .hero h1 em { font-style: normal; color: #2b6bff; }
+  .hero p { margin: 0 auto 30px; max-width: 620px; color: #5c6675; font-size: 18px; line-height: 1.6; }
+  .cta { display: inline-block; background: #2b6bff; color: #fff; font-weight: 700; font-size: 17px; text-decoration: none;
+         padding: 15px 36px; border-radius: 999px; box-shadow: 0 8px 24px rgba(43,107,255,.30); }
+  .cta:hover { background: #1f58e0; }
+
+  .stats { max-width: 1080px; margin: 8px auto 0; padding: 0 24px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .stat { text-align: center; padding: 18px 34px; }
+  .stat b { display: block; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .stat span { color: #5c6675; font-size: 14px; }
+
+  #courses { max-width: 1080px; margin: 0 auto; padding: 64px 24px 24px; }
+  #courses h2, .how h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px; text-align: center; }
+  .secsub { text-align: center; color: #5c6675; font-size: 16px; margin: 0 0 36px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .course { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e6e9f0;
+            border-radius: 20px; overflow: hidden; transition: transform .15s, box-shadow .15s;
+            box-shadow: 0 4px 16px rgba(23,32,46,.06); }
+  .course:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(23,32,46,.12); }
+  .art { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 72px; }
+  .art.asl { background: linear-gradient(135deg, #ff9a5a, #ff5a7a); }
+  .art.chess { background: linear-gradient(135deg, #5b5bd6, #9b5bff); }
+  .art.morse { background: linear-gradient(135deg, #00b8a9, #3ddc84); }
+  .cbody { padding: 22px 24px 24px; }
+  .cbody h3 { margin: 0 0 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+  .cbody p { margin: 0 0 12px; color: #5c6675; font-size: 14.5px; line-height: 1.55; }
+  .meta { font-size: 12.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8a93a5; margin-bottom: 14px; }
+  .go { display: inline-block; background: #17202e; color: #fff; font-weight: 700; font-size: 14.5px;
+        padding: 10px 22px; border-radius: 999px; }
+  .course:hover .go { background: #2b6bff; }
+
+  .how { background: #f6f8fc; margin-top: 64px; padding: 64px 24px; }
+  .how .inner { max-width: 1080px; margin: 0 auto; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 36px; }
+  .hstep { background: #fff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 26px 22px; }
+  .hstep .n { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+              border-radius: 50%; background: #eaf0ff; color: #2b6bff; font-weight: 800; font-size: 18px; margin-bottom: 12px; }
+  .hstep b { display: block; font-size: 17px; margin-bottom: 6px; }
+  .hstep span { color: #5c6675; font-size: 14.5px; line-height: 1.55; }
+
+  .classroom { max-width: 1080px; margin: 0 auto; padding: 64px 24px; text-align: center; }
+  .classroom .box { background: linear-gradient(135deg, #1c2a4a, #2b3a62);
+                    color: #fff; border-radius: 24px; padding: 52px 32px; }
+  .classroom h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em; }
+  .classroom p { margin: 0 auto; max-width: 560px; color: #b9c2d4; font-size: 16px; line-height: 1.6; }
+
+  footer { border-top: 1px solid #eef0f5; padding: 28px 24px; text-align: center; color: #8a93a5; font-size: 13.5px; }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 
 <div id="gate">
-  <div class="card" id="gateCard">
-    <h1>&#x1F512; Edwin's Projects</h1>
-    <p>Enter the password to continue</p>
+  <div class="gcard" id="gateCard">
+    <h1>&#x1F393; Edwin's Projects</h1>
+    <p>Interactive lessons — enter the password to continue</p>
     <form id="gateForm">
       <input type="password" id="pw" placeholder="Password" autocomplete="off" autofocus />
       <button type="submit">Unlock</button>
@@ -50,33 +104,81 @@
   </div>
 </div>
 
-<div id="gallery" hidden>
-  <header>
-    <h1>&#x1F4C1; My Projects</h1>
-    <span id="count"></span>
-  </header>
-  <div class="grid">
-    <a class="proj" href="projects/chess-prek-day1/">
-      <h2>&#x265E; Chess for Pre-K: Day 1</h2>
-      <p>Meet the board and the chess team &mdash; tap, play, and earn stars.</p>
-      <span class="open">Open &rarr;</span>
-    </a>
-    <a class="proj" href="projects/asl-basic-signs-1/">
-      <h2>&#x1F918; ASL: Basic Signs 1</h2>
-      <p>Everyday ASL vocabulary &mdash; watch each sign, practice it, then test yourself.</p>
-      <span class="open">Open &rarr;</span>
-    </a>
-    <a class="proj" href="projects/hello-morse/">
-      <h2>&#x1F50E; Hello Morse Quiz</h2>
-      <p>The interactive Morse code quiz slide deck &mdash; play it right in the browser.</p>
-      <span class="open">Open &rarr;</span>
-    </a>
-    <a class="proj" href="projects/sample/">
-      <h2>Sample Project</h2>
-      <p>A demo page showing how projects are organized. It will be replaced by your real projects.</p>
-      <span class="open">Open &rarr;</span>
-    </a>
+<div id="site" hidden>
+  <nav class="top">
+    <div class="inner">
+      <a class="brand" href="#">&#x1F393; Edwin's <span>Projects</span></a>
+      <a class="link" href="#courses">Lessons</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="badge">Interactive lessons</div>
+    <h1>Learning that's <em>hands-on</em> and fun.</h1>
+    <p>Short, interactive lessons — tap, play, and test yourself. No boring slideshows. Made for Edwin's classroom, open to curious minds everywhere.</p>
+    <a class="cta" href="#courses">Start learning &darr;</a>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><b>3</b><span>interactive lessons</span></div>
+    <div class="stat"><b>13</b><span>ASL signs taught</span></div>
+    <div class="stat"><b>6</b><span>chess pieces to meet</span></div>
   </div>
+
+  <section id="courses">
+    <h2>Pick a lesson</h2>
+    <p class="secsub">Every lesson is interactive — you do things, not just watch.</p>
+    <div class="grid">
+      <a class="course" href="projects/asl-basic-signs-1/">
+        <div class="art asl">&#x1F918;</div>
+        <div class="cbody">
+          <h3>ASL: Basic Signs 1</h3>
+          <p>Everyday American Sign Language vocabulary — watch each sign, practice it, then test yourself.</p>
+          <div class="meta">13 signs &middot; Watch &middot; Practice &middot; Test</div>
+          <span class="go">Start &rarr;</span>
+        </div>
+      </a>
+      <a class="course" href="projects/chess-prek-day1/">
+        <div class="art chess">&#x265E;</div>
+        <div class="cbody">
+          <h3>Chess for Pre-K: Day 1</h3>
+          <p>Meet the board and the chess team — tap the squares, say hello to the horsey, and earn stars.</p>
+          <div class="meta">Tap &amp; play &middot; Star game</div>
+          <span class="go">Start &rarr;</span>
+        </div>
+      </a>
+      <a class="course" href="projects/hello-morse/">
+        <div class="art morse">&#x1F50E;</div>
+        <div class="cbody">
+          <h3>Hello Morse Quiz</h3>
+          <p>The interactive Morse code quiz slide deck — play it right in the browser.</p>
+          <div class="meta">Interactive quiz deck</div>
+          <span class="go">Start &rarr;</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="inner">
+      <h2>How it works</h2>
+      <p class="secsub">Built the way brains actually learn — by doing.</p>
+      <div class="steps">
+        <div class="hstep"><div class="n">1</div><b>Pick a lesson</b><span>Short, focused topics. Each one takes just a few minutes.</span></div>
+        <div class="hstep"><div class="n">2</div><b>Tap and play</b><span>Interactive, visual, never a wall of text. You manipulate, try, and discover.</span></div>
+        <div class="hstep"><div class="n">3</div><b>Test yourself</b><span>Quick checks with instant feedback, so the learning actually sticks.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="classroom">
+    <div class="box">
+      <h2>&#x1F3EB; Made for the classroom</h2>
+      <p>These lessons are built for real teaching — they fit into a class period or work as homework. No accounts, no setup: open a lesson and start.</p>
+    </div>
+  </section>
+
+  <footer>Made for Edwin's class &middot; More lessons on the way</footer>
 </div>
 
 <script>
@@ -90,11 +192,8 @@ async function sha256Hex(text) {
 
 function unlock() {
   document.getElementById("gate").hidden = true;
-  const g = document.getElementById("gallery");
-  g.hidden = false;
+  document.getElementById("site").hidden = false;
   try { sessionStorage.setItem("edwin_unlocked", "1"); } catch (e) {}
-  document.getElementById("count").textContent =
-    document.querySelectorAll(".proj").length + " project(s)";
 }
 
 try {
