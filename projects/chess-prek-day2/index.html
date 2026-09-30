@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chess for Pre-K — Day 2: How the Pieces Move</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero .kicker { display: inline-block; background: #eef0ff; color: #2b3a9e; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; letter-spacing: 1px; }
+  header.hero h1 { margin: 10px 0 6px; font-size: 32px; }
+  header.hero p { margin: 0; color: #5b6472; font-size: 16px; }
+  .card { background: #fff; border: 1px solid #e6e8ee; border-radius: 18px; padding: 22px; margin: 22px 0; box-shadow: 0 2px 10px rgba(20,30,60,.05); }
+  h2.part { margin: 0 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: #5b6472; font-size: 15px; }
+  .teacher { background: #fff8e6; border: 2px dashed #d9a400; border-radius: 14px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #7a5c00; }
+
+  .picker { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; }
+  .pk { border: 2px solid #e6e8ee; background: #f6f7fb; border-radius: 12px; padding: 8px 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; color: #17202e; }
+  .pk .g { font-size: 22px; margin-right: 6px; vertical-align: -3px; }
+  .pk.on { border-color: #2b6bff; background: #e8efff; }
+  #movedesc { text-align: center; font-size: 16px; color: #2b3a9e; font-weight: 600; min-height: 48px; margin: 4px 0 8px; padding: 0 8px; }
+
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; container-type: inline-size; }
+  .sq { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); font-size: 9cqw; min-width: 0; user-select: none; }
+  .sq.light { background: #f0d9b5; } .sq.dark { background: #b58863; }
+  .sq .pc { cursor: pointer; transition: transform .12s; }
+  .sq .pc:hover { transform: scale(1.12); }
+  .sq.mv { cursor: pointer; }
+  .sq.mv::after { content: ""; position: absolute; width: 26%; height: 26%; border-radius: 50%; background: rgba(43,107,255,.55); pointer-events: none; }
+  .sq.star::after { content: "\2B50"; position: absolute; font-size: 9cqw; pointer-events: none; animation: twinkle 1s infinite alternate; }
+  @keyframes twinkle { from { transform: scale(1); } to { transform: scale(1.25); } }
+  .sq.burst { animation: burst .5s; }
+  @keyframes burst { 0% { transform: scale(1); } 50% { transform: scale(1.3); background: #ffe066; } 100% { transform: scale(1); } }
+
+  #gmsg { text-align: center; font-size: 20px; font-weight: 800; min-height: 60px; margin: 10px 0 4px; }
+  #gstars { text-align: center; font-size: 34px; letter-spacing: 6px; min-height: 48px; overflow-wrap: anywhere; }
+  #gprog { text-align: center; color: #5b6472; font-size: 14px; margin-bottom: 4px; }
+  .btnrow { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button.big { padding: 13px 34px; font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #2b6bff; border: 0; border-radius: 12px; box-shadow: 0 4px 0 #1a46b0; cursor: pointer; font-family: inherit; }
+  button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a46b0; }
+  button.big.green { background: #31a24c; box-shadow: 0 4px 0 #237a38; }
+  nav.days { display: flex; justify-content: space-between; margin-top: 26px; font-size: 15px; font-weight: 600; }
+  nav.days a { color: #2b6bff; text-decoration: none; }
+  footer { margin-top: 40px; color: #8a93a6; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+  <header class="hero">
+    <span class="kicker">CHESS FOR PRE-K</span>
+    <h1>Day 2: How the Pieces Move &#x265E;</h1>
+    <p>Yesterday we met the team. Today we learn their dance moves!</p>
+  </header>
+
+  <div class="teacher">&#x1F4E2; <b>Teacher:</b> pick a piece, tap it on the board, and watch where it can go. Then tap a glowing dot to move it there.</div>
+
+  <div class="card">
+    <h2 class="part">Part 1 &mdash; Watch them move</h2>
+    <p class="partsub">Choose a piece, then tap it on the board.</p>
+    <div class="picker" id="picker"></div>
+    <div id="movedesc"></div>
+    <div class="board" id="board1"></div>
+  </div>
+
+  <div class="card">
+    <h2 class="part">Part 2 &mdash; Game: catch the star! &#x2B50;</h2>
+    <p class="partsub">Tap the piece, then tap the square with the star.</p>
+    <div id="gprog"></div>
+    <div class="board" id="board2"></div>
+    <div id="gmsg"></div>
+    <div id="gstars"></div>
+    <div class="btnrow"><button class="big green" id="gstart" style="display:none">PLAY AGAIN</button></div>
+  </div>
+
+  <nav class="days">
+    <a href="../chess-prek-day1/">&larr; Day 1: Meet the Team</a>
+    <a href="../chess-prek-day3/">Day 3: Gobble Up! &rarr;</a>
+  </nav>
+
+  <footer>Day 2 of Chess for Pre-K &mdash; made for Edwin&rsquo;s class.</footer>
+</div>
+
+<script>
+var PIECES = {
+  rook:   { g: "\u265C", name: "Rook",   nick: "the castle",     d: "The Rook slides straight \u2014 up, down, left, right \u2014 as far as it wants!" },
+  bishop: { g: "\u265D", name: "Bishop", nick: "the pointy hat", d: "The Bishop slides diagonal \u2014 corner to corner \u2014 as far as it wants!" },
+  queen:  { g: "\u265B", name: "Queen",  nick: "the superhero",  d: "The Queen slides straight AND diagonal. She goes everywhere!" },
+  king:   { g: "\u265A", name: "King",   nick: "the king",       d: "The King steps one square in any direction. Slow and careful!" },
+  knight: { g: "\u265E", name: "Knight", nick: "the horsey",     d: "The Knight jumps in an L \u2014 two straight, one to the side. It can jump over pieces!" },
+  pawn:   { g: "\u265F", name: "Pawn",   nick: "the little soldier", d: "The Pawn marches one square forward. Straight ahead, little soldier!" }
+};
+var ORDER = ["rook", "knight", "bishop", "queen", "king", "pawn"];
+var WIN = ["Great move!", "You got it!", "Superstar!", "Beautiful!", "Nice sliding!", "Perfect jump!"];
+
+function inB(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+function slide(r, c, dirs) {
+  var out = [];
+  dirs.forEach(function (dd) {
+    var rr = r + dd[0], cc = c + dd[1];
+    while (inB(rr, cc)) { out.push([rr, cc]); rr += dd[0]; cc += dd[1]; }
+  });
+  return out;
+}
+function movesFor(p, r, c) {
+  var D = [[1,0],[-1,0],[0,1],[0,-1]], X = [[1,1],[1,-1],[-1,1],[-1,-1]];
+  if (p === "rook") return slide(r, c, D);
+  if (p === "bishop") return slide(r, c, X);
+  if (p === "queen") return slide(r, c, D.concat(X));
+  if (p === "king") {
+    var o = [];
+    D.concat(X).forEach(function (dd) { if (inB(r+dd[0], c+dd[1])) o.push([r+dd[0], c+dd[1]]); });
+    return o;
+  }
+  if (p === "knight") {
+    var o2 = [];
+    [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(function (dd) {
+      if (inB(r+dd[0], c+dd[1])) o2.push([r+dd[0], c+dd[1]]);
+    });
+    return o2;
+  }
+  if (p === "pawn") return inB(r-1, c) ? [[r-1, c]] : [];
+  return [];
+}
+
+function makeBoard(el) {
+  el.innerHTML = "";
+  var cells = [];
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var d = document.createElement("div");
+      d.className = "sq " + (((r + c) % 2 === 0) ? "light" : "dark");
+      d.dataset.r = r; d.dataset.c = c;
+      el.appendChild(d);
+      cells.push(d);
+    }
+  }
+  return cells;
+}
+function cellAt(cells, r, c) { return cells[r * 8 + c]; }
+function clearMarks(cells) {
+  cells.forEach(function (d) { d.classList.remove("mv", "star", "burst"); });
+}
+
+/* ---------- Part 1: explorer ---------- */
+var b1 = makeBoard(document.getElementById("board1"));
+var cur = "rook", pos = { r: 4, c: 3 };
+
+function drawExplorer() {
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b1);
+  var s = cellAt(b1, pos.r, pos.c);
+  var sp = document.createElement("span");
+  sp.className = "pc"; sp.textContent = PIECES[cur].g;
+  sp.style.color = "#1a1a1a";
+  s.appendChild(sp);
+  document.getElementById("movedesc").textContent = PIECES[cur].name + " (" + PIECES[cur].nick + "): " + PIECES[cur].d;
+  s.onclick = function () {
+    clearMarks(b1);
+    drawExplorerPiece();
+    var ms = movesFor(cur, pos.r, pos.c);
+    ms.forEach(function (m) {
+      var t = cellAt(b1, m[0], m[1]);
+      t.classList.add("mv");
+      t.onclick = function () {
+        pos = { r: m[0], c: m[1] };
+        drawExplorer();
+      };
+    });
+  };
+}
+function drawExplorerPiece() {
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  var s = cellAt(b1, pos.r, pos.c);
+  var sp = document.createElement("span");
+  sp.className = "pc"; sp.textContent = PIECES[cur].g;
+  sp.style.color = "#1a1a1a";
+  s.appendChild(sp);
+  s.onclick = function () {
+    clearMarks(b1);
+    drawExplorerPiece();
+    var ms = movesFor(cur, pos.r, pos.c);
+    ms.forEach(function (m) {
+      var t = cellAt(b1, m[0], m[1]);
+      t.classList.add("mv");
+      t.onclick = function () { pos = { r: m[0], c: m[1] }; drawExplorer(); };
+    });
+  };
+}
+(function () {
+  var pk = document.getElementById("picker");
+  ORDER.forEach(function (k) {
+    var b = document.createElement("button");
+    b.className = "pk" + (k === cur ? " on" : "");
+    b.innerHTML = "<span class='g'>" + PIECES[k].g + "</span>" + PIECES[k].name;
+    b.onclick = function () {
+      cur = k; pos = { r: 4, c: 3 };
+      pk.querySelectorAll(".pk").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      drawExplorer();
+    };
+    pk.appendChild(b);
+  });
+})();
+drawExplorer();
+
+/* ---------- Part 2: catch the star ---------- */
+var b2 = makeBoard(document.getElementById("board2"));
+var G = { round: 0, total: 5, stars: 0, piece: null, pr: 0, pc: 0, sr: 0, sc: 0, live: false };
+
+function gStart() {
+  G.round = 0; G.stars = 0; G.live = true;
+  document.getElementById("gstart").style.display = "none";
+  document.getElementById("gstars").textContent = "";
+  gRound();
+}
+function gRound() {
+  if (G.round >= G.total) return gEnd();
+  G.round++;
+  document.getElementById("gprog").textContent = "Star " + G.round + " of " + G.total;
+  document.getElementById("gmsg").textContent = "Tap the piece!";
+  b2.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b2);
+  G.piece = ORDER[Math.floor(Math.random() * ORDER.length)];
+  G.pr = 1 + Math.floor(Math.random() * 6);
+  G.pc = 1 + Math.floor(Math.random() * 6);
+  var ms = movesFor(G.piece, G.pr, G.pc).filter(function (m) { return !(m[0] === G.pr && m[1] === G.pc); });
+  var dest = ms[Math.floor(Math.random() * ms.length)];
+  G.sr = dest[0]; G.sc = dest[1];
+  var s = cellAt(b2, G.pr, G.pc);
+  var sp = document.createElement("span");
+  sp.className = "pc"; sp.textContent = PIECES[G.piece].g;
+  sp.style.color = "#1a1a1a";
+  s.appendChild(sp);
+  cellAt(b2, G.sr, G.sc).classList.add("star");
+  s.onclick = function () {
+    if (!G.live) return;
+    document.getElementById("gmsg").textContent = "Now tap the \u2B50!";
+    var ms2 = movesFor(G.piece, G.pr, G.pc);
+    ms2.forEach(function (m) {
+      var t = cellAt(b2, m[0], m[1]);
+      t.classList.add("mv");
+      t.onclick = function () {
+        if (m[0] === G.sr && m[1] === G.sc) {
+          t.classList.add("burst");
+          G.stars++;
+          document.getElementById("gstars").textContent = "\u2B50".repeat(G.stars);
+          document.getElementById("gmsg").textContent = WIN[Math.floor(Math.random() * WIN.length)] + " The " + PIECES[G.piece].name + " caught it!";
+          G.live = false;
+          setTimeout(function () { G.live = true; gRound(); }, 1400);
+        } else {
+          document.getElementById("gmsg").textContent = "Not there \u2014 follow the piece's move!";
+        }
+      };
+    });
+  };
+}
+function gEnd() {
+  G.live = false;
+  document.getElementById("gprog").textContent = "";
+  document.getElementById("gmsg").innerHTML = "\uD83C\uDF89; You caught " + G.stars + " out of " + G.total + " stars! \uD83C\uDF89;";
+  document.getElementById("gstart").style.display = "";
+}
+document.getElementById("gstart").addEventListener("click", gStart);
+gStart();
+</script>
+</body>
+</html>
