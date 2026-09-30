@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Chess Day 1 — Meet the Board &amp; the Team (Pre-K)</title>
 <style>
-  :root { color-scheme: dark; }
+  :root { color-scheme: light; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
-  a.back { color: #7ea2ff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
   header.hero { text-align: center; margin: 18px 0 8px; }
   header.hero h1 { margin: 0 0 6px; font-size: 30px; }
-  header.hero p { margin: 0; color: #9aa7c2; font-size: 15px; }
-  .teacher { background: #182032; border: 1px dashed #4f7cff; border-radius: 12px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #9dc0ff; }
+  header.hero p { margin: 0; color: #5c6675; font-size: 15px; }
+  .teacher { background: #eaf0ff; border: 1px dashed #2b6bff; border-radius: 12px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #24407c; }
   .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
-  .step { flex: 1 1 200px; background: #182032; border: 1px solid #2a3652; border-radius: 12px; padding: 14px 16px; }
+  .step { flex: 1 1 200px; background: #ffffff; border: 1px solid #e6e9f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
   .step b { display: block; font-size: 15px; margin-bottom: 4px; }
-  .step span { color: #9aa7c2; font-size: 13.5px; }
+  .step span { color: #5c6675; font-size: 13.5px; }
   h2.part { margin: 44px 0 4px; font-size: 24px; }
-  p.partsub { margin: 0 0 18px; color: #9aa7c2; font-size: 14.5px; }
-  .card { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 22px; margin: 0 0 22px; }
+  p.partsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
+  .card { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
   .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; }
   .sq { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); cursor: pointer; user-select: none; transition: transform .12s; }
   .sq.light { background: #f0d9b5; }
@@ -31,21 +31,21 @@
   .sq.pop { animation: pop .35s; }
   @keyframes pop { 50% { transform: scale(1.25); } }
   .say { text-align: center; font-size: 19px; font-weight: 700; min-height: 30px; margin: 14px 0 4px; }
-  .say.good { color: #8fe3b6; }
-  .say.try { color: #ffd98a; }
+  .say.good { color: #1f8f57; }
+  .say.try { color: #9a6b12; }
   .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-  .mate { background: #101828; border: 1px solid #2a3652; border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer; }
-  .mate .g { font-size: 56px; line-height: 1.2; color: #f5f5f5; text-shadow: 0 2px 4px rgba(0,0,0,.7); }
+  .mate { background: #f6f8fc; border: 1px solid #e6e9f0; border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer; }
+  .mate .g { font-size: 56px; line-height: 1.2; color: #17202e; text-shadow: 0 2px 4px rgba(0,0,0,.12); }
   .mate b { display: block; margin-top: 6px; font-size: 16px; }
-  .mate span { display: block; color: #9aa7c2; font-size: 13px; margin-top: 4px; line-height: 1.45; }
+  .mate span { display: block; color: #5c6675; font-size: 13px; margin-top: 4px; line-height: 1.45; }
   .mate.bounce .g { animation: pop .4s; }
   .prompt { text-align: center; font-size: 22px; font-weight: 700; margin: 6px 0 12px; }
-  .prompt b { color: #ffd98a; }
+  .prompt b { color: #9a6b12; }
   .stars { text-align: center; font-size: 30px; min-height: 40px; margin-top: 10px; letter-spacing: 4px; }
   .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 22px; font-size: 16px; font-weight: 700; background: #4f7cff; color: #fff; }
-  button:hover { background: #3d68f0; }
-  footer { margin-top: 56px; color: #66708a; font-size: 13px; text-align: center; line-height: 1.7; }
+  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 12px 26px; font-size: 16px; font-weight: 700; background: #2b6bff; color: #fff; }
+  button:hover { background: #1f58e0; }
+  footer { margin-top: 56px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
   [hidden] { display: none !important; }
 </style>
 </head>
