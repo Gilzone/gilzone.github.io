@@ -7,7 +7,7 @@
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; overflow-x: clip; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
   a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
   header.hero { text-align: center; margin: 18px 0 8px; }
@@ -21,8 +21,8 @@
   h2.part { margin: 44px 0 4px; font-size: 24px; }
   p.partsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
   .card { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
-  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; }
-  .sq { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); cursor: pointer; user-select: none; transition: transform .12s; }
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; container-type: inline-size; }
+  .sq { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); font-size: 9cqw; min-width: 0; cursor: pointer; user-select: none; transition: transform .12s; }
   .sq.light { background: #f0d9b5; }
   .sq.dark { background: #b58863; }
   .sq .w { color: #ffffff; text-shadow: 0 0 3px #000, 0 2px 2px rgba(0,0,0,.6); }
@@ -41,7 +41,7 @@
   .mate.bounce .g { animation: pop .4s; }
   .prompt { text-align: center; font-size: 22px; font-weight: 700; margin: 6px 0 12px; }
   .prompt b { color: #9a6b12; }
-  .stars { text-align: center; font-size: 30px; min-height: 40px; margin-top: 10px; letter-spacing: 4px; }
+  .stars { text-align: center; font-size: 30px; min-height: 40px; margin-top: 10px; letter-spacing: 4px; overflow-wrap: anywhere; line-height: 1.5; }
   .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
   button { font-family: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 12px 26px; font-size: 16px; font-weight: 700; background: #2b6bff; color: #fff; }
   button:hover { background: #1f58e0; }
