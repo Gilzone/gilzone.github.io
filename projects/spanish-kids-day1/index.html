@@ -235,7 +235,6 @@ function buildRounds() {
   var meaningWords = shuffle(WORDS).slice(0, 4);
   meaningWords.forEach(function (w) { r.push({ type: "meaning", word: w }); });
   shuffle(PHRASES).slice(0, 3).forEach(function (p) { r.push({ type: "build", phrase: p }); });
-  r.push({ type: "sayit", word: WORDS[Math.floor(Math.random() * WORDS.length)] });
   return shuffle(r);
 }
 
@@ -353,22 +352,6 @@ function nextRound() {
       grade(got === target.es, target);
     };
     setTimeout(function () { sayEn('How do you say "' + target.en + '"?'); }, 450);
-  }
-  else if (current.type === "sayit") {
-    prompt.textContent = "Say it out loud!";
-    sub.textContent = "Listen, repeat after the voice, then tap the button.";
-    var card = document.createElement("div");
-    card.className = "saycard";
-    card.innerHTML = "<div class='e'>" + current.word.emoji + "</div><div class='es'>" + current.word.es + "</div><div class='en'>" + current.word.en + "</div>";
-    var hb = document.createElement("button");
-    hb.id = "speakbtn"; hb.innerHTML = "\uD83D\uDD0A; Listen";
-    hb.addEventListener("click", function () { say(current.word.es); });
-    card.appendChild(hb);
-    stage.appendChild(card);
-    $("check").disabled = false;
-    $("check").textContent = "I SAID IT! \u2B50";
-    $("check").onclick = function () { grade(true, current.word); };
-    setTimeout(function () { say(current.word.es); }, 450);
   }
 }
 
