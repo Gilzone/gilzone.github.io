@@ -1,270 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ASL: Basic Signs 1 — Interactive Lesson</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ASL: Basic Signs 1 — Slideshow Lesson</title>
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
-  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
-  a.back:hover { text-decoration: underline; }
-  header.hero { text-align: center; margin: 18px 0 8px; }
-  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
-  header.hero p { margin: 0; color: #5c6675; font-size: 15px; }
-  .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
-  .step { flex: 1 1 200px; background: #ffffff; border: 1px solid #e6e9f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
-  .step b { display: block; font-size: 15px; margin-bottom: 4px; }
-  .step span { color: #5c6675; font-size: 13.5px; }
-  nav.toc { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 6px; }
-  nav.toc a { background: #ffffff; border: 1px solid #e6e9f0; color: #17202e; padding: 9px 16px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 600; }
-  nav.toc a:hover { border-color: #2b6bff; }
-  h2.set { margin: 44px 0 4px; font-size: 24px; }
-  p.setsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
-  .sign { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
-  .sign h3 { margin: 0 0 14px; font-size: 21px; }
-  .sign h3 .num { color: #2b6bff; margin-right: 8px; }
-  .phase { margin: 16px 0 0; }
-  .phase > .label { display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 10px; }
-  .label.watch { background: #eaf0ff; color: #2b6bff; }
-  .label.practice { background: #fff3d6; color: #9a6b12; }
-  .label.test { background: #dcf5e5; color: #1f8f57; }
-  .vfacade { position: relative; width: 100%; aspect-ratio: 16/9; background: #000 center/cover; border-radius: 10px; cursor: pointer; border: 1px solid #e6e9f0; overflow: hidden; }
-  .vfacade .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-  .vfacade .play span { width: 74px; height: 74px; border-radius: 50%; background: rgba(79,124,255,.92); display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; }
-  .vfacade iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .vfacade .cap { position: absolute; left: 10px; bottom: 10px; background: rgba(0,0,0,.65); padding: 4px 10px; border-radius: 8px; font-size: 12.5px; color: #cfd8ea; }
-  .cues { margin: 6px 0 0; padding-left: 20px; color: #3d4657; font-size: 15px; line-height: 1.65; }
-  .cues li { margin-bottom: 4px; }
-  .rep { color: #5c6675; font-size: 14px; margin-top: 10px; }
-  .testq { font-size: 17px; margin: 4px 0 12px; }
-  .testq b { color: #1f8f57; }
-  .btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
-  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 20px; font-size: 15px; font-weight: 600; }
-  .btn-reveal { background: #1f8f57; color: #fff; }
-  .btn-reveal:hover { background: #177a48; }
-  .btn-got { background: #2b6bff; color: #fff; }
-  .btn-got:hover { background: #1f58e0; }
-  .btn-miss { background: #eef1f6; color: #3d4657; }
-  .btn-miss:hover { background: #e2e7f0; }
-  .answer { margin-top: 14px; }
-  .answer .who { font-size: 15px; color: #5c6675; margin-bottom: 8px; }
-  .scorebar { display: flex; align-items: center; gap: 12px; background: #f6f8fc; border: 1px solid #e6e9f0; border-radius: 12px; padding: 12px 18px; margin: 26px 0 0; font-size: 15px; }
-  .scorebar b { font-size: 19px; color: #1f8f57; }
-  footer { margin-top: 56px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
-  footer a { color: #2b6bff; }
-  [hidden] { display: none !important; }
+  :root{
+    --ink:#17202e; --muted:#5b6472; --line:#e6e9ef; --bg:#f7f8fb; --card:#ffffff;
+    --blue:#2b6bff; --coral:#ff6b5e; --green:#1faa53; --red:#e5484d; --gold:#f5a623;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;
+    display:flex;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .topbar-in{max-width:860px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+  .back{color:var(--muted);text-decoration:none;font-size:14px;white-space:nowrap}
+  .back:hover{color:var(--ink)}
+  .brand{font-weight:800;font-size:15px;white-space:nowrap}
+  .spacer{flex:1}
+  .pill{font-size:13px;font-weight:700;color:var(--muted);background:#eef1f6;border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;white-space:nowrap}
+  .pill.score{color:#8a6d00;background:#fff6dd;border-color:#f0dfa8}
+  .progress{height:4px;background:#eef1f6}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--coral),var(--gold));width:0;transition:width .3s}
+  main{flex:1;display:flex;flex-direction:column;max-width:860px;width:100%;margin:0 auto;padding:28px 20px 20px}
+  .deck{flex:1;display:flex;flex-direction:column}
+  .slide{background:var(--card);border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 12px 40px rgba(23,32,46,.08);padding:40px 36px;min-height:480px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    animation:fadein .28s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--coral);background:#ffe9e6;padding:6px 14px;border-radius:999px;margin-bottom:18px}
+  .kicker.test{color:var(--blue);background:#e4ecff}
+  h1{font-size:clamp(30px,5vw,44px);margin:0 0 12px;letter-spacing:-.02em}
+  h2{font-size:clamp(26px,4.5vw,36px);margin:0 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:17px;line-height:1.55;max-width:560px;margin:0 0 8px}
+  .sign-img{width:100%;max-width:520px;border-radius:16px;border:1px solid var(--line);
+    box-shadow:0 8px 24px rgba(23,32,46,.10);margin:6px 0 18px}
+  .cues{text-align:left;max-width:520px;width:100%;margin:0 0 6px;padding:0;list-style:none}
+  .cues li{background:#f2f6ff;border:1px solid #dbe6ff;border-radius:12px;padding:10px 14px 10px 40px;
+    margin:8px 0;font-size:15px;line-height:1.45;position:relative}
+  .cues li::before{content:"✋";position:absolute;left:12px;top:10px}
+  .cliplink{margin-top:14px;font-size:14px;color:var(--blue);text-decoration:none;font-weight:600}
+  .cliplink:hover{text-decoration:underline}
+  .q{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 22px}
+  .q b{color:var(--blue)}
+  .choices{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;width:100%}
+  .choice{border:3px solid var(--line);border-radius:18px;background:#fff;padding:8px;cursor:pointer;
+    transition:transform .12s,border-color .12s,box-shadow .12s;max-width:300px;flex:1 1 220px}
+  .choice img{width:100%;border-radius:12px;display:block}
+  .choice:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 10px 24px rgba(23,32,46,.12)}
+  .choice:disabled{cursor:default}
+  .choice.correct{border-color:var(--green);box-shadow:0 0 0 4px rgba(31,170,83,.18)}
+  .choice.wrong{border-color:var(--red);box-shadow:0 0 0 4px rgba(229,72,77,.15);animation:shake .3s}
+  @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+  .feedback{min-height:34px;margin-top:18px;font-size:18px;font-weight:700}
+  .feedback.ok{color:var(--green)}
+  .feedback.no{color:var(--red)}
+  .feedback .answer{color:var(--muted);font-weight:600;font-size:15px;display:block;margin-top:4px}
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:12px}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:700;font-size:15px;
+    padding:12px 26px;border-radius:999px;cursor:pointer;transition:transform .1s}
+  .btn:hover:not(:disabled){transform:translateY(-1px)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 20px rgba(43,107,255,.3)}
+  .btn.coral{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 8px 20px rgba(255,107,94,.3)}
+  .dots{display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap;max-width:100%}
+  .dots span{width:8px;height:8px;border-radius:50%;background:#dfe4ec}
+  .dots span.done{background:var(--green)}
+  .dots span.now{background:var(--blue);transform:scale(1.25)}
+  .howto{display:flex;gap:12px;justify-content:center;margin:26px 0;flex-wrap:wrap}
+  .howto div{background:#f2f6ff;border:1px solid #dbe6ff;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:600;max-width:180px}
+  .stars{font-size:52px;margin:6px 0 12px;letter-spacing:6px}
+  .bigscore{font-size:22px;font-weight:800;margin-bottom:6px}
+  .tnote{margin-top:22px;font-size:13px;color:var(--muted);background:#f2f4f8;border:1px dashed var(--line);
+    border-radius:12px;padding:10px 16px;max-width:560px}
+  footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:13px}
+  @media (max-width:560px){ .slide{padding:28px 20px;min-height:420px} .choices{gap:12px} }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a class="back" href="../../">&larr; All projects</a>
-
-  <header class="hero">
-    <h1>&#x1F918; ASL: Basic Signs 1</h1>
-    <p>Everyday vocabulary in American Sign Language &mdash; watch, practice, test.</p>
-  </header>
-
-  <div class="steps">
-    <div class="step"><b>&#x25B6; 1. Watch</b><span>See the sign demonstrated in the video clip.</span></div>
-    <div class="step"><b>&#x1F64C; 2. Practice</b><span>Copy the handshape. Repeat 5 times with a partner.</span></div>
-    <div class="step"><b>&#x2705; 3. Test</b><span>Show the sign from memory, then reveal the answer.</span></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="back" href="../../">← Lessons</a>
+    <span class="brand">🤟 ASL: Basic Signs 1</span>
+    <span class="spacer"></span>
+    <span class="pill" id="counter">Slide 1 of 28</span>
+    <span class="pill score" id="scorepill">⭐ 0</span>
   </div>
+  <div class="progress"><div id="bar"></div></div>
+</header>
 
-  <nav class="toc">
-    <a href="#set1">&#x1F64F; Polite signs</a>
-    <a href="#set2">&#x1F4AC; Needs &amp; states</a>
-    <a href="#final">&#x1F3C1; Final test</a>
-  </nav>
+<main>
+  <div class="deck" id="deck"></div>
+  <div class="nav">
+    <button class="btn" id="prev">← Back</button>
+    <button class="btn primary" id="next">Next →</button>
+  </div>
+  <div class="dots" id="dots"></div>
+</main>
 
-  <div id="lesson"></div>
-
-  <section id="final" class="sign">
-    <h3><span class="num">&#x1F3C1;</span> Final test &mdash; all signs</h3>
-    <div class="phase">
-      <span class="label watch">Watch</span>
-      <div class="vfacade" data-start="452" data-end="500" data-cap="Final review (7:32 &ndash; 8:20)"></div>
-      <p class="rep">Watch the full review once. Then, with the screen covered, take turns: one person names a sign, the other performs it.</p>
-    </div>
-    <div class="scorebar">Your score this session: <b id="scoreGot">0</b> got it &nbsp;&middot;&nbsp; <span id="scoreMiss">0</span> to practice</div>
-  </section>
-
-  <footer>
-    Video: &ldquo;ASL: Basic Signs 1 &ndash; Everyday Vocabulary in ASL&rdquo; by
-    <a href="https://www.youtube.com/watch?v=fnFWAzd3Kfw" target="_blank" rel="noopener">Miacademy &amp; MiaPrep Learning Channel</a>.<br/>
-    Clips are short excerpts for classroom study. Made for Edwin&rsquo;s class.
-  </footer>
-</div>
+<footer>Built for the classroom · Signs demonstrated in the companion video · Fish Learning</footer>
 
 <script>
-const VIDEO_ID = "fnFWAzd3Kfw";
-const THUMB = "https://i.ytimg.com/vi/" + VIDEO_ID + "/hqdefault.jpg";
-
-// name, start/end (seconds), practice cues, set 1 = polite, 2 = needs & states
+const VIDEO = "fnFWAzd3Kfw";
 const SIGNS = [
-  { name: "Help", start: 93, end: 112, set: 1, cues: [
+  { name:"Help", img:"help.jpg", start:93, end:112, cues:[
     "Non-dominant hand forms a closed five, palm facing up.",
     "Dominant hand makes a thumbs-up and sits on the other palm.",
-    "It's directional: move toward the person you're helping (\"help you\") or toward yourself (\"help me\")."
-  ]},
-  { name: "Stop", start: 148, end: 165, set: 1, cues: [
+    "It's directional: move toward the person you're helping (\"help you\") or toward yourself (\"help me\")."]},
+  { name:"Stop", img:"stop.jpg", start:148, end:165, cues:[
     "Both hands form closed fives.",
     "Non-dominant hand sits palm-up.",
-    "Dominant hand comes down, pinkie-edge landing on the other palm."
-  ]},
-  { name: "Please", start: 165, end: 186, set: 1, cues: [
+    "Dominant hand comes down, pinkie-edge landing on the other palm."]},
+  { name:"Please", img:"please.jpg", start:165, end:186, cues:[
     "Dominant hand forms a closed five.",
     "Palm on your chest, circle it around.",
-    "Mouth \"please\" or make a pleading face as you do it."
-  ]},
-  { name: "Sorry", start: 186, end: 202, set: 1, cues: [
+    "Mouth \"please\" or make a pleading face as you do it."]},
+  { name:"Sorry", img:"sorry.jpg", start:186, end:202, cues:[
     "Just like please, but the dominant hand forms a thumbs-up.",
     "Circle it on your chest.",
-    "Mouth \"sorry\" or make an apologetic face."
-  ]},
-  { name: "Thank you", start: 203, end: 222, set: 1, cues: [
+    "Mouth \"sorry\" or make an apologetic face."]},
+  { name:"Thank you", img:"thankyou.jpg", start:203, end:222, cues:[
     "Dominant hand forms a closed five.",
     "Fingertips start at your chin, then move outward.",
-    "Mouth \"thank you\" as you do it — or just smile."
-  ]},
-  { name: "Bathroom", start: 222, end: 241, set: 1, cues: [
+    "Mouth \"thank you\" as you do it — or just smile."]},
+  { name:"Bathroom", img:"bathroom.jpg", start:222, end:241, cues:[
     "Dominant hand forms the ASL letter T.",
     "Shake it gently.",
-    "Furrow your brow with a puzzled look to ask \"where's the bathroom?\""
-  ]},
-  { name: "Yes", start: 269, end: 293, set: 2, cues: [
+    "Furrow your brow with a puzzled look to ask \"where's the bathroom?\""]},
+  { name:"Yes", img:"yes.jpg", start:269, end:293, cues:[
     "Dominant hand forms the ASL letter S.",
     "The motion is like knocking on a door.",
-    "Nod your head at the same time."
-  ]},
-  { name: "No", start: 297, end: 318, set: 2, cues: [
+    "Nod your head at the same time."]},
+  { name:"No", img:"no.jpg", start:297, end:318, cues:[
     "Thumb, index and middle finger stick out together.",
     "Move them like a talking hand.",
-    "Shake your head at the same time."
-  ]},
-  { name: "Ready", start: 326, end: 344, set: 2, cues: [
+    "Shake your head at the same time."]},
+  { name:"Ready", img:"ready.jpg", start:326, end:344, cues:[
     "Both hands form the ASL letter R.",
-    "Shake them."
-  ]},
-  { name: "Hungry", start: 344, end: 361, set: 2, cues: [
+    "Shake them."]},
+  { name:"Hungry", img:"hungry.jpg", start:344, end:361, cues:[
     "Dominant hand forms a sideways letter C.",
-    "Fingers at your chest, slowly slide the hand down."
-  ]},
-  { name: "Food / Eat", start: 365, end: 381, set: 2, cues: [
+    "Fingers at your chest, slowly slide the hand down."]},
+  { name:"Food / Eat", img:"food.jpg", start:365, end:381, cues:[
     "Fingertips come together like the ASL letter O.",
     "Gesture to your mouth.",
-    "One sign, two meanings: \"food\" and \"eat\"."
-  ]},
-  { name: "Drink", start: 385, end: 408, set: 2, cues: [
+    "One sign, two meanings: \"food\" and \"eat\"."]},
+  { name:"Drink", img:"drink.jpg", start:385, end:408, cues:[
     "Dominant hand forms a sideways letter C — like holding an invisible glass.",
     "Motion as if you're drinking.",
-    "Once = the verb (drinking); a couple of times = the noun (a drink)."
-  ]},
-  { name: "Thirsty", start: 410, end: 427, set: 2, cues: [
+    "Once = the verb (drinking); a couple of times = the noun (a drink)."]},
+  { name:"Thirsty", img:"thirsty.jpg", start:410, end:427, cues:[
     "Dominant hand forms a one-hand shape.",
-    "Finger starts at the base of your chin and slides down your throat."
-  ]}
+    "Finger starts at the base of your chin and slides down your throat."]}
 ];
 
-let got = 0, miss = 0;
-function bump(ok) {
-  if (ok) got++; else miss++;
-  document.getElementById("scoreGot").textContent = got;
-  document.getElementById("scoreMiss").textContent = miss;
+// Build slide list: cover, then (learn, test) per sign, then final
+const slides = [{type:"cover"}];
+SIGNS.forEach((s,i)=>{ slides.push({type:"learn",i}); slides.push({type:"test",i}); });
+slides.push({type:"final"});
+const TOTAL = slides.length; // 28
+
+let idx = 0, score = 0;
+const answers = {};   // slide idx -> {picked, ok}
+const testSetup = {}; // slide idx -> {options:[signIdx,signIdx], correctPos}
+
+const deck = document.getElementById("deck");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const counter = document.getElementById("counter");
+const scorepill = document.getElementById("scorepill");
+const bar = document.getElementById("bar");
+const dots = document.getElementById("dots");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+function setupTest(slideIdx, signIdx){
+  if(testSetup[slideIdx]) return testSetup[slideIdx];
+  let d;
+  do{ d = Math.floor(Math.random()*SIGNS.length); }while(d===signIdx);
+  const opts = Math.random()<0.5 ? [signIdx,d] : [d,signIdx];
+  return testSetup[slideIdx] = {options:opts, correctPos: opts[0]===signIdx?0:1};
 }
 
-function facade(start, end, cap) {
-  const d = document.createElement("div");
-  d.className = "vfacade";
-  d.style.backgroundImage = "url('" + THUMB + "')";
-  d.innerHTML = '<div class="play"><span>&#x25B6;</span></div>' +
-    (cap ? '<div class="cap">' + cap + "</div>" : "");
-  d.addEventListener("click", function () {
-    d.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + VIDEO_ID +
-      "?start=" + start + "&end=" + end + "&rel=0&autoplay=1" +
-      '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-  }, { once: true });
-  return d;
-}
-
-function buildSet(num, title, sub, signs) {
-  const frag = document.createDocumentFragment();
-  const h = document.createElement("h2");
-  h.className = "set"; h.id = "set" + num; h.textContent = title;
-  frag.appendChild(h);
-  const p = document.createElement("p");
-  p.className = "setsub"; p.innerHTML = sub;
-  frag.appendChild(p);
-  signs.forEach(function (s, i) {
-    const card = document.createElement("section");
-    card.className = "sign";
-    card.innerHTML =
-      "<h3><span class='num'>" + (i + 1) + ".</span>" + s.name + "</h3>" +
-      "<div class='phase'><span class='label watch'>Watch</span><div class='vwatch'></div>" +
-      "<p class='rep'>Watch closely, then copy the sign along with the video.</p></div>" +
-      "<div class='phase'><span class='label practice'>Practice</span><ul class='cues'>" +
-      s.cues.map(function (c) { return "<li>" + c + "</li>"; }).join("") +
-      "</ul><p class='rep'>&#x1F504; Do it 5 times &mdash; then 5 more with a partner watching.</p></div>" +
-      "<div class='phase'><span class='label test'>Test</span>" +
-      "<p class='testq'>Without looking: show me the sign for <b>&ldquo;" + s.name + "&rdquo;</b></p>" +
-      "<div class='btnrow'><button class='btn-reveal'>Reveal answer</button></div>" +
-      "<div class='answer' hidden><p class='who'>The sign for &ldquo;" + s.name + "&rdquo;:</p><div class='vans'></div>" +
-      "<div class='btnrow' style='margin-top:12px'><button class='btn-got'>I got it &#x2713;</button>" +
-      "<button class='btn-miss'>I&rsquo;ll practice more</button></div></div></div>";
-    card.querySelector(".vwatch").appendChild(facade(s.start, s.end, null));
-    const ans = card.querySelector(".answer");
-    card.querySelector(".btn-reveal").addEventListener("click", function () {
-      ans.hidden = false;
-      ans.querySelector(".vans").appendChild(facade(s.start, s.end, null));
-      this.disabled = true;
-    });
-    ans.querySelector(".btn-got").addEventListener("click", function () { bump(true); this.disabled = true; ans.querySelector(".btn-miss").disabled = true; });
-    ans.querySelector(".btn-miss").addEventListener("click", function () { bump(false); this.disabled = true; ans.querySelector(".btn-got").disabled = true; });
-    frag.appendChild(card);
-  });
-  return frag;
-}
-
-function reviewCard(title, start, end, cap, text) {
-  const sec = document.createElement("section");
-  sec.className = "sign";
-  const h = document.createElement("h3");
-  h.innerHTML = "<span class='num'>&#x1F501;</span>" + title;
-  sec.appendChild(h);
-  const ph = document.createElement("div");
-  ph.className = "phase";
-  ph.innerHTML = "<span class='label watch'>Watch</span>";
-  ph.appendChild(facade(start, end, cap));
-  const p = document.createElement("p");
-  p.className = "rep"; p.textContent = text;
-  ph.appendChild(p);
-  sec.appendChild(ph);
-  return sec;
-}
-
-(function init() {
-  const lesson = document.getElementById("lesson");
-  const set1 = SIGNS.filter(function (s) { return s.set === 1; });
-  const set2 = SIGNS.filter(function (s) { return s.set === 2; });
-  if (!set1.length && !set2.length) {
-    lesson.innerHTML = "<p style='color:#5c6675'>Lesson content is loading&hellip;</p>";
-    return;
+function render(){
+  const s = slides[idx];
+  let html = "";
+  if(s.type==="cover"){
+    html = `<div class="slide">
+      <span class="kicker">Slideshow lesson</span>
+      <h1>🤟 ASL: Basic Signs 1</h1>
+      <p class="sub">Learn <b>13 everyday signs</b> with real pictures from the video — then prove it in the tap-the-sign tests.</p>
+      <div class="howto">
+        <div>🖼️ <b>1. Look</b><br>Study each sign's picture</div>
+        <div>✋ <b>2. Copy</b><br>Practice it with your hands</div>
+        <div>👆 <b>3. Tap</b><br>Pick the right sign in the test</div>
+      </div>
+      <button class="btn coral" style="font-size:18px;padding:14px 44px" onclick="go(1)">Start ▶</button>
+      <div class="tnote">🍎 <b>Teacher tip:</b> read each question out loud and let students tap the answer. Instant feedback shows right away.</div>
+    </div>`;
+  } else if(s.type==="learn"){
+    const g = SIGNS[s.i];
+    const clip = `https://www.youtube.com/watch?v=${VIDEO}&t=${g.start}s`;
+    html = `<div class="slide">
+      <span class="kicker">Learn · ${s.i+1} of ${SIGNS.length}</span>
+      <h2>${esc(g.name)}</h2>
+      <img class="sign-img" src="img/${g.img}" alt="How to sign ${esc(g.name)}">
+      <ul class="cues">${g.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+      <a class="cliplink" href="${clip}" target="_blank" rel="noopener">▶ Watch the video clip</a>
+    </div>`;
+  } else if(s.type==="test"){
+    const g = SIGNS[s.i];
+    const t = setupTest(idx, s.i);
+    const a = answers[idx];
+    html = `<div class="slide">
+      <span class="kicker test">Test · Question ${s.i+1} of ${SIGNS.length}</span>
+      <p class="q">Which sign says <b>${esc(g.name).toUpperCase()}</b>?</p>
+      <div class="choices">
+        ${t.options.map((oi,p)=>{
+          const cls = a ? (p===t.correctPos ? "choice correct" : (p===a.picked && !a.ok ? "choice wrong" : "choice")) : "choice";
+          const dis = a ? "disabled" : "";
+          return `<button class="${cls}" ${dis} onclick="answer(${idx},${p})" aria-label="Choice ${p+1}">
+            <img src="img/${SIGNS[oi].img}" alt="Sign choice ${p+1}"></button>`;
+        }).join("")}
+      </div>
+      <div class="feedback ${a ? (a.ok?"ok":"no") : ""}">${a ? (a.ok ? "✅ Correct!" : `❌ Not quite.<span class="answer">The answer is <b>${esc(g.name)}</b> — the one with the green border.</span>`) : ""}</div>
+    </div>`;
+  } else {
+    const stars = score>=12 ? "★★★" : score>=9 ? "★★☆" : score>=6 ? "★☆☆" : "☆☆☆";
+    const msg = score===13 ? "Perfect! You're a signing superstar! 🌟"
+      : score>=10 ? "Amazing work! Keep practicing! 🎉"
+      : score>=7 ? "Good job! Watch the tricky ones again. 💪"
+      : "Nice try! Go through the pictures again and retry. 🤟";
+    html = `<div class="slide">
+      <span class="kicker">Finished!</span>
+      <div class="stars">${stars}</div>
+      <div class="bigscore">You scored ${score} out of ${SIGNS.length}</div>
+      <p class="sub">${msg}</p>
+      <div style="margin-top:18px"><button class="btn coral" onclick="restart()">↺ Start over</button></div>
+    </div>`;
   }
-  lesson.appendChild(buildSet(1, "\u{1F64F} Set 1: Polite signs",
-    "Everyday courtesy signs &mdash; the video teaches these first.", set1));
-  lesson.appendChild(reviewCard("Set 1 review", 240, 268, "Review (4:00 &ndash; 4:28)",
-    "Watch her run through all six signs. Sign along, naming each one out loud before she does."));
-  lesson.appendChild(buildSet(2, "\u{1F4AC} Set 2: Needs &amp; states",
-    "Signs for expressing needs and how you feel.", set2));
-  lesson.appendChild(reviewCard("Set 2 review", 427, 452, "Review (7:07 &ndash; 7:32)",
-    "Same drill — call out each sign's name before she signs it."));
-  document.querySelectorAll("#final .vfacade[data-start]").forEach(function (el) {
-    const f = facade(el.getAttribute("data-start"), el.getAttribute("data-end"), el.getAttribute("data-cap"));
-    el.replaceWith(f);
-  });
-})();
+  deck.innerHTML = html;
+  counter.textContent = `Slide ${idx+1} of ${TOTAL}`;
+  scorepill.textContent = `⭐ ${score}`;
+  bar.style.width = ((idx+1)/TOTAL*100)+"%";
+  prevBtn.disabled = idx===0;
+  const st = slides[idx];
+  nextBtn.disabled = (st.type==="test" && !answers[idx]);
+  nextBtn.innerHTML = idx===TOTAL-2 ? "See results →" : idx===TOTAL-1 ? "Done ✓" : "Next →";
+  dots.innerHTML = slides.map((_,i)=>{
+    const c = (slides[i].type==="test"&&answers[i])||(slides[i].type!=="test"&&i<idx) ? "done" : i===idx ? "now" : "";
+    return `<span class="${c}"></span>`;
+  }).join("");
+}
+
+function answer(slideIdx, picked){
+  if(answers[slideIdx]) return;
+  const s = slides[slideIdx];
+  const t = setupTest(slideIdx, s.i);
+  const ok = picked===t.correctPos;
+  answers[slideIdx] = {picked, ok};
+  if(ok) score++;
+  render();
+}
+
+function go(n){ idx = Math.max(0, Math.min(TOTAL-1, n)); render(); window.scrollTo({top:0,behavior:"smooth"}); }
+function restart(){ idx=0; score=0; for(const k in answers) delete answers[k]; for(const k in testSetup) delete testSetup[k]; render(); window.scrollTo({top:0}); }
+
+prevBtn.onclick = ()=>go(idx-1);
+nextBtn.onclick = ()=>go(idx+1);
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight") nextBtn.click();
+  if(e.key==="ArrowLeft") prevBtn.click();
+});
+render();
 </script>
 </body>
 </html>
