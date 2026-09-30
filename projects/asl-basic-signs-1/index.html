@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ASL: Basic Signs 1 — Interactive Lesson</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #7ea2ff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  a.back:hover { text-decoration: underline; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
+  header.hero p { margin: 0; color: #9aa7c2; font-size: 15px; }
+  .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
+  .step { flex: 1 1 200px; background: #182032; border: 1px solid #2a3652; border-radius: 12px; padding: 14px 16px; }
+  .step b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .step span { color: #9aa7c2; font-size: 13.5px; }
+  nav.toc { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 6px; }
+  nav.toc a { background: #182032; border: 1px solid #2a3652; color: #e8ecf4; padding: 9px 16px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 600; }
+  nav.toc a:hover { border-color: #4f7cff; }
+  h2.set { margin: 44px 0 4px; font-size: 24px; }
+  p.setsub { margin: 0 0 18px; color: #9aa7c2; font-size: 14.5px; }
+  .sign { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 22px; margin: 0 0 22px; }
+  .sign h3 { margin: 0 0 14px; font-size: 21px; }
+  .sign h3 .num { color: #4f7cff; margin-right: 8px; }
+  .phase { margin: 16px 0 0; }
+  .phase > .label { display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 10px; }
+  .label.watch { background: #1d3a6e; color: #9dc0ff; }
+  .label.practice { background: #3a2c10; color: #ffd98a; }
+  .label.test { background: #123f2b; color: #8fe3b6; }
+  .vfacade { position: relative; width: 100%; aspect-ratio: 16/9; background: #000 center/cover; border-radius: 10px; cursor: pointer; border: 1px solid #2a3652; overflow: hidden; }
+  .vfacade .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .vfacade .play span { width: 74px; height: 74px; border-radius: 50%; background: rgba(79,124,255,.92); display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; }
+  .vfacade iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .vfacade .cap { position: absolute; left: 10px; bottom: 10px; background: rgba(0,0,0,.65); padding: 4px 10px; border-radius: 8px; font-size: 12.5px; color: #cfd8ea; }
+  .cues { margin: 6px 0 0; padding-left: 20px; color: #c6d0e4; font-size: 15px; line-height: 1.65; }
+  .cues li { margin-bottom: 4px; }
+  .rep { color: #9aa7c2; font-size: 14px; margin-top: 10px; }
+  .testq { font-size: 17px; margin: 4px 0 12px; }
+  .testq b { color: #8fe3b6; }
+  .btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
+  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 20px; font-size: 15px; font-weight: 600; }
+  .btn-reveal { background: #1f8f57; color: #fff; }
+  .btn-reveal:hover { background: #177a48; }
+  .btn-got { background: #4f7cff; color: #fff; }
+  .btn-got:hover { background: #3d68f0; }
+  .btn-miss { background: #2a3652; color: #cfd8ea; }
+  .btn-miss:hover { background: #35436a; }
+  .answer { margin-top: 14px; }
+  .answer .who { font-size: 15px; color: #9aa7c2; margin-bottom: 8px; }
+  .scorebar { display: flex; align-items: center; gap: 12px; background: #101828; border: 1px solid #2a3652; border-radius: 12px; padding: 12px 18px; margin: 26px 0 0; font-size: 15px; }
+  .scorebar b { font-size: 19px; color: #8fe3b6; }
+  footer { margin-top: 56px; color: #66708a; font-size: 13px; text-align: center; line-height: 1.7; }
+  footer a { color: #7ea2ff; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All projects</a>
+
+  <header class="hero">
+    <h1>&#x1F918; ASL: Basic Signs 1</h1>
+    <p>Everyday vocabulary in American Sign Language &mdash; watch, practice, test.</p>
+  </header>
+
+  <div class="steps">
+    <div class="step"><b>&#x25B6; 1. Watch</b><span>See the sign demonstrated in the video clip.</span></div>
+    <div class="step"><b>&#x1F64C; 2. Practice</b><span>Copy the handshape. Repeat 5 times with a partner.</span></div>
+    <div class="step"><b>&#x2705; 3. Test</b><span>Show the sign from memory, then reveal the answer.</span></div>
+  </div>
+
+  <nav class="toc">
+    <a href="#set1">&#x1F64F; Polite signs</a>
+    <a href="#set2">&#x1F4AC; Needs &amp; states</a>
+    <a href="#final">&#x1F3C1; Final test</a>
+  </nav>
+
+  <div id="lesson"></div>
+
+  <section id="final" class="sign">
+    <h3><span class="num">&#x1F3C1;</span> Final test &mdash; all signs</h3>
+    <div class="phase">
+      <span class="label watch">Watch</span>
+      <div class="vfacade" data-start="452" data-end="500" data-cap="Final review (7:32 &ndash; 8:20)"></div>
+      <p class="rep">Watch the full review once. Then, with the screen covered, take turns: one person names a sign, the other performs it.</p>
+    </div>
+    <div class="scorebar">Your score this session: <b id="scoreGot">0</b> got it &nbsp;&middot;&nbsp; <span id="scoreMiss">0</span> to practice</div>
+  </section>
+
+  <footer>
+    Video: &ldquo;ASL: Basic Signs 1 &ndash; Everyday Vocabulary in ASL&rdquo; by
+    <a href="https://www.youtube.com/watch?v=fnFWAzd3Kfw" target="_blank" rel="noopener">Miacademy &amp; MiaPrep Learning Channel</a>.<br/>
+    Clips are short excerpts for classroom study. Made for Edwin&rsquo;s class.
+  </footer>
+</div>
+
+<script>
+const VIDEO_ID = "fnFWAzd3Kfw";
+const THUMB = "https://i.ytimg.com/vi/" + VIDEO_ID + "/hqdefault.jpg";
+
+// name, start/end (seconds), practice cues, set 1 = polite, 2 = needs & states
+const SIGNS = [
+  { name: "Help", start: 93, end: 112, set: 1, cues: [
+    "Non-dominant hand forms a closed five, palm facing up.",
+    "Dominant hand makes a thumbs-up and sits on the other palm.",
+    "It's directional: move toward the person you're helping (\"help you\") or toward yourself (\"help me\")."
+  ]},
+  { name: "Stop", start: 148, end: 165, set: 1, cues: [
+    "Both hands form closed fives.",
+    "Non-dominant hand sits palm-up.",
+    "Dominant hand comes down, pinkie-edge landing on the other palm."
+  ]},
+  { name: "Please", start: 165, end: 186, set: 1, cues: [
+    "Dominant hand forms a closed five.",
+    "Palm on your chest, circle it around.",
+    "Mouth \"please\" or make a pleading face as you do it."
+  ]},
+  { name: "Sorry", start: 186, end: 202, set: 1, cues: [
+    "Just like please, but the dominant hand forms a thumbs-up.",
+    "Circle it on your chest.",
+    "Mouth \"sorry\" or make an apologetic face."
+  ]},
+  { name: "Thank you", start: 203, end: 222, set: 1, cues: [
+    "Dominant hand forms a closed five.",
+    "Fingertips start at your chin, then move outward.",
+    "Mouth \"thank you\" as you do it — or just smile."
+  ]},
+  { name: "Bathroom", start: 222, end: 241, set: 1, cues: [
+    "Dominant hand forms the ASL letter T.",
+    "Shake it gently.",
+    "Furrow your brow with a puzzled look to ask \"where's the bathroom?\""
+  ]},
+  { name: "Yes", start: 269, end: 293, set: 2, cues: [
+    "Dominant hand forms the ASL letter S.",
+    "The motion is like knocking on a door.",
+    "Nod your head at the same time."
+  ]},
+  { name: "No", start: 297, end: 318, set: 2, cues: [
+    "Thumb, index and middle finger stick out together.",
+    "Move them like a talking hand.",
+    "Shake your head at the same time."
+  ]},
+  { name: "Ready", start: 326, end: 344, set: 2, cues: [
+    "Both hands form the ASL letter R.",
+    "Shake them."
+  ]},
+  { name: "Hungry", start: 344, end: 361, set: 2, cues: [
+    "Dominant hand forms a sideways letter C.",
+    "Fingers at your chest, slowly slide the hand down."
+  ]},
+  { name: "Food / Eat", start: 365, end: 381, set: 2, cues: [
+    "Fingertips come together like the ASL letter O.",
+    "Gesture to your mouth.",
+    "One sign, two meanings: \"food\" and \"eat\"."
+  ]},
+  { name: "Drink", start: 385, end: 408, set: 2, cues: [
+    "Dominant hand forms a sideways letter C — like holding an invisible glass.",
+    "Motion as if you're drinking.",
+    "Once = the verb (drinking); a couple of times = the noun (a drink)."
+  ]},
+  { name: "Thirsty", start: 410, end: 427, set: 2, cues: [
+    "Dominant hand forms a one-hand shape.",
+    "Finger starts at the base of your chin and slides down your throat."
+  ]}
+];
+
+let got = 0, miss = 0;
+function bump(ok) {
+  if (ok) got++; else miss++;
+  document.getElementById("scoreGot").textContent = got;
+  document.getElementById("scoreMiss").textContent = miss;
+}
+
+function facade(start, end, cap) {
+  const d = document.createElement("div");
+  d.className = "vfacade";
+  d.style.backgroundImage = "url('" + THUMB + "')";
+  d.innerHTML = '<div class="play"><span>&#x25B6;</span></div>' +
+    (cap ? '<div class="cap">' + cap + "</div>" : "");
+  d.addEventListener("click", function () {
+    d.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + VIDEO_ID +
+      "?start=" + start + "&end=" + end + "&rel=0&autoplay=1" +
+      '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+  }, { once: true });
+  return d;
+}
+
+function buildSet(num, title, sub, signs) {
+  const frag = document.createDocumentFragment();
+  const h = document.createElement("h2");
+  h.className = "set"; h.id = "set" + num; h.textContent = title;
+  frag.appendChild(h);
+  const p = document.createElement("p");
+  p.className = "setsub"; p.innerHTML = sub;
+  frag.appendChild(p);
+  signs.forEach(function (s, i) {
+    const card = document.createElement("section");
+    card.className = "sign";
+    card.innerHTML =
+      "<h3><span class='num'>" + (i + 1) + ".</span>" + s.name + "</h3>" +
+      "<div class='phase'><span class='label watch'>Watch</span><div class='vwatch'></div>" +
+      "<p class='rep'>Watch closely, then copy the sign along with the video.</p></div>" +
+      "<div class='phase'><span class='label practice'>Practice</span><ul class='cues'>" +
+      s.cues.map(function (c) { return "<li>" + c + "</li>"; }).join("") +
+      "</ul><p class='rep'>&#x1F504; Do it 5 times &mdash; then 5 more with a partner watching.</p></div>" +
+      "<div class='phase'><span class='label test'>Test</span>" +
+      "<p class='testq'>Without looking: show me the sign for <b>&ldquo;" + s.name + "&rdquo;</b></p>" +
+      "<div class='btnrow'><button class='btn-reveal'>Reveal answer</button></div>" +
+      "<div class='answer' hidden><p class='who'>The sign for &ldquo;" + s.name + "&rdquo;:</p><div class='vans'></div>" +
+      "<div class='btnrow' style='margin-top:12px'><button class='btn-got'>I got it &#x2713;</button>" +
+      "<button class='btn-miss'>I&rsquo;ll practice more</button></div></div></div>";
+    card.querySelector(".vwatch").appendChild(facade(s.start, s.end, null));
+    const ans = card.querySelector(".answer");
+    card.querySelector(".btn-reveal").addEventListener("click", function () {
+      ans.hidden = false;
+      ans.querySelector(".vans").appendChild(facade(s.start, s.end, null));
+      this.disabled = true;
+    });
+    ans.querySelector(".btn-got").addEventListener("click", function () { bump(true); this.disabled = true; ans.querySelector(".btn-miss").disabled = true; });
+    ans.querySelector(".btn-miss").addEventListener("click", function () { bump(false); this.disabled = true; ans.querySelector(".btn-got").disabled = true; });
+    frag.appendChild(card);
+  });
+  return frag;
+}
+
+function reviewCard(title, start, end, cap, text) {
+  const sec = document.createElement("section");
+  sec.className = "sign";
+  const h = document.createElement("h3");
+  h.innerHTML = "<span class='num'>&#x1F501;</span>" + title;
+  sec.appendChild(h);
+  const ph = document.createElement("div");
+  ph.className = "phase";
+  ph.innerHTML = "<span class='label watch'>Watch</span>";
+  ph.appendChild(facade(start, end, cap));
+  const p = document.createElement("p");
+  p.className = "rep"; p.textContent = text;
+  ph.appendChild(p);
+  sec.appendChild(ph);
+  return sec;
+}
+
+(function init() {
+  const lesson = document.getElementById("lesson");
+  const set1 = SIGNS.filter(function (s) { return s.set === 1; });
+  const set2 = SIGNS.filter(function (s) { return s.set === 2; });
+  if (!set1.length && !set2.length) {
+    lesson.innerHTML = "<p style='color:#9aa7c2'>Lesson content is loading&hellip;</p>";
+    return;
+  }
+  lesson.appendChild(buildSet(1, "\u{1F64F} Set 1: Polite signs",
+    "Everyday courtesy signs &mdash; the video teaches these first.", set1));
+  lesson.appendChild(reviewCard("Set 1 review", 240, 268, "Review (4:00 &ndash; 4:28)",
+    "Watch her run through all six signs. Sign along, naming each one out loud before she does."));
+  lesson.appendChild(buildSet(2, "\u{1F4AC} Set 2: Needs &amp; states",
+    "Signs for expressing needs and how you feel.", set2));
+  lesson.appendChild(reviewCard("Set 2 review", 427, 452, "Review (7:07 &ndash; 7:32)",
+    "Same drill — call out each sign's name before she signs it."));
+  document.querySelectorAll("#final .vfacade[data-start]").forEach(function (el) {
+    const f = facade(el.getAttribute("data-start"), el.getAttribute("data-end"), el.getAttribute("data-cap"));
+    el.replaceWith(f);
+  });
+})();
+</script>
+</body>
+</html>
