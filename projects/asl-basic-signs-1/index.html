@@ -5,56 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ASL: Basic Signs 1 — Interactive Lesson</title>
 <style>
-  :root { color-scheme: dark; }
+  :root { color-scheme: light; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
-  a.back { color: #7ea2ff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
   a.back:hover { text-decoration: underline; }
   header.hero { text-align: center; margin: 18px 0 8px; }
   header.hero h1 { margin: 0 0 6px; font-size: 30px; }
-  header.hero p { margin: 0; color: #9aa7c2; font-size: 15px; }
+  header.hero p { margin: 0; color: #5c6675; font-size: 15px; }
   .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
-  .step { flex: 1 1 200px; background: #182032; border: 1px solid #2a3652; border-radius: 12px; padding: 14px 16px; }
+  .step { flex: 1 1 200px; background: #ffffff; border: 1px solid #e6e9f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
   .step b { display: block; font-size: 15px; margin-bottom: 4px; }
-  .step span { color: #9aa7c2; font-size: 13.5px; }
+  .step span { color: #5c6675; font-size: 13.5px; }
   nav.toc { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 6px; }
-  nav.toc a { background: #182032; border: 1px solid #2a3652; color: #e8ecf4; padding: 9px 16px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 600; }
-  nav.toc a:hover { border-color: #4f7cff; }
+  nav.toc a { background: #ffffff; border: 1px solid #e6e9f0; color: #17202e; padding: 9px 16px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 600; }
+  nav.toc a:hover { border-color: #2b6bff; }
   h2.set { margin: 44px 0 4px; font-size: 24px; }
-  p.setsub { margin: 0 0 18px; color: #9aa7c2; font-size: 14.5px; }
-  .sign { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 22px; margin: 0 0 22px; }
+  p.setsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
+  .sign { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
   .sign h3 { margin: 0 0 14px; font-size: 21px; }
-  .sign h3 .num { color: #4f7cff; margin-right: 8px; }
+  .sign h3 .num { color: #2b6bff; margin-right: 8px; }
   .phase { margin: 16px 0 0; }
   .phase > .label { display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 10px; }
-  .label.watch { background: #1d3a6e; color: #9dc0ff; }
-  .label.practice { background: #3a2c10; color: #ffd98a; }
-  .label.test { background: #123f2b; color: #8fe3b6; }
-  .vfacade { position: relative; width: 100%; aspect-ratio: 16/9; background: #000 center/cover; border-radius: 10px; cursor: pointer; border: 1px solid #2a3652; overflow: hidden; }
+  .label.watch { background: #eaf0ff; color: #2b6bff; }
+  .label.practice { background: #fff3d6; color: #9a6b12; }
+  .label.test { background: #dcf5e5; color: #1f8f57; }
+  .vfacade { position: relative; width: 100%; aspect-ratio: 16/9; background: #000 center/cover; border-radius: 10px; cursor: pointer; border: 1px solid #e6e9f0; overflow: hidden; }
   .vfacade .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
   .vfacade .play span { width: 74px; height: 74px; border-radius: 50%; background: rgba(79,124,255,.92); display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; }
   .vfacade iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .vfacade .cap { position: absolute; left: 10px; bottom: 10px; background: rgba(0,0,0,.65); padding: 4px 10px; border-radius: 8px; font-size: 12.5px; color: #cfd8ea; }
-  .cues { margin: 6px 0 0; padding-left: 20px; color: #c6d0e4; font-size: 15px; line-height: 1.65; }
+  .cues { margin: 6px 0 0; padding-left: 20px; color: #3d4657; font-size: 15px; line-height: 1.65; }
   .cues li { margin-bottom: 4px; }
-  .rep { color: #9aa7c2; font-size: 14px; margin-top: 10px; }
+  .rep { color: #5c6675; font-size: 14px; margin-top: 10px; }
   .testq { font-size: 17px; margin: 4px 0 12px; }
-  .testq b { color: #8fe3b6; }
+  .testq b { color: #1f8f57; }
   .btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
   button { font-family: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 20px; font-size: 15px; font-weight: 600; }
   .btn-reveal { background: #1f8f57; color: #fff; }
   .btn-reveal:hover { background: #177a48; }
-  .btn-got { background: #4f7cff; color: #fff; }
-  .btn-got:hover { background: #3d68f0; }
-  .btn-miss { background: #2a3652; color: #cfd8ea; }
-  .btn-miss:hover { background: #35436a; }
+  .btn-got { background: #2b6bff; color: #fff; }
+  .btn-got:hover { background: #1f58e0; }
+  .btn-miss { background: #eef1f6; color: #3d4657; }
+  .btn-miss:hover { background: #e2e7f0; }
   .answer { margin-top: 14px; }
-  .answer .who { font-size: 15px; color: #9aa7c2; margin-bottom: 8px; }
-  .scorebar { display: flex; align-items: center; gap: 12px; background: #101828; border: 1px solid #2a3652; border-radius: 12px; padding: 12px 18px; margin: 26px 0 0; font-size: 15px; }
-  .scorebar b { font-size: 19px; color: #8fe3b6; }
-  footer { margin-top: 56px; color: #66708a; font-size: 13px; text-align: center; line-height: 1.7; }
-  footer a { color: #7ea2ff; }
+  .answer .who { font-size: 15px; color: #5c6675; margin-bottom: 8px; }
+  .scorebar { display: flex; align-items: center; gap: 12px; background: #f6f8fc; border: 1px solid #e6e9f0; border-radius: 12px; padding: 12px 18px; margin: 26px 0 0; font-size: 15px; }
+  .scorebar b { font-size: 19px; color: #1f8f57; }
+  footer { margin-top: 56px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
+  footer a { color: #2b6bff; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -249,7 +249,7 @@ function reviewCard(title, start, end, cap, text) {
   const set1 = SIGNS.filter(function (s) { return s.set === 1; });
   const set2 = SIGNS.filter(function (s) { return s.set === 2; });
   if (!set1.length && !set2.length) {
-    lesson.innerHTML = "<p style='color:#9aa7c2'>Lesson content is loading&hellip;</p>";
+    lesson.innerHTML = "<p style='color:#5c6675'>Lesson content is loading&hellip;</p>";
     return;
   }
   lesson.appendChild(buildSet(1, "\u{1F64F} Set 1: Polite signs",
