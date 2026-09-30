@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chess for Pre-K — Day 5: Save the King!</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero .kicker { display: inline-block; background: #eef0ff; color: #2b3a9e; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; letter-spacing: 1px; }
+  header.hero h1 { margin: 10px 0 6px; font-size: 32px; }
+  header.hero p { margin: 0; color: #5b6472; font-size: 16px; }
+  .card { background: #fff; border: 1px solid #e6e8ee; border-radius: 18px; padding: 22px; margin: 22px 0; box-shadow: 0 2px 10px rgba(20,30,60,.05); }
+  h2.part { margin: 0 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: #5b6472; font-size: 15px; }
+  .teacher { background: #fff8e6; border: 2px dashed #d9a400; border-radius: 14px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #7a5c00; }
+  .defbox { background: #fff0f0; border: 2px solid #ffb3b3; border-radius: 14px; padding: 14px 18px; margin: 0 0 14px; font-size: 15px; }
+  .defbox b { color: #c00; }
+  #p1msg { text-align: center; font-size: 17px; font-weight: 700; min-height: 52px; margin: 4px 0 8px; color: #2b3a9e; }
+
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; container-type: inline-size; }
+  .sq { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); font-size: 9cqw; min-width: 0; user-select: none; }
+  .sq.light { background: #f0d9b5; } .sq.dark { background: #b58863; }
+  .sq .pc { transition: transform .12s; }
+  .sq .pc.mine { cursor: pointer; }
+  .sq .pc.mine:hover { transform: scale(1.12); }
+  .sq.safe { cursor: pointer; }
+  .sq.safe::after { content: ""; position: absolute; width: 26%; height: 26%; border-radius: 50%; background: rgba(49,162,76,.65); pointer-events: none; }
+  .sq.danger::after { content: "\2715"; position: absolute; font-size: 5cqw; color: rgba(220,30,30,.8); font-weight: 900; pointer-events: none; }
+  .sq.incheck::before { content: ""; position: absolute; inset: 2%; border: 4px solid rgba(255,60,60,.9); border-radius: 8px; pointer-events: none; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { from { opacity: .6; } to { opacity: 1; } }
+  .sq.rescued { animation: rescue .6s; }
+  @keyframes rescue { 0% { transform: scale(1); } 50% { transform: scale(1.25); background: #b8f0c4; } 100% { transform: scale(1); } }
+
+  #gmsg { text-align: center; font-size: 20px; font-weight: 800; min-height: 60px; margin: 10px 0 4px; }
+  #gstars { text-align: center; font-size: 34px; letter-spacing: 6px; min-height: 48px; overflow-wrap: anywhere; }
+  #gprog { text-align: center; color: #5b6472; font-size: 14px; margin-bottom: 4px; }
+  .btnrow { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button.big { padding: 13px 34px; font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #2b6bff; border: 0; border-radius: 12px; box-shadow: 0 4px 0 #1a46b0; cursor: pointer; font-family: inherit; }
+  button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a46b0; }
+  button.big.green { background: #31a24c; box-shadow: 0 4px 0 #237a38; }
+  button.big.gold { background: #d9a400; box-shadow: 0 4px 0 #a87c00; }
+  nav.days { display: flex; justify-content: space-between; margin-top: 26px; font-size: 15px; font-weight: 600; }
+  nav.days a { color: #2b6bff; text-decoration: none; }
+  footer { margin-top: 40px; color: #8a93a6; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+  <header class="hero">
+    <span class="kicker">CHESS FOR PRE-K</span>
+    <h1>Day 5: Save the King! &#x1F6A8;</h1>
+    <p>The most important rule in all of chess.</p>
+  </header>
+
+  <div class="teacher">&#x1F4E2; <b>Teacher:</b> when an enemy points at the king, shout &ldquo;CHECK!&rdquo; together. Then help the king run somewhere safe.</div>
+
+  <div class="card">
+    <h2 class="part">Part 1 &mdash; What is &ldquo;check&rdquo;?</h2>
+    <div class="defbox"><b>CHECK</b> means an enemy piece is pointing at your king &mdash; it could gobble him next! You <b>must</b> move the king somewhere safe.</div>
+    <p class="partsub">The red rook is pointing at the king. Tap the king, then tap a green safe square.</p>
+    <div id="p1msg"></div>
+    <div class="board" id="board1"></div>
+    <div class="btnrow"><button class="big" id="p1again">NEW DANGER</button></div>
+  </div>
+
+  <div class="card">
+    <h2 class="part">Part 2 &mdash; Game: escape!</h2>
+    <p class="partsub">The king is in check! Find a safe square &mdash; 5 escapes to win.</p>
+    <div id="gprog"></div>
+    <div class="board" id="board2"></div>
+    <div id="gmsg"></div>
+    <div id="gstars"></div>
+    <div class="btnrow"><button class="big green" id="gstart" style="display:none">PLAY AGAIN</button></div>
+  </div>
+
+  <div class="card">
+    <h2 class="part">Bonus &mdash; What is checkmate?</h2>
+    <p class="partsub">If the king is in check and has <b>nowhere</b> safe to run &mdash; that&rsquo;s <b>CHECKMATE</b>. Game over!</p>
+    <div class="board" id="board3"></div>
+    <div class="btnrow"><button class="big gold" id="matedemo">SHOW ME CHECKMATE</button></div>
+    <p id="matemsg" style="text-align:center;font-size:16px;font-weight:700;color:#2b3a9e;min-height:28px"></p>
+  </div>
+
+  <nav class="days">
+    <a href="../chess-prek-day4/">&larr; Day 4: Pawn Power!</a>
+    <span style="color:#8a93a6">You finished all 5 days! &#x1F3C6;</span>
+  </nav>
+
+  <footer>Day 5 of Chess for Pre-K &mdash; made for Edwin&rsquo;s class.</footer>
+</div>
+
+<script>
+var WK = "\u2654", BR = "\u265C", BQ = "\u265B", WQ = "\u2655";
+function inB(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+function makeBoard(el) {
+  el.innerHTML = "";
+  var cells = [];
+  for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+    var d = document.createElement("div");
+    d.className = "sq " + (((r + c) % 2 === 0) ? "light" : "dark");
+    el.appendChild(d); cells.push(d);
+  }
+  return cells;
+}
+function cellAt(cells, r, c) { return cells[r * 8 + c]; }
+function clearMarks(cells) { cells.forEach(function (d) { d.classList.remove("safe", "danger", "incheck", "rescued"); }); }
+function putP(cells, r, c, glyph, mine) {
+  var s = cellAt(cells, r, c);
+  s.innerHTML = "";
+  var sp = document.createElement("span");
+  sp.className = "pc" + (mine ? " mine" : "");
+  sp.textContent = glyph; sp.style.color = "#1a1a1a";
+  s.appendChild(sp);
+  return sp;
+}
+/* on an otherwise empty board: does `atk` ("rook"/"queen") at (ar,ac) attack (r,c)? */
+function attacks(atk, ar, ac, r, c) {
+  if (ar === r && ac === c) return false;
+  var dr = r - ar, dc = c - ac;
+  var straight = (dr === 0 || dc === 0);
+  var diag = Math.abs(dr) === Math.abs(dc);
+  if (atk === "rook") return straight;
+  if (atk === "queen") return straight || diag;
+  return false;
+}
+function kingMoves(r, c) {
+  var o = [];
+  for (var dr = -1; dr <= 1; dr++) for (var dc = -1; dc <= 1; dc++) {
+    if (!dr && !dc) continue;
+    if (inB(r + dr, c + dc)) o.push([r + dr, c + dc]);
+  }
+  return o;
+}
+/* find a random valid check puzzle: king in check with >=1 safe escape */
+function makePuzzle() {
+  var atks = ["rook", "queen"];
+  for (var t = 0; t < 80; t++) {
+    var atk = atks[Math.floor(Math.random() * atks.length)];
+    var kr = 1 + Math.floor(Math.random() * 6), kc = 1 + Math.floor(Math.random() * 6);
+    var ar = Math.floor(Math.random() * 8), ac = Math.floor(Math.random() * 8);
+    if (Math.abs(ar - kr) + Math.abs(ac - kc) < 2) continue;
+    if (!attacks(atk, ar, ac, kr, kc)) continue;
+    var safe = kingMoves(kr, kc).filter(function (m) {
+      if (m[0] === ar && m[1] === ac) return false; /* can't run AT the scary piece */
+      return !attacks(atk, ar, ac, m[0], m[1]);
+    });
+    if (!safe.length) continue;
+    return { atk: atk, kr: kr, kc: kc, ar: ar, ac: ac, safe: safe };
+  }
+  return { atk: "rook", kr: 4, kc: 4, ar: 4, ac: 0, safe: [[3,3],[3,4],[3,5],[5,3],[5,4],[5,5]] };
+}
+function atkGlyph(atk) { return atk === "rook" ? BR : BQ; }
+
+/* ---------- Part 1 ---------- */
+var b1 = makeBoard(document.getElementById("board1"));
+var P1 = null;
+var p1msg = document.getElementById("p1msg");
+function p1Setup() {
+  P1 = makePuzzle();
+  drawP1();
+  p1msg.innerHTML = "&#x1F6A8; <b>CHECK!</b> The " + P1.atk + " is pointing at the king. Tap him!";
+}
+function drawP1() {
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b1);
+  putP(b1, P1.kr, P1.kc, WK, true);
+  putP(b1, P1.ar, P1.ac, atkGlyph(P1.atk), false);
+  cellAt(b1, P1.kr, P1.kc).classList.add("incheck");
+  cellAt(b1, P1.kr, P1.kc).onclick = p1Show;
+}
+function p1Show() {
+  clearMarks(b1);
+  b1.forEach(function (d) { d.innerHTML = ""; });
+  putP(b1, P1.kr, P1.kc, WK, true);
+  putP(b1, P1.ar, P1.ac, atkGlyph(P1.atk), false);
+  p1msg.textContent = "Green = safe! Red \u2715 = still in danger.";
+  var safeSet = {};
+  P1.safe.forEach(function (m) { safeSet[m[0] + "," + m[1]] = true; });
+  kingMoves(P1.kr, P1.kc).forEach(function (m) {
+    var t = cellAt(b1, m[0], m[1]);
+    if (safeSet[m[0] + "," + m[1]]) {
+      t.classList.add("safe");
+      (function (mr, mc) {
+        t.onclick = function () {
+          P1.kr = mr; P1.kc = mc;
+          b1.forEach(function (d) { d.innerHTML = ""; });
+          clearMarks(b1);
+          putP(b1, P1.kr, P1.kc, WK, false);
+          putP(b1, P1.ar, P1.ac, atkGlyph(P1.atk), false);
+          cellAt(b1, P1.kr, P1.kc).classList.add("rescued");
+          p1msg.innerHTML = "\uD83C\uDF89; Safe! The king escaped the check.";
+        };
+      })(m[0], m[1]);
+    } else {
+      t.classList.add("danger");
+      t.onclick = function () { p1msg.textContent = "Not safe \u2014 the " + P1.atk + " still points there!"; };
+    }
+  });
+  cellAt(b1, P1.kr, P1.kc).onclick = p1Show;
+}
+document.getElementById("p1again").onclick = p1Setup;
+p1Setup();
+
+/* ---------- Part 2: game ---------- */
+var b2 = makeBoard(document.getElementById("board2"));
+var G = { round: 0, total: 5, stars: 0, live: false, P: null };
+var gmsg = document.getElementById("gmsg");
+function gStart() {
+  G.round = 0; G.stars = 0; G.live = true;
+  document.getElementById("gstart").style.display = "none";
+  document.getElementById("gstars").textContent = "";
+  gRound();
+}
+function gRound() {
+  if (G.round >= G.total) return gEnd();
+  G.round++;
+  document.getElementById("gprog").textContent = "Escape " + G.round + " of " + G.total;
+  G.P = makePuzzle();
+  G.live = true;
+  b2.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b2);
+  putP(b2, G.P.kr, G.P.kc, WK, true);
+  putP(b2, G.P.ar, G.P.ac, atkGlyph(G.P.atk), false);
+  cellAt(b2, G.P.kr, G.P.kc).classList.add("incheck");
+  gmsg.innerHTML = "&#x1F6A8; <b>CHECK!</b> Tap the king!";
+  cellAt(b2, G.P.kr, G.P.kc).onclick = gShow;
+}
+function gShow() {
+  if (!G.live) return;
+  clearMarks(b2);
+  b2.forEach(function (d) { d.innerHTML = ""; });
+  putP(b2, G.P.kr, G.P.kc, WK, true);
+  putP(b2, G.P.ar, G.P.ac, atkGlyph(G.P.atk), false);
+  gmsg.textContent = "Tap a green safe square!";
+  var safeSet = {};
+  G.P.safe.forEach(function (m) { safeSet[m[0] + "," + m[1]] = true; });
+  kingMoves(G.P.kr, G.P.kc).forEach(function (m) {
+    var t = cellAt(b2, m[0], m[1]);
+    if (safeSet[m[0] + "," + m[1]]) {
+      t.classList.add("safe");
+      (function (mr, mc) {
+        t.onclick = function () {
+          if (!G.live) return;
+          G.live = false;
+          b2.forEach(function (d) { d.innerHTML = ""; });
+          clearMarks(b2);
+          putP(b2, mr, mc, WK, false);
+          putP(b2, G.P.ar, G.P.ac, atkGlyph(G.P.atk), false);
+          cellAt(b2, mr, mc).classList.add("rescued");
+          G.stars++;
+          document.getElementById("gstars").textContent = "\u2B50".repeat(G.stars);
+          gmsg.textContent = "Escaped! \u2B50";
+          setTimeout(gRound, 1300);
+        };
+      })(m[0], m[1]);
+    } else {
+      t.classList.add("danger");
+      t.onclick = function () { if (G.live) gmsg.textContent = "Still in check there \u2014 try a green square!"; };
+    }
+  });
+  cellAt(b2, G.P.kr, G.P.kc).onclick = gShow;
+}
+function gEnd() {
+  G.live = false;
+  document.getElementById("gprog").textContent = "";
+  gmsg.innerHTML = "\uD83C\uDF89; " + G.stars + " escapes! The king is safe thanks to you. \uD83C\uDF89;";
+  document.getElementById("gstart").style.display = "";
+}
+document.getElementById("gstart").addEventListener("click", gStart);
+gStart();
+
+/* ---------- Bonus: checkmate demo ---------- */
+var b3 = makeBoard(document.getElementById("board3"));
+document.getElementById("matedemo").onclick = function () {
+  b3.forEach(function (d) { d.innerHTML = ""; });
+  clearMarks(b3);
+  putP(b3, 0, 0, "\u265A", false);   /* black king in the corner */
+  putP(b3, 1, 1, WQ, false);          /* white queen */
+  putP(b3, 2, 2, WK, false);          /* white king defends the queen */
+  cellAt(b3, 0, 0).classList.add("incheck");
+  [[0, 1], [1, 0], [1, 1]].forEach(function (m) { cellAt(b3, m[0], m[1]).classList.add("danger"); });
+  document.getElementById("matemsg").textContent = "The king is in check and every escape is covered \u2014 CHECKMATE! \uD83C\uDFC6;";
+};
+</script>
+</body>
+</html>
