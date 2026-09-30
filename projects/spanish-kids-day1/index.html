@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spanish for Kids — Day 1: Greetings</title>
+<style>
+  :root { color-scheme: light; --green:#58cc02; --green-d:#58a700; --red:#ff4b4b; --ink:#3c3c3c; --mut:#777; --line:#e5e5e5; --card:#f7f7f7; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; background: #fff; color: var(--ink); min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 20px 60px; }
+  a.back { color: #1cb0f6; text-decoration: none; font-weight: 700; font-size: 14px; }
+  header.hero { text-align: center; margin: 16px 0 6px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
+  header.hero p { margin: 0; color: var(--mut); font-size: 15px; }
+  .teacher { background: #ddf4ff; border: 2px dashed #1cb0f6; border-radius: 14px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #0b6d99; }
+  h2.part { margin: 30px 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: var(--mut); font-size: 14.5px; }
+
+  /* ---- word cards (learn screen) ---- */
+  .wgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .wcard { background: var(--card); border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 16px; padding: 16px 8px; text-align: center; cursor: pointer; transition: transform .1s; }
+  .wcard:active { transform: scale(.96); }
+  .wcard .e { font-size: 52px; line-height: 1.15; }
+  .wcard b { display: block; margin-top: 6px; font-size: 17px; color: #1cb0f6; }
+  .wcard span { display: block; color: var(--mut); font-size: 13px; margin-top: 2px; }
+
+  .bigbtn { display: block; width: 100%; max-width: 340px; margin: 26px auto 0; padding: 15px; font-size: 17px; font-weight: 800; letter-spacing: 1px; color: #fff; background: var(--green); border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d); cursor: pointer; font-family: inherit; }
+  .bigbtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+
+  /* ---- quiz chrome ---- */
+  #topbar { display: flex; align-items: center; gap: 14px; padding: 6px 0 16px; }
+  #quit { border: 0; background: none; font-size: 22px; color: #afafaf; cursor: pointer; padding: 4px 8px; font-family: inherit; }
+  #pbar { flex: 1; height: 14px; background: #e5e5e5; border-radius: 999px; overflow: hidden; }
+  #pfill { height: 100%; width: 0%; background: var(--green); border-radius: 999px; transition: width .4s; }
+  #hearts { font-weight: 800; color: var(--red); font-size: 17px; white-space: nowrap; }
+  #prompt { font-size: 24px; font-weight: 800; margin: 8px 0 4px; }
+  #sub { color: var(--mut); font-size: 15px; margin: 0 0 18px; }
+  #speakbtn { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 10px 18px; font-size: 16px; font-weight: 800; color: #1cb0f6; background: #ddf4ff; border: 2px solid #bfe6fb; border-bottom-width: 4px; border-radius: 12px; cursor: pointer; font-family: inherit; }
+  #speakbtn:active { transform: translateY(2px); }
+
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 110px; }
+  .opt { background: #fff; border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; font-family: inherit; transition: transform .08s; }
+  .opt:active { transform: scale(.97); }
+  .opt .e { font-size: 46px; line-height: 1.15; }
+  .opt b { display: block; margin-top: 6px; font-size: 16px; color: var(--ink); font-weight: 700; }
+  .opt.sel { border-color: #1cb0f6; background: #ddf4ff; }
+
+  /* word-bank builder */
+  #answerline { min-height: 64px; border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  #answerline .hint { color: #b5b5b5; font-size: 14px; }
+  .bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 110px; }
+  .chip { padding: 10px 20px; font-size: 17px; font-weight: 700; background: #fff; border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 12px; cursor: pointer; font-family: inherit; color: var(--ink); }
+  .chip:active { transform: scale(.95); }
+  .chip.used { opacity: .25; pointer-events: none; }
+  .chip.picked { background: #ddf4ff; border-color: #1cb0f6; color: #0b6d99; }
+
+  /* say-it-loud card */
+  .saycard { text-align: center; background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 34px 20px; margin-bottom: 110px; }
+  .saycard .e { font-size: 84px; }
+  .saycard .es { font-size: 34px; font-weight: 800; color: #1cb0f6; margin: 10px 0 2px; }
+  .saycard .en { color: var(--mut); font-size: 16px; margin-bottom: 18px; }
+
+  /* check bar + feedback */
+  #checkbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 16px 20px calc(18px + env(safe-area-inset-bottom)); background: #fff; border-top: 2px solid var(--line); }
+  #checkbar .inner { max-width: 720px; margin: 0 auto; }
+  #check { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff; background: var(--green); border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d); cursor: pointer; font-family: inherit; }
+  #check:disabled { background: #e5e5e5; box-shadow: 0 4px 0 #d0d0d0; color: #afafaf; cursor: default; }
+  #check:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+  #feedback { display: none; }
+  #feedback.show { display: block; }
+  #feedback.good { background: #d7ffb8; }
+  #feedback.bad { background: #ffdfe0; }
+  #feedback .inner { max-width: 720px; margin: 0 auto; padding: 18px 20px calc(18px + env(safe-area-inset-bottom)); }
+  #feedback h3 { margin: 0 0 4px; font-size: 22px; }
+  #feedback.good h3 { color: var(--green-d); }
+  #feedback.bad h3 { color: #e02626; }
+  #feedback p { margin: 0 0 14px; color: var(--ink); font-size: 15px; }
+  #cont { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff; border: 0; border-radius: 14px; cursor: pointer; font-family: inherit; }
+  #feedback.good #cont { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #feedback.bad #cont { background: var(--red); box-shadow: 0 4px 0 #d33131; }
+
+  /* done screen */
+  #doneScreen { text-align: center; padding: 30px 0; }
+  #doneScreen .trophy { font-size: 90px; }
+  #doneScreen h2 { font-size: 28px; margin: 12px 0 4px; color: #ff9600; }
+  #doneScreen .stars { font-size: 44px; letter-spacing: 6px; margin: 8px 0; }
+  #doneScreen p { color: var(--mut); font-size: 16px; }
+  .rowbtns { display: flex; gap: 12px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+  .rowbtns button { padding: 13px 30px; font-size: 15px; font-weight: 800; letter-spacing: 1px; border-radius: 14px; cursor: pointer; font-family: inherit; border: 0; }
+  #again { color: #fff; background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #tolessons { color: #1cb0f6; background: #fff; border: 2px solid var(--line) !important; box-shadow: 0 4px 0 var(--line); }
+
+  [hidden] { display: none !important; }
+  footer { margin-top: 46px; color: #afafaf; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+
+  <!-- ============ LEARN SCREEN ============ -->
+  <div id="learnScreen">
+    <header class="hero">
+      <h1>&#x1F1EA;&#x1F1F8; Spanish Day 1</h1>
+      <p>Greetings — say hello like a friend!</p>
+    </header>
+    <div class="teacher">&#x1F4E2; <b>Teacher:</b> tap each card to hear it. Then press START and let the kids take the quiz.</div>
+    <h2 class="part">Say hello to the words</h2>
+    <p class="partsub">Tap a card to hear it out loud. &#x1F50A;</p>
+    <div class="wgrid" id="wgrid"></div>
+    <button class="bigbtn" id="startBtn">START &#x25B6;</button>
+    <footer>Day 1 of Spanish for Kids &mdash; made for Edwin&rsquo;s class.<br/>Day 2: colors.</footer>
+  </div>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <div id="quizScreen" hidden>
+    <div id="topbar">
+      <button id="quit" aria-label="Quit">&times;</button>
+      <div id="pbar"><div id="pfill"></div></div>
+      <div id="hearts">&#x2764;&#xFE0F; 5</div>
+    </div>
+    <h2 id="prompt"></h2>
+    <p id="sub"></p>
+    <div id="stage"></div>
+  </div>
+
+  <!-- ============ DONE SCREEN ============ -->
+  <div id="doneScreen" hidden>
+    <div class="trophy">&#x1F3C6;</div>
+    <h2 id="doneTitle">Lesson complete!</h2>
+    <div class="stars" id="doneStars"></div>
+    <p id="doneSub"></p>
+    <div class="rowbtns">
+      <button id="again">PLAY AGAIN</button>
+      <button id="tolessons">ALL LESSONS</button>
+    </div>
+  </div>
+</div>
+
+<div id="checkbar" hidden><div class="inner"><button id="check" disabled>CHECK</button></div></div>
+<div id="feedback"><div class="inner">
+  <h3 id="fbTitle"></h3>
+  <p id="fbText"></p>
+  <button id="cont">CONTINUE</button>
+</div></div>
+
+<script>
+/* ================= DATA ================= */
+var WORDS = [
+  { es: "hola",          en: "hello",        emoji: "\uD83D\uDC4B" },
+  { es: "adi\u00F3s",    en: "goodbye",      emoji: "\uD83D\uDE4B" },
+  { es: "buenos d\u00EDas", en: "good morning", emoji: "\u2600\uFE0F" },
+  { es: "buenas noches", en: "good night",   emoji: "\uD83C\uDF19" },
+  { es: "gracias",       en: "thank you",    emoji: "\uD83D\uDE4F" },
+  { es: "por favor",     en: "please",       emoji: "\u2728" },
+  { es: "s\u00ED",       en: "yes",          emoji: "\u2705" },
+  { es: "no",            en: "no",           emoji: "\u274C" }
+];
+var PHRASES = ["buenos d\u00EDas", "buenas noches", "por favor"]; // for the word-bank builder
+var CHEERS = ["\u00A1Correcto!", "\u00A1Muy bien!", "\u00A1Excelente!", "\u00A1Bravo!"];
+
+/* ================= TTS ================= */
+var esVoice = null;
+function pickVoice() {
+  try {
+    var vs = window.speechSynthesis.getVoices();
+    esVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("es-us") === 0; })
+           || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("es") === 0; })
+           || null;
+  } catch (e) { esVoice = null; }
+}
+function say(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if (esVoice) u.voice = esVoice;
+    u.lang = "es-US"; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+/* ================= HELPERS ================= */
+function $(id) { return document.getElementById(id); }
+function shuffle(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function others(word, n) {
+  return shuffle(WORDS.filter(function (w) { return w.es !== word.es; })).slice(0, n);
+}
+
+/* ================= LEARN SCREEN ================= */
+(function () {
+  var g = $("wgrid");
+  WORDS.forEach(function (w) {
+    var d = document.createElement("div");
+    d.className = "wcard";
+    d.innerHTML = "<div class='e'>" + w.emoji + "</div><b>" + w.es + "</b><span>" + w.en + "</span>";
+    d.addEventListener("click", function () { say(w.es); });
+    g.appendChild(d);
+  });
+  $("startBtn").addEventListener("click", startQuiz);
+})();
+
+/* ================= QUIZ ENGINE ================= */
+var rounds = [], ri = 0, hearts = 5, mistakes = 0, current = null;
+
+function buildRounds() {
+  var r = [];
+  var listenWords = shuffle(WORDS).slice(0, 4);
+  listenWords.forEach(function (w) { r.push({ type: "listen", word: w }); });
+  var meaningWords = shuffle(WORDS).slice(0, 4);
+  meaningWords.forEach(function (w) { r.push({ type: "meaning", word: w }); });
+  shuffle(PHRASES).slice(0, 3).forEach(function (p) { r.push({ type: "build", phrase: p }); });
+  r.push({ type: "sayit", word: WORDS[Math.floor(Math.random() * WORDS.length)] });
+  return shuffle(r);
+}
+
+function startQuiz() {
+  rounds = buildRounds(); ri = 0; hearts = 5; mistakes = 0;
+  $("learnScreen").hidden = true;
+  $("doneScreen").hidden = true;
+  $("quizScreen").hidden = false;
+  $("checkbar").hidden = false;
+  updateHearts();
+  nextRound();
+}
+
+function updateHearts() { $("hearts").innerHTML = "\u2764\uFE0F; " + hearts; }
+function updateProgress() { $("pfill").style.width = Math.round((ri / rounds.length) * 100) + "%"; }
+
+function optionCards(words, onPick) {
+  var box = document.createElement("div");
+  box.className = "opts";
+  words.forEach(function (w) {
+    var b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = "<div class='e'>" + w.emoji + "</div><b>" + w.es + "</b>";
+    b.addEventListener("click", function () {
+      var prev = box.querySelector(".sel");
+      if (prev) prev.classList.remove("sel");
+      b.classList.add("sel");
+      onPick(w);
+    });
+    box.appendChild(b);
+  });
+  return box;
+}
+
+function nextRound() {
+  updateProgress();
+  if (ri >= rounds.length) return finish(true);
+  current = rounds[ri];
+  var stage = $("stage"); stage.innerHTML = "";
+  var prompt = $("prompt"), sub = $("sub");
+  hideFeedback();
+  $("check").disabled = true;
+  $("check").onclick = null;
+  $("check").textContent = "CHECK";
+
+  if (current.type === "listen") {
+    prompt.textContent = "Tap what you hear";
+    sub.innerHTML = "Listen carefully, then tap the picture. \uD83D\uDD0A;";
+    var sp = document.createElement("button");
+    sp.id = "speakbtn";
+    sp.innerHTML = "\uD83D\uDD0A; Hear it again";
+    sp.addEventListener("click", function () { say(current.word.es); });
+    stage.appendChild(sp);
+    var opts = optionCards(shuffle([current.word].concat(others(current.word, 3))), function (w) {
+      current.picked = w; $("check").disabled = false;
+    });
+    stage.appendChild(opts);
+    $("check").onclick = function () { grade(current.picked.es === current.word.es, current.word); };
+    setTimeout(function () { say(current.word.es); }, 450);
+  }
+  else if (current.type === "meaning") {
+    prompt.innerHTML = "Which one means \u201C" + current.word.en + "\u201D?";
+    sub.textContent = "Tap the picture that matches.";
+    var opts2 = optionCards(shuffle([current.word].concat(others(current.word, 3))), function (w) {
+      current.picked = w; $("check").disabled = false;
+    });
+    stage.appendChild(opts2);
+    $("check").onclick = function () { grade(current.picked.es === current.word.es, current.word); };
+  }
+  else if (current.type === "build") {
+    var target = WORDS.find(function (w) { return w.es === current.phrase; });
+    prompt.textContent = "Build it in Spanish";
+    sub.innerHTML = "Tap the pieces in order: \u201C" + target.en + "\u201D";
+    var line = document.createElement("div");
+    line.id = "answerline";
+    line.innerHTML = "<span class='hint'>Tap the words below\u2026</span>";
+    stage.appendChild(line);
+    var parts = target.es.split(" ");
+    var distract = [];
+    PHRASES.filter(function (p) { return p !== target.es; }).forEach(function (p) {
+      p.split(" ").forEach(function (w) { if (parts.indexOf(w) < 0 && distract.indexOf(w) < 0) distract.push(w); });
+    });
+    var bank = document.createElement("div");
+    bank.className = "bank";
+    var picked = [];
+    shuffle(parts.concat(distract.slice(0, 2))).forEach(function (w) {
+      var c = document.createElement("button");
+      c.className = "chip"; c.textContent = w;
+      c.addEventListener("click", function () {
+        if (c.classList.contains("used")) return;
+        c.classList.add("used");
+        picked.push({ w: w, el: c });
+        var p2 = document.createElement("button");
+        p2.className = "chip picked"; p2.textContent = w;
+        p2.addEventListener("click", function () {
+          c.classList.remove("used");
+          line.removeChild(p2);
+          picked = picked.filter(function (x) { return x.w !== w || x.el !== c; });
+          if (!picked.length) line.innerHTML = "<span class='hint'>Tap the words below\u2026</span>";
+          $("check").disabled = picked.length === 0;
+        });
+        var hint = line.querySelector(".hint");
+        if (hint) line.removeChild(hint);
+        line.appendChild(p2);
+        $("check").disabled = false;
+      });
+      bank.appendChild(c);
+    });
+    stage.appendChild(bank);
+    $("check").onclick = function () {
+      var got = picked.map(function (x) { return x.w; }).join(" ");
+      grade(got === target.es, target);
+    };
+    say(target.es);
+  }
+  else if (current.type === "sayit") {
+    prompt.textContent = "Say it out loud!";
+    sub.textContent = "Listen, repeat after the voice, then tap the button.";
+    var card = document.createElement("div");
+    card.className = "saycard";
+    card.innerHTML = "<div class='e'>" + current.word.emoji + "</div><div class='es'>" + current.word.es + "</div><div class='en'>" + current.word.en + "</div>";
+    var hb = document.createElement("button");
+    hb.id = "speakbtn"; hb.innerHTML = "\uD83D\uDD0A; Listen";
+    hb.addEventListener("click", function () { say(current.word.es); });
+    card.appendChild(hb);
+    stage.appendChild(card);
+    $("check").disabled = false;
+    $("check").textContent = "I SAID IT! \u2B50";
+    $("check").onclick = function () { grade(true, current.word); };
+    setTimeout(function () { say(current.word.es); }, 450);
+  }
+}
+
+function grade(ok, word) {
+  var fb = $("feedback");
+  $("checkbar").hidden = true;
+  if (ok) {
+    fb.className = "show good";
+    $("fbTitle").textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    $("fbText").textContent = word.es + " = " + word.en + " " + word.emoji;
+  } else {
+    mistakes++;
+    hearts--;
+    updateHearts();
+    fb.className = "show bad";
+    $("fbTitle").textContent = "Oops!";
+    $("fbText").innerHTML = "The answer is <b>" + word.es + "</b> (" + word.en + ") " + word.emoji;
+  }
+  $("check").textContent = "CHECK";
+  $("cont").onclick = function () {
+    ri++;
+    if (hearts <= 0) return finish(false);
+    $("checkbar").hidden = false;
+    nextRound();
+  };
+}
+
+function hideFeedback() { $("feedback").className = ""; }
+
+function finish(won) {
+  $("quizScreen").hidden = true;
+  $("checkbar").hidden = true;
+  hideFeedback();
+  var d = $("doneScreen");
+  d.hidden = false;
+  if (!won) {
+    $("doneTitle").textContent = "Out of hearts!";
+    $("doneStars").textContent = "\uD83D\uDC94";
+    $("doneSub").textContent = "Good try! Practice the words above and play again.";
+  } else {
+    var stars = hearts >= 5 ? 3 : hearts >= 3 ? 2 : 1;
+    $("doneTitle").textContent = "Lesson complete!";
+    $("doneStars").textContent = "\u2B50".repeat(stars) + "\u2606".repeat(3 - stars);
+    $("doneSub").textContent = mistakes === 0
+      ? "Perfect \u2014 no mistakes! \u00A1Incre\u00EDble!"
+      : "You finished with " + hearts + " " + (hearts === 1 ? "heart" : "hearts") + " left. \u00A1Buen trabajo!";
+  }
+  window.scrollTo(0, 0);
+}
+
+$("quit").addEventListener("click", function () {
+  if (confirm("Quit the lesson? Your progress will be lost.")) {
+    $("quizScreen").hidden = true;
+    $("checkbar").hidden = true;
+    hideFeedback();
+    $("learnScreen").hidden = false;
+    window.scrollTo(0, 0);
+  }
+});
+$("again").addEventListener("click", startQuiz);
+$("tolessons").addEventListener("click", function () { window.location.href = "../../"; });
+</script>
+</body>
+</html>
