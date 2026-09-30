@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chess Day 1 — Meet the Board &amp; the Team (Pre-K)</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #0f1420; color: #e8ecf4; min-height: 100vh; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #7ea2ff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
+  header.hero p { margin: 0; color: #9aa7c2; font-size: 15px; }
+  .teacher { background: #182032; border: 1px dashed #4f7cff; border-radius: 12px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #9dc0ff; }
+  .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
+  .step { flex: 1 1 200px; background: #182032; border: 1px solid #2a3652; border-radius: 12px; padding: 14px 16px; }
+  .step b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .step span { color: #9aa7c2; font-size: 13.5px; }
+  h2.part { margin: 44px 0 4px; font-size: 24px; }
+  p.partsub { margin: 0 0 18px; color: #9aa7c2; font-size: 14.5px; }
+  .card { background: #182032; border: 1px solid #2a3652; border-radius: 16px; padding: 22px; margin: 0 0 22px; }
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; margin: 6px auto; border: 4px solid #5b4632; border-radius: 8px; overflow: hidden; }
+  .sq { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 52px); cursor: pointer; user-select: none; transition: transform .12s; }
+  .sq.light { background: #f0d9b5; }
+  .sq.dark { background: #b58863; }
+  .sq .w { color: #ffffff; text-shadow: 0 0 3px #000, 0 2px 2px rgba(0,0,0,.6); }
+  .sq .b { color: #1a1a1a; text-shadow: 0 1px 1px rgba(255,255,255,.35); }
+  .sq.lit { outline: 4px solid #4f7cff; outline-offset: -4px; }
+  .sq.pop { animation: pop .35s; }
+  @keyframes pop { 50% { transform: scale(1.25); } }
+  .say { text-align: center; font-size: 19px; font-weight: 700; min-height: 30px; margin: 14px 0 4px; }
+  .say.good { color: #8fe3b6; }
+  .say.try { color: #ffd98a; }
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .mate { background: #101828; border: 1px solid #2a3652; border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer; }
+  .mate .g { font-size: 56px; line-height: 1.2; color: #f5f5f5; text-shadow: 0 2px 4px rgba(0,0,0,.7); }
+  .mate b { display: block; margin-top: 6px; font-size: 16px; }
+  .mate span { display: block; color: #9aa7c2; font-size: 13px; margin-top: 4px; line-height: 1.45; }
+  .mate.bounce .g { animation: pop .4s; }
+  .prompt { text-align: center; font-size: 22px; font-weight: 700; margin: 6px 0 12px; }
+  .prompt b { color: #ffd98a; }
+  .stars { text-align: center; font-size: 30px; min-height: 40px; margin-top: 10px; letter-spacing: 4px; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 22px; font-size: 16px; font-weight: 700; background: #4f7cff; color: #fff; }
+  button:hover { background: #3d68f0; }
+  footer { margin-top: 56px; color: #66708a; font-size: 13px; text-align: center; line-height: 1.7; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All projects</a>
+
+  <header class="hero">
+    <h1>&#x265E; Chess Day 1</h1>
+    <p>Meet the board and the team! (Pre-K)</p>
+  </header>
+
+  <div class="teacher">&#x1F4E2; <b>Teacher:</b> read everything out loud. Let the kids tap — tapping is the lesson.</div>
+
+  <div class="steps">
+    <div class="step"><b>&#x1F440; 1. Look</b><span>Look at the board. What colors do you see?</span></div>
+    <div class="step"><b>&#x1F446; 2. Tap</b><span>Tap the squares and the pieces. They do things!</span></div>
+    <div class="step"><b>&#x1F3AE; 3. Play</b><span>Can you find the piece I name? Earn stars!</span></div>
+  </div>
+
+  <h2 class="part">Part 1 &mdash; The board</h2>
+  <p class="partsub">The chess board is a big square made of little squares. Tap any square!</p>
+  <div class="card">
+    <div class="board" id="board1"></div>
+    <div class="say" id="say1">Tap a square! &#x1F446;</div>
+    <p class="partsub" style="text-align:center;margin:10px 0 0">64 little squares &mdash; 32 light, 32 dark. This is where the whole game happens.</p>
+  </div>
+
+  <h2 class="part">Part 2 &mdash; Meet the team</h2>
+  <p class="partsub">Every player gets a team of 16 pieces. Here are the 6 kinds. Tap each one to say hello!</p>
+  <div class="card">
+    <div class="team" id="team"></div>
+  </div>
+
+  <h2 class="part">Part 3 &mdash; Game: find the piece!</h2>
+  <p class="partsub">The teams are lined up and ready. Listen, then tap the piece I name.</p>
+  <div class="card">
+    <div class="prompt" id="prompt">Press Start! &#x1F3B2;</div>
+    <div class="board" id="board2"></div>
+    <div class="say" id="say2"></div>
+    <div class="stars" id="stars"></div>
+    <div class="btnrow"><button id="startBtn">Start the game</button></div>
+  </div>
+
+  <footer>Day 1 of Chess for Pre-K &mdash; made for Edwin&rsquo;s class.<br/>Day 2: how the pieces move.</footer>
+</div>
+
+<script>
+var GLYPHS = { k: "\u265A", q: "\u265B", r: "\u265C", b: "\u265D", n: "\u265E", p: "\u265F",
+               K: "\u2654", Q: "\u2655", R: "\u2656", B: "\u2657", N: "\u2658", P: "\u2659" };
+var TEAM = [
+  { g: "\u265A", name: "King",   nick: "the king",           line: "The most important piece. Keep him safe!" },
+  { g: "\u265B", name: "Queen",  nick: "the queen",          line: "The superhero. She is the strongest piece!" },
+  { g: "\u265C", name: "Rook",   nick: "the castle",         line: "Looks like a little castle tower." },
+  { g: "\u265D", name: "Bishop", nick: "the pointy hat",     line: "Wears a pointy hat with a little cut." },
+  { g: "\u265E", name: "Knight", nick: "the horsey",         line: "The horsey! The only piece that jumps." },
+  { g: "\u265F", name: "Pawn",   nick: "the little soldier", line: "Small but brave. You get 8 of them!" }
+];
+var KEY2NAME = { k: "King", q: "Queen", r: "Rook", b: "Bishop", n: "Knight", p: "Pawn" };
+var KEY2NICK = { k: "the king", q: "the queen", r: "the castle", b: "the pointy hat", n: "the horsey", p: "the little soldier" };
+
+function buildBoard(el, setup) {
+  el.innerHTML = "";
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      (function (r, c) {
+        var d = document.createElement("div");
+        d.className = "sq " + ((r + c) % 2 === 0 ? "light" : "dark");
+        var piece = setup ? setup[r][c] : null;
+        if (piece) {
+          var s = document.createElement("span");
+          s.className = piece === piece.toUpperCase() ? "w" : "b";
+          s.textContent = GLYPHS[piece];
+          d.appendChild(s);
+          d.dataset.piece = piece.toLowerCase();
+        }
+        d.dataset.r = r; d.dataset.c = c;
+        el.appendChild(d);
+      })(r, c);
+    }
+  }
+  return el.children;
+}
+
+/* Part 1: tap a square, learn light vs dark */
+(function () {
+  var sqs = buildBoard(document.getElementById("board1"), null);
+  var say = document.getElementById("say1");
+  Array.prototype.forEach.call(sqs, function (d) {
+    d.addEventListener("click", function () {
+      Array.prototype.forEach.call(sqs, function (x) { x.classList.remove("lit"); });
+      d.classList.add("lit");
+      var light = d.classList.contains("light");
+      say.textContent = light ? "A light square! \u2600\uFE0F" : "A dark square! \uD83C\uDF19";
+      say.className = "say";
+    });
+  });
+})();
+
+/* Part 2: meet the team cards */
+(function () {
+  var team = document.getElementById("team");
+  TEAM.forEach(function (t) {
+    var d = document.createElement("div");
+    d.className = "mate";
+    d.innerHTML = "<div class='g'>" + t.g + "</div><b>" + t.name + "</b><span>\"" + t.nick + "\"<br/>" + t.line + "</span>";
+    d.addEventListener("click", function () {
+      d.classList.remove("bounce");
+      void d.offsetWidth;
+      d.classList.add("bounce");
+    });
+    team.appendChild(d);
+  });
+})();
+
+/* Part 3: find-the-piece game */
+(function () {
+  var START = [
+    ["r","n","b","q","k","b","n","r"],
+    ["p","p","p","p","p","p","p","p"],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    ["P","P","P","P","P","P","P","P"],
+    ["R","N","B","Q","K","B","N","R"]
+  ];
+  var sqs = buildBoard(document.getElementById("board2"), START);
+  var prompt = document.getElementById("prompt");
+  var say = document.getElementById("say2");
+  var starsEl = document.getElementById("stars");
+  var startBtn = document.getElementById("startBtn");
+  var target = null, stars = 0, playing = false;
+  var CHEERS = ["Yes! \u2B50", "You found it! \uD83C\uDF89", "Amazing! \u2B50", "Superstar! \uD83C\uDF89"];
+
+  function newRound() {
+    var keys = Object.keys(KEY2NAME);
+    target = keys[Math.floor(Math.random() * keys.length)];
+    prompt.innerHTML = "Can you find <b>" + KEY2NICK[target] + "</b>?";
+    say.textContent = "";
+    say.className = "say";
+  }
+  startBtn.addEventListener("click", function () {
+    stars = 0; starsEl.textContent = ""; playing = true;
+    startBtn.textContent = "New round";
+    newRound();
+  });
+  Array.prototype.forEach.call(sqs, function (d) {
+    d.addEventListener("click", function () {
+      if (!playing) return;
+      d.classList.remove("pop"); void d.offsetWidth; d.classList.add("pop");
+      if (d.dataset.piece === target) {
+        stars++;
+        starsEl.textContent = "\u2B50".repeat(stars);
+        say.textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)] + " That's " + KEY2NAME[target] + "!";
+        say.className = "say good";
+        setTimeout(newRound, 1400);
+      } else {
+        say.textContent = "Oops, try again! \uD83D\uDC40";
+        say.className = "say try";
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
