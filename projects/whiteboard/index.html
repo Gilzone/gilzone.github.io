@@ -166,11 +166,74 @@
   #status.show { opacity: 1; }
 
   [hidden] { display: none !important; }
+
+  /* ---- floating classroom widgets (dice, wheel, groups, score) ---- */
+  .wid { position: absolute; z-index: 24; background: #fff; border-radius: 18px;
+         box-shadow: 0 12px 34px rgba(23,32,46,.24); border: 1px solid rgba(230,233,240,.9);
+         overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .wid .whead { background: #2b6bff; color: #fff; font-weight: 700; font-size: 14px; padding: 10px 12px;
+                display: flex; align-items: center; gap: 8px; cursor: grab; min-height: 44px; box-sizing: border-box; }
+  .wid .whead:active { cursor: grabbing; }
+  .wid .whead .wt { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wid .whead .wx { cursor: pointer; font-size: 16px; padding: 6px 10px; border-radius: 8px; min-width: 44px;
+                    min-height: 44px; display: flex; align-items: center; justify-content: center; }
+  .wid .whead .wx:hover { background: rgba(255,255,255,.25); }
+  .wid .wbody { padding: 12px 14px 14px; }
+  .wid .wbtn { border: 0; border-radius: 12px; background: #2b6bff; color: #fff; font-weight: 700; font-size: 15px;
+               padding: 12px 18px; min-height: 44px; cursor: pointer; font-family: inherit; width: 100%; }
+  .wid .wbtn:active { transform: scale(.98); }
+  .wid .wbtn.ghost { background: #eef2ff; color: #2b6bff; }
+  .wid .wbtn.warn { background: #fdecec; color: #c81e1e; }
+  .wid .chips { display: flex; gap: 6px; margin-bottom: 10px; }
+  .wid .chip { flex: 1; border: 1.5px solid #e6e9f0; background: #fff; border-radius: 999px; font-size: 14px;
+               font-weight: 700; padding: 10px 0; min-height: 44px; cursor: pointer; font-family: inherit; color: #17202e; }
+  .wid .chip.on { border-color: #2b6bff; color: #2b6bff; background: #eaf0ff; }
+  .wid .wrow { display: flex; gap: 8px; margin-bottom: 10px; }
+  .wid input[type=text], .wid input[type=number], .wid textarea {
+    font-size: 15px; padding: 10px 12px; border: 1.5px solid #dfe3ec; border-radius: 12px; outline: none;
+    font-family: inherit; box-sizing: border-box; min-height: 44px; }
+  .wid input:focus, .wid textarea:focus { border-color: #2b6bff; }
+  .wid .wlabel { font-size: 12px; font-weight: 700; color: #5c6675; text-transform: uppercase;
+                 letter-spacing: .04em; margin: 10px 0 6px; }
+  .wid canvas.wheelcv, .wid canvas.dicecv { display: block; margin: 0 auto 10px; touch-action: none; }
+  .wid .winner { text-align: center; font-size: 22px; font-weight: 800; color: #2b6bff; margin: 6px 0 10px;
+                 min-height: 30px; }
+  .wid .poolct { text-align: center; font-size: 13px; color: #5c6675; font-weight: 600; margin-bottom: 8px; }
+  .wid .nlist { max-height: 130px; overflow-y: auto; border: 1.5px solid #eef0f5; border-radius: 12px;
+                margin-bottom: 8px; }
+  .wid .nrow { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid #f3f5f9;
+               font-size: 14px; font-weight: 600; }
+  .wid .nrow:last-child { border-bottom: 0; }
+  .wid .nrow span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wid .nrow .nx { border: 0; background: #fdecec; color: #c81e1e; border-radius: 8px; width: 32px; height: 32px;
+                   font-size: 14px; cursor: pointer; flex: none; }
+  .wid .nrow.pickedn span { text-decoration: line-through; color: #9aa3b2; }
+  .wid .hist { font-size: 12.5px; color: #5c6675; margin-top: 8px; line-height: 1.6; }
+  .wid .hist b { color: #17202e; }
+  .wid .ggroups { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 220px; overflow-y: auto; }
+  .wid .gg { border: 1.5px solid #e6e9f0; border-radius: 12px; padding: 8px 10px; }
+  .wid .gg h4 { margin: 0 0 6px; font-size: 13px; color: #2b6bff; }
+  .wid .gg .gm { display: inline-block; background: #eef2ff; border-radius: 999px; padding: 4px 10px;
+                 font-size: 12.5px; font-weight: 600; margin: 0 4px 4px 0; }
+  .wid .trow { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f3f5f9; }
+  .wid .trow:last-of-type { border-bottom: 0; }
+  .wid .tdot { width: 16px; height: 16px; border-radius: 50%; flex: none; }
+  .wid .tname { flex: 1; min-width: 0; }
+  .wid .tscore { font-size: 24px; font-weight: 800; min-width: 44px; text-align: center; }
+  .wid .sbtn { border: 0; border-radius: 10px; min-width: 44px; min-height: 44px; font-size: 16px; font-weight: 800;
+               cursor: pointer; font-family: inherit; background: #eef2ff; color: #2b6bff; }
+  .wid .sbtn.minus { background: #fdecec; color: #c81e1e; }
+  .wid .dicetotal { text-align: center; font-size: 15px; font-weight: 700; color: #5c6675; margin-top: 4px; }
+  .wid .dicetotal b { font-size: 26px; color: #17202e; }
+  #appsPanel { flex-wrap: wrap; justify-content: center; max-width: 94vw; }
+  .wid .nlist, .wid .ggroups, .wid textarea { touch-action: pan-y; }
+  .wid input, .wid textarea { user-select: text; -webkit-user-select: text; touch-action: auto; }
   @media (max-width: 700px) {
     #boardTitle { width: 110px; }
     #mainbar .ibtn { width: 46px; height: 46px; font-size: 21px; }
     #penPalette { bottom: 86px; padding: 10px 12px; max-width: 94vw; }
     .prow { flex-wrap: wrap; }
+    .wid { max-width: 92vw; }
   }
 </style>
 </head>
@@ -236,6 +299,10 @@
     <button class="ibtn" data-app="text" title="Text box">T<small>Text</small></button>
     <button class="ibtn" data-app="note" title="Sticky note">📝<small>Note</small></button>
     <button class="ibtn" data-app="timer" title="Add timer">⏱️<small>Timer</small></button>
+    <button class="ibtn" data-app="dice" title="Dice">🎲<small>Dice</small></button>
+    <button class="ibtn" data-app="wheel" title="Name wheel">🎡<small>Wheel</small></button>
+    <button class="ibtn" data-app="groups" title="Group maker">👥<small>Groups</small></button>
+    <button class="ibtn" data-app="score" title="Scoreboard">🏆<small>Score</small></button>
   </div>
 
   <div id="shapesPanel" class="popup" hidden>
@@ -275,6 +342,7 @@
   </div>
 
   <div id="timers"></div>
+  <div id="widgets"></div>
   <textarea id="textEdit" hidden></textarea>
   <input type="file" id="filePick" accept="image/*" multiple hidden />
   <div id="status"></div>
@@ -808,6 +876,10 @@ document.getElementById('appsPanel').addEventListener('click', e => {
   hidePopups();
   const a = b.dataset.app;
   if (a === 'timer') { addTimer(); return; }
+  if (a === 'dice') { addDice(); return; }
+  if (a === 'wheel') { addWheel(); return; }
+  if (a === 'groups') { addGroups(); return; }
+  if (a === 'score') { addScore(); return; }
   setTool(a);
   status(a === 'text' ? 'Tap the board to place text' : 'Tap the board to place a sticky note');
 });
@@ -1105,6 +1177,387 @@ function addTimer() {
   });
   paint();
   status('Timer added — drag it anywhere');
+}
+
+/* ---------------- floating classroom widgets ----------------
+   Dice, name wheel, group maker, scoreboard. Draggable floating
+   cards launched from the ⊞ apps menu. WebAudio for sounds. */
+let widN = 0;
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function makeDraggable(el, head) {
+  head.addEventListener('pointerdown', e => {
+    if (e.target.closest('.wx')) return;
+    e.preventDefault();
+    const sx = e.clientX - el.offsetLeft, sy = e.clientY - el.offsetTop;
+    try { head.setPointerCapture(e.pointerId); } catch (err) {}
+    const mv = ev => {
+      el.style.left = Math.min(Math.max(0, ev.clientX - sx), W - 60) + 'px';
+      el.style.top = Math.min(Math.max(0, ev.clientY - sy), H - 60) + 'px';
+    };
+    const up = () => { head.removeEventListener('pointermove', mv); head.removeEventListener('pointerup', up); };
+    head.addEventListener('pointermove', mv);
+    head.addEventListener('pointerup', up);
+  });
+}
+function makeWid(title, width) {
+  widN++;
+  const el = document.createElement('div');
+  el.className = 'wid';
+  el.style.width = width + 'px';
+  const ox = 90 + (widN % 5) * 44, oy = 110 + (widN % 5) * 44;
+  el.style.left = Math.min(ox, Math.max(8, W - width - 16)) + 'px';
+  el.style.top = oy + 'px';
+  el.innerHTML = '<div class="whead"><span class="wt">' + escapeHtml(title) + '</span>' +
+    '<span class="wx" title="Close">✕</span></div><div class="wbody"></div>';
+  document.getElementById('widgets').appendChild(el);
+  el.querySelector('.wx').addEventListener('click', () => el.remove());
+  makeDraggable(el, el.querySelector('.whead'));
+  return { el, body: el.querySelector('.wbody') };
+}
+function tick() {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    const t0 = AC.currentTime;
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = 'square'; o.frequency.value = 2200;
+    g.gain.setValueAtTime(0.1, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0 + 0.06);
+  } catch (err) { /* audio unavailable */ }
+}
+function fanfare() {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    const t0 = AC.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = 'triangle'; o.frequency.value = f;
+      const dt = i * 0.13;
+      g.gain.setValueAtTime(0.0001, t0 + dt);
+      g.gain.exponentialRampToValueAtTime(0.35, t0 + dt + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.35);
+      o.connect(g); g.connect(AC.destination);
+      o.start(t0 + dt); o.stop(t0 + dt + 0.4);
+    });
+  } catch (err) { /* audio unavailable */ }
+}
+
+/* ---- shared class name list (localStorage) ---- */
+function getRoster() {
+  try { const a = JSON.parse(localStorage.getItem('wb_names') || '[]'); return Array.isArray(a) ? a : []; }
+  catch (e) { return []; }
+}
+function setRoster(a) { try { localStorage.setItem('wb_names', JSON.stringify(a)); } catch (e) {} }
+function getPicked() {
+  try { const a = JSON.parse(localStorage.getItem('wb_picked') || '[]'); return Array.isArray(a) ? a : []; }
+  catch (e) { return []; }
+}
+function setPicked(a) { try { localStorage.setItem('wb_picked', JSON.stringify(a)); } catch (e) {} }
+function namePool() { const p = getPicked(); return getRoster().filter(n => p.indexOf(n) < 0); }
+
+/* ---- dice ---- */
+const PIPS = {
+  1: [[.5, .5]],
+  2: [[.28, .28], [.72, .72]],
+  3: [[.28, .28], [.5, .5], [.72, .72]],
+  4: [[.3, .3], [.7, .3], [.3, .7], [.7, .7]],
+  5: [[.3, .3], [.7, .3], [.5, .5], [.3, .7], [.7, .7]],
+  6: [[.3, .28], [.7, .28], [.3, .5], [.7, .5], [.3, .72], [.7, .72]]
+};
+function drawDie(g, x, y, s, v, rot) {
+  g.save(); g.translate(x, y); g.rotate(rot || 0);
+  const r = s * 0.16;
+  g.fillStyle = '#ffffff'; g.strokeStyle = '#17202e'; g.lineWidth = Math.max(2, s * 0.03);
+  g.beginPath();
+  if (g.roundRect) g.roundRect(-s / 2, -s / 2, s, s, r); else g.rect(-s / 2, -s / 2, s, s);
+  g.fill(); g.stroke();
+  g.fillStyle = '#17202e';
+  PIPS[v].forEach(pt => {
+    g.beginPath();
+    g.arc((pt[0] - .5) * s, (pt[1] - .5) * s, s * 0.075, 0, Math.PI * 2);
+    g.fill();
+  });
+  g.restore();
+}
+function addDice() {
+  const w = makeWid('Dice', 300), body = w.body;
+  let count = 2, vals = [4, 2], rolling = false;
+  body.innerHTML =
+    '<div class="chips">' + [1, 2, 3].map(n =>
+      '<button class="chip' + (n === count ? ' on' : '') + '" data-n="' + n + '">' + n + (n === 1 ? ' die' : ' dice') + '</button>').join('') + '</div>' +
+    '<canvas class="dicecv" width="280" height="112"></canvas>' +
+    '<button class="wbtn">ROLL</button>' +
+    '<div class="dicetotal">Total: <b>–</b></div>';
+  const cv = body.querySelector('canvas'), g = cv.getContext('2d');
+  const totalEl = body.querySelector('.dicetotal b');
+  function paint(rots) {
+    g.clearRect(0, 0, 280, 112);
+    const s = 86, gap = 14;
+    const x0 = 140 - (count * s + (count - 1) * gap) / 2;
+    vals.forEach((v, i) => drawDie(g, x0 + s / 2 + i * (s + gap), 56, s, v, rots ? rots[i] : 0));
+  }
+  function fresh() { return Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6)); }
+  body.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+    if (rolling) return;
+    count = +ch.dataset.n;
+    body.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === ch));
+    vals = fresh(); totalEl.textContent = '–'; paint();
+  }));
+  body.querySelector('.wbtn').addEventListener('click', () => {
+    if (rolling) return;
+    rolling = true;
+    const t0 = performance.now(), dur = 900;
+    const rots = vals.map(() => (Math.random() - .5) * .7);
+    (function frame(t) {
+      const k = (t - t0) / dur;
+      if (k >= 1) {
+        vals = fresh(); paint(); rolling = false;
+        totalEl.textContent = vals.reduce((a, b) => a + b, 0);
+        chime();
+        return;
+      }
+      vals = fresh();
+      if (Math.random() < .35) tick();
+      paint(rots.map(r => r * (1 - k)));
+      requestAnimationFrame(frame);
+    })(t0);
+  });
+  paint();
+  status('Dice added — tap ROLL');
+}
+
+/* ---- name wheel ---- */
+const WHEEL_COLORS = ['#2b6bff', '#7c5cff', '#00b39b', '#ff9f1c', '#e5484d', '#0ea5e9', '#f472b6', '#84cc16', '#a855f7', '#f59e0b'];
+function addWheel() {
+  const w = makeWid('Name wheel', 330), body = w.body;
+  body.innerHTML =
+    '<canvas class="wheelcv" width="300" height="300"></canvas>' +
+    '<div class="winner"></div>' +
+    '<div class="poolct"></div>' +
+    '<button class="wbtn nmSpin">SPIN</button>' +
+    '<div class="wlabel">Class list</div>' +
+    '<div class="wrow"><input type="text" class="nmAdd" placeholder="Add a name" style="flex:1;min-width:0" />' +
+    '<button class="wbtn ghost nmAddBtn" style="width:auto;padding:12px 18px">Add</button></div>' +
+    '<div class="wrow"><textarea class="nmBulk" rows="2" placeholder="Or paste many names, one per line" style="flex:1;min-width:0;resize:vertical"></textarea></div>' +
+    '<div class="wrow"><button class="wbtn ghost nmReplace">Replace list</button></div>' +
+    '<div class="nlist"></div>' +
+    '<div class="wrow" style="margin-bottom:0"><button class="wbtn warn nmRestore">Restore all picked</button></div>' +
+    '<div class="hist"></div>';
+  const cv = body.querySelector('.wheelcv'), g = cv.getContext('2d');
+  const S = 300, C = S / 2, R = C - 10;
+  let rot = 0, spinning = false, lastTickSeg = 0;
+  function drawPointer() {
+    g.fillStyle = '#e5484d';
+    g.beginPath(); g.moveTo(C - 11, 4); g.lineTo(C + 11, 4); g.lineTo(C, 26); g.closePath(); g.fill();
+  }
+  function drawWheel() {
+    const p = namePool();
+    g.clearRect(0, 0, S, S);
+    if (!p.length) {
+      g.fillStyle = '#eef0f5'; g.beginPath(); g.arc(C, C, R, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#8a93a5'; g.font = '700 15px system-ui, sans-serif';
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(getRoster().length ? 'Everyone picked!' : 'Add names below', C, C);
+      drawPointer();
+      return;
+    }
+    const seg = Math.PI * 2 / p.length;
+    g.save(); g.translate(C, C);
+    for (let i = 0; i < p.length; i++) {
+      g.save(); g.rotate(rot + i * seg);
+      g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, 0, seg); g.closePath();
+      g.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length]; g.fill();
+      g.strokeStyle = '#ffffff'; g.lineWidth = 2; g.stroke();
+      if (p.length <= 16) {
+        g.rotate(seg / 2);
+        g.textAlign = 'right'; g.textBaseline = 'middle';
+        g.fillStyle = '#ffffff'; g.font = '700 13px system-ui, sans-serif';
+        const nm = p[i].length > 14 ? p[i].slice(0, 13) + '…' : p[i];
+        g.fillText(nm, R - 12, 0);
+      }
+      g.restore();
+    }
+    g.restore();
+    drawPointer();
+    g.fillStyle = '#17202e'; g.beginPath(); g.arc(C, C, 15, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff'; g.font = '700 11px system-ui, sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('SPIN', C, C);
+  }
+  function refreshLists() {
+    const r = getRoster(), pk = getPicked(), p = namePool();
+    body.querySelector('.poolct').textContent = p.length + ' of ' + r.length + ' still in the wheel';
+    const list = body.querySelector('.nlist');
+    list.innerHTML = '';
+    r.forEach(nm => {
+      const row = document.createElement('div');
+      row.className = 'nrow' + (pk.indexOf(nm) >= 0 ? ' pickedn' : '');
+      const sp = document.createElement('span'); sp.textContent = nm;
+      const x = document.createElement('button'); x.className = 'nx'; x.textContent = '✕'; x.title = 'Remove ' + nm;
+      x.addEventListener('click', () => {
+        setRoster(getRoster().filter(n => n !== nm));
+        setPicked(getPicked().filter(n => n !== nm));
+        refreshLists(); drawWheel();
+      });
+      row.appendChild(sp); row.appendChild(x); list.appendChild(row);
+    });
+    const h = getPicked().slice(-5).reverse();
+    body.querySelector('.hist').innerHTML = h.length ? '<b>Picked:</b> ' + h.map(escapeHtml).join(', ') : '';
+  }
+  function spin() {
+    if (spinning) return;
+    const p = namePool();
+    if (!p.length) { status('Everyone has been picked — tap Restore all'); return; }
+    spinning = true;
+    body.querySelector('.winner').textContent = '';
+    const wIdx = Math.floor(Math.random() * p.length);
+    const seg = Math.PI * 2 / p.length;
+    const pointer = -Math.PI / 2;
+    let target = pointer - wIdx * seg - seg / 2;
+    while (target < rot + Math.PI * 2 * 6) target += Math.PI * 2;
+    const start = rot, dur = 4500, t0 = performance.now();
+    lastTickSeg = Math.floor(rot / seg);
+    (function frame(t) {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      rot = start + (target - start) * e;
+      const sg = Math.floor(rot / seg);
+      if (sg !== lastTickSeg) { lastTickSeg = sg; tick(); }
+      drawWheel();
+      if (k < 1) { requestAnimationFrame(frame); return; }
+      spinning = false;
+      const winner = p[wIdx];
+      const pk = getPicked(); pk.push(winner); setPicked(pk);
+      body.querySelector('.winner').textContent = '★ ' + winner;
+      fanfare();
+      refreshLists(); drawWheel();
+      status(winner + ' was picked — removed from the wheel');
+    })(t0);
+  }
+  const addIn = body.querySelector('.nmAdd');
+  function addOne() {
+    const v = addIn.value.trim();
+    if (!v) return;
+    const r = getRoster();
+    if (r.indexOf(v) < 0) r.push(v);
+    setRoster(r);
+    addIn.value = '';
+    refreshLists(); drawWheel();
+  }
+  body.querySelector('.nmAddBtn').addEventListener('click', addOne);
+  addIn.addEventListener('keydown', e => { if (e.key === 'Enter') addOne(); });
+  body.querySelector('.nmReplace').addEventListener('click', () => {
+    const seen = [];
+    body.querySelector('.nmBulk').value.split('\n').forEach(s => {
+      const t = s.trim();
+      if (t && seen.indexOf(t) < 0) seen.push(t);
+    });
+    setRoster(seen); setPicked([]);
+    body.querySelector('.nmBulk').value = '';
+    refreshLists(); drawWheel();
+    status(seen.length + ' names loaded into the wheel');
+  });
+  body.querySelector('.nmRestore').addEventListener('click', () => {
+    setPicked([]);
+    refreshLists(); drawWheel();
+    status('Everyone is back in the wheel');
+  });
+  body.querySelector('.nmSpin').addEventListener('click', spin);
+  cv.addEventListener('click', spin);
+  refreshLists(); drawWheel();
+  status('Name wheel added — add your class list, then SPIN');
+}
+
+/* ---- group maker (uses the shared class list) ---- */
+function addGroups() {
+  const w = makeWid('Group maker', 340), body = w.body;
+  let mode = 'n';
+  body.innerHTML =
+    '<div class="chips">' +
+      '<button class="chip on" data-m="n">N groups</button>' +
+      '<button class="chip" data-m="k">Size K</button>' +
+    '</div>' +
+    '<div class="wrow"><input type="number" class="gnum" min="1" max="30" value="4" style="flex:1;min-width:0" />' +
+    '<button class="wbtn ggo" style="width:auto;padding:12px 22px">Shuffle</button></div>' +
+    '<div class="gout"><div class="poolct">Add student names in the Name wheel first.</div></div>';
+  const num = body.querySelector('.gnum'), out = body.querySelector('.gout');
+  body.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+    mode = ch.dataset.m;
+    body.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === ch));
+  }));
+  body.querySelector('.ggo').addEventListener('click', () => {
+    const r = getRoster().slice();
+    if (!r.length) { status('No names yet — add them in the Name wheel'); return; }
+    for (let i = r.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = r[i]; r[i] = r[j]; r[j] = t;
+    }
+    const v = Math.max(1, Math.min(30, +num.value || 1));
+    const ng = mode === 'n' ? Math.min(v, r.length) : Math.max(1, Math.ceil(r.length / v));
+    const groups = Array.from({ length: ng }, () => []);
+    r.forEach((nm, i) => groups[i % ng].push(nm));
+    out.innerHTML = '<div class="ggroups">' + groups.map((gm, i) =>
+      '<div class="gg"><h4>Group ' + (i + 1) + '</h4>' +
+      gm.map(nm => '<span class="gm">' + escapeHtml(nm) + '</span>').join('') + '</div>').join('') + '</div>';
+    tick();
+    status('Shuffled into ' + ng + ' groups');
+  });
+  status('Group maker added — uses your class list');
+}
+
+/* ---- scoreboard ---- */
+const TEAM_COLORS = ['#2b6bff', '#e5484d', '#00b39b', '#ff9f1c'];
+function addScore() {
+  const w = makeWid('Scoreboard', 350), body = w.body;
+  body.innerHTML =
+    '<div class="chips">' + [2, 3, 4].map(n =>
+      '<button class="chip' + (n === 2 ? ' on' : '') + '" data-n="' + n + '">' + n + ' teams</button>').join('') + '</div>' +
+    '<div class="teams"></div>' +
+    '<button class="wbtn ghost sreset" style="margin-top:10px">Reset scores</button>';
+  const box = body.querySelector('.teams');
+  function render(nt) {
+    box.innerHTML = '';
+    for (let i = 0; i < nt; i++) {
+      const row = document.createElement('div');
+      row.className = 'trow';
+      row.dataset.score = '0';
+      const dot = document.createElement('span');
+      dot.className = 'tdot'; dot.style.background = TEAM_COLORS[i];
+      const nm = document.createElement('input');
+      nm.type = 'text'; nm.className = 'tname'; nm.value = 'Team ' + (i + 1);
+      const sc = document.createElement('span');
+      sc.className = 'tscore'; sc.textContent = '0';
+      row.appendChild(dot); row.appendChild(nm);
+      [['−1', -1, 'minus'], ['+1', 1, ''], ['+5', 5, '']].forEach(([label, d, cls]) => {
+        const b = document.createElement('button');
+        b.className = 'sbtn' + (cls ? ' ' + cls : '');
+        b.textContent = label;
+        b.addEventListener('click', () => {
+          let s = Math.max(0, (+row.dataset.score || 0) + d);
+          row.dataset.score = s;
+          sc.textContent = s;
+          if (d > 0) tick();
+        });
+        row.appendChild(b);
+      });
+      row.appendChild(sc);
+      box.appendChild(row);
+    }
+  }
+  body.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+    body.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === ch));
+    render(+ch.dataset.n);
+  }));
+  body.querySelector('.sreset').addEventListener('click', () => {
+    box.querySelectorAll('.trow').forEach(r => { r.dataset.score = '0'; r.querySelector('.tscore').textContent = '0'; });
+    status('Scores reset');
+  });
+  render(2);
+  status('Scoreboard added');
 }
 
 /* ---------------- export PNG ---------------- */
