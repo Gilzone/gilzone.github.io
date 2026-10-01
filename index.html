@@ -59,7 +59,8 @@
             border-radius: 20px; overflow: hidden; transition: transform .15s, box-shadow .15s;
             box-shadow: 0 4px 16px rgba(23,32,46,.06); }
   .course:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(23,32,46,.12); }
-  .art { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 72px; }
+  .art { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 72px; overflow: hidden; }
+  .art img { width: 100%; height: 150px; object-fit: cover; display: block; }
   .art.asl { background: linear-gradient(135deg, #ff9a5a, #ff5a7a); }
   .art.chess { background: linear-gradient(135deg, #5b5bd6, #9b5bff); }
   .art.chess2 { background: linear-gradient(135deg, #2b6bff, #00c2ff); }
@@ -135,7 +136,7 @@
     <p class="secsub">Every lesson is interactive — you do things, not just watch.</p>
     <div class="grid">
       <a class="course" href="projects/asl-basic-signs-1/">
-        <div class="art asl">&#x1F918;</div>
+        <div class="art asl"><img src="assets/thumbs/asl.jpg" alt="ASL: Basic Signs 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>ASL: Basic Signs 1</h3>
           <p>Everyday American Sign Language vocabulary — watch each sign, practice it, then test yourself.</p>
@@ -144,7 +145,7 @@
         </div>
       </a>
       <a class="course" href="projects/chess-prek-day1/">
-        <div class="art chess">&#x265E;</div>
+        <div class="art chess"><img src="assets/thumbs/chess-day1.jpg" alt="Chess for Pre-K: Day 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 1</h3>
           <p>Meet the board and the chess team — tap the squares, say hello to the horsey, and earn stars.</p>
@@ -153,7 +154,7 @@
         </div>
       </a>
       <a class="course" href="projects/spanish-kids-day1/">
-        <div class="art spanish">&#x1F1EA;&#x1F1F8;</div>
+        <div class="art spanish"><img src="assets/thumbs/spanish.jpg" alt="Spanish for Kids: Day 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>Spanish for Kids: Day 1</h3>
           <p>Greetings — hear it, tap it, build it. Duolingo-style quiz with hearts, stars, and spoken Spanish.</p>
@@ -162,7 +163,7 @@
         </div>
       </a>
       <a class="course" href="projects/chess-prek-day2/">
-        <div class="art chess2">&#x265C;</div>
+        <div class="art chess2"><img src="assets/thumbs/chess-day2.jpg" alt="Chess for Pre-K: Day 2" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 2</h3>
           <p>How the pieces move — tap a piece to see where it can go, then catch the star!</p>
@@ -171,7 +172,7 @@
         </div>
       </a>
       <a class="course" href="projects/chess-prek-day3/">
-        <div class="art chess3">&#x1F37D;</div>
+        <div class="art chess3"><img src="assets/thumbs/chess-day3.jpg" alt="Chess for Pre-K: Day 3" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 3</h3>
           <p>Gobble Up! — capture enemy pieces, then gobble them all in the game.</p>
@@ -180,7 +181,7 @@
         </div>
       </a>
       <a class="course" href="projects/chess-prek-day4/">
-        <div class="art chess4">&#x2659;</div>
+        <div class="art chess4"><img src="assets/thumbs/chess-day4.jpg" alt="Chess for Pre-K: Day 4" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 4</h3>
           <p>Pawn Power! — the little soldier's three secrets, race to the crown.</p>
@@ -189,7 +190,7 @@
         </div>
       </a>
       <a class="course" href="projects/chess-prek-day5/">
-        <div class="art chess5">&#x1F6A8;</div>
+        <div class="art chess5"><img src="assets/thumbs/chess-day5.jpg" alt="Chess for Pre-K: Day 5" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 5</h3>
           <p>Save the King! — what check means, escape the danger, meet checkmate.</p>
@@ -198,7 +199,7 @@
         </div>
       </a>
       <a class="course" href="projects/hello-morse/">
-        <div class="art morse">&#x1F50E;</div>
+        <div class="art morse"><img src="assets/thumbs/morse.jpg" alt="Hello Morse Quiz" loading="lazy" /></div>
         <div class="cbody">
           <h3>Hello Morse Quiz</h3>
           <p>The interactive Morse code quiz slide deck — play it right in the browser.</p>
