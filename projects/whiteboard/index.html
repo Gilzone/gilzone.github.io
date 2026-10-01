@@ -104,6 +104,10 @@
               background: rgba(255,255,255,.94); padding: 8px; font-family: inherit; font-weight: 800;
               resize: none; overflow: hidden; outline: none; line-height: 1.25; }
 
+  /* ---- scrim (tap outside drawer/widgets to dismiss) ---- */
+  #scrim { position: absolute; inset: 0; z-index: 29; background: rgba(20,26,38,.25);
+           opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+  #scrim.on { opacity: 1; pointer-events: auto; }
   /* ---- image search drawer ---- */
   #imgDrawer { position: absolute; top: 0; right: 0; bottom: 0; width: min(340px, 90%); background: #fff; z-index: 32;
                box-shadow: -10px 0 36px rgba(23,32,46,.2); transform: translateX(106%); transition: transform .22s ease;
@@ -329,6 +333,9 @@
   </div>
 
   <div id="pagesPanel" class="popup" hidden></div>
+
+  <!-- tap-outside scrim for the image drawer -->
+  <div id="scrim"></div>
 
   <!-- image search drawer -->
   <div id="imgDrawer">
@@ -823,6 +830,7 @@ function status(msg) {
 function hidePopups() {
   ['appsPanel', 'shapesPanel', 'moreMenu', 'pagesPanel'].forEach(id =>
     document.getElementById(id).hidden = true);
+  if (typeof closeDrawer === 'function') closeDrawer();
 }
 function syncToolUI() {
   document.getElementById('penBtn').classList.toggle('on', tool === 'pen');
@@ -984,14 +992,20 @@ const WIKI = 'https://commons.wikimedia.org/w/api.php';
 const drawer = document.getElementById('imgDrawer');
 const imgQ = document.getElementById('imgQ');
 const imgResults = document.getElementById('imgResults');
-document.getElementById('imageBtn').addEventListener('click', () => {
+const scrim = document.getElementById('scrim');
+function openDrawer() {
   hidePopups();
-  drawer.classList.toggle('open');
-  if (drawer.classList.contains('open')) setTimeout(() => imgQ.focus(), 250);
-});
-const closeDrawer = () => drawer.classList.remove('open');
+  drawer.classList.add('open'); scrim.classList.add('on');
+  setTimeout(() => imgQ.focus(), 250);
+}
+function closeDrawer() {
+  drawer.classList.remove('open'); scrim.classList.remove('on');
+}
+function toggleDrawer() { drawer.classList.contains('open') ? closeDrawer() : openDrawer(); }
+document.getElementById('imageBtn').addEventListener('click', toggleDrawer);
 document.getElementById('imgClose').addEventListener('click', closeDrawer);
 document.getElementById('imgClose').addEventListener('pointerdown', e => { e.stopPropagation(); closeDrawer(); });
+scrim.addEventListener('pointerdown', e => { e.stopPropagation(); closeDrawer(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 function stripHtml(s) {
   const d = document.createElement('div'); d.innerHTML = s || '';
@@ -1063,7 +1077,7 @@ function insertImage(src, title, lic) {
     objects.push(o);
     selection = o;
     setTool('select');
-    drawer.classList.remove('open');
+    closeDrawer();
     pushHist(); render();
     status('Image added — drag to move, corner to resize');
   };
