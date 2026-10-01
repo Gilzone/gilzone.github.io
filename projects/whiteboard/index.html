@@ -644,6 +644,7 @@ function render() {
   drawBG(ctx, W, H);
   for (const s of strokes) drawStroke(ctx, s);
   if (preview) drawStroke(ctx, preview);
+  for (const s of drawing.values()) drawStroke(ctx, s); // live multitouch strokes
   for (const o of objects) drawObject(ctx, o);
   if (selection) drawSelection(ctx, selection);
 }
@@ -676,10 +677,10 @@ function strokeNear(s, x, y, r) {
 
 /* ---------------- pointer interaction ---------------- */
 let selection = null;
-let preview = null;        // rubber-band shape preview
-let drawing = null;        // active ink stroke
-let drag = null;           // {mode:'move'|'resize', o, dx, dy, moved}
-let erasing = false;
+let preview = null;        // rubber-band shape preview (single-pointer; has .pid)
+const drawing = new Map(); // pointerId -> active ink stroke (multitouch)
+let drag = null;           // {pid, mode:'move'|'resize', o, dx, dy, moved} (single-pointer)
+const erasing = new Set(); // pointerIds currently erasing (multitouch)
 
 function pos(e) {
   const r = canvas.getBoundingClientRect();
@@ -694,6 +695,7 @@ canvas.addEventListener('pointerdown', e => {
   commitEditor(); // finish any open text edit
 
   if (tool === 'select') {
+    if (drag) return; // another finger is already moving/resizing — stay single-pointer
     if (selection) {
       const k = hitUI(selection, p.x, p.y);
       if (k === 'del') {
@@ -702,12 +704,12 @@ canvas.addEventListener('pointerdown', e => {
         return;
       }
       if (k === 'ok') { selection = null; render(); return; }
-      if (k === 'rs') { drag = { mode: 'resize', o: selection }; return; }
+      if (k === 'rs') { drag = { pid: e.pointerId, mode: 'resize', o: selection }; return; }
     }
     const o = hitObject(p.x, p.y);
     if (o) {
       selection = o;
-      drag = { mode: 'move', o, dx: p.x - o.x, dy: p.y - o.y, moved: false };
+      drag = { pid: e.pointerId, mode: 'move', o, dx: p.x - o.x, dy: p.y - o.y, moved: false };
       if (o.kind === 'img' || o.kind === 'text' || o.kind === 'note') {
         const lic = o.license ? ' — ' + o.license : '';
         status((o.title || o.kind) + lic);
@@ -718,26 +720,29 @@ canvas.addEventListener('pointerdown', e => {
   }
   if (tool === 'text' || tool === 'note') { openEditor(p.x, p.y); return; }
   if (tool === 'shape') {
-    preview = { kind: 'shape', shape: shapeKind, x0: p.x, y0: p.y, x1: p.x, y1: p.y,
+    if (preview) return; // one rubber-band at a time — keep shapes single-pointer
+    preview = { pid: e.pointerId, kind: 'shape', shape: shapeKind, x0: p.x, y0: p.y, x1: p.x, y1: p.y,
                 color: inkColor, size: THICK.pen[thickIdx] };
     return;
   }
-  // pen family
-  if (penKind === 'eraser') { erasing = true; eraseAt(p.x, p.y); return; }
+  // pen family — multitouch: each pointer gets its own stroke with the
+  // tool/color/thickness active at ITS pointerdown, frozen for that stroke
+  if (penKind === 'eraser') { erasing.add(e.pointerId); eraseAt(p.x, p.y); return; }
   const sz = penKind === 'pen' ? THICK.pen[thickIdx]
            : penKind === 'brush' ? THICK.brush[thickIdx] : THICK.high[thickIdx];
-  drawing = { kind: 'ink', tool: penKind, color: inkColor, size: sz, pts: [{ x: p.x, y: p.y }] };
+  drawing.set(e.pointerId, { kind: 'ink', tool: penKind, color: inkColor, size: sz, pts: [{ x: p.x, y: p.y }] });
 });
 canvas.addEventListener('pointermove', e => {
   const p = pos(e);
-  if (drawing) {
-    const pts = drawing.pts, l = pts[pts.length - 1];
-    if (distPt(l.x, l.y, p.x, p.y) > 1.2) { pts.push({ x: p.x, y: p.y }); render(); drawStroke(ctx, drawing); }
+  const st = drawing.get(e.pointerId);
+  if (st) {
+    const pts = st.pts, l = pts[pts.length - 1];
+    if (distPt(l.x, l.y, p.x, p.y) > 1.2) { pts.push({ x: p.x, y: p.y }); render(); }
     return;
   }
-  if (preview) { preview.x1 = p.x; preview.y1 = p.y; render(); return; }
-  if (erasing) { eraseAt(p.x, p.y); return; }
-  if (drag) {
+  if (preview && preview.pid === e.pointerId) { preview.x1 = p.x; preview.y1 = p.y; render(); return; }
+  if (erasing.has(e.pointerId)) { eraseAt(p.x, p.y); return; }
+  if (drag && drag.pid === e.pointerId) {
     const o = drag.o;
     if (drag.mode === 'move') {
       o.x = p.x - drag.dx; o.y = p.y - drag.dy; drag.moved = true;
@@ -753,18 +758,21 @@ canvas.addEventListener('pointermove', e => {
   }
 });
 function endPointer(e) {
-  if (drawing) {
-    if (drawing.pts.length) { strokes.push(drawing); pushHist(); }
-    drawing = null; render();
+  const pid = e.pointerId;
+  const st = drawing.get(pid);
+  if (st) {
+    // each finished stroke is one undoable unit, in completion order
+    if (st.pts.length) { strokes.push(st); pushHist(); }
+    drawing.delete(pid); render();
   }
-  if (preview) {
+  if (preview && preview.pid === pid) {
     if (Math.hypot(preview.x1 - preview.x0, preview.y1 - preview.y0) > 6) {
       strokes.push(preview); pushHist();
     }
     preview = null; render();
   }
-  if (erasing) { erasing = false; }
-  if (drag) {
+  erasing.delete(pid);
+  if (drag && drag.pid === pid) {
     if (drag.moved) pushHist();
     drag = null; render();
   }
