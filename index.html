@@ -53,7 +53,13 @@
 
   #courses { max-width: 1080px; margin: 0 auto; padding: 64px 24px 24px; }
   #courses h2, .how h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px; text-align: center; }
-  .secsub { text-align: center; color: #5c6675; font-size: 16px; margin: 0 0 36px; }
+  .secsub { text-align: center; color: #5c6675; font-size: 16px; margin: 0 0 20px; }
+  .fchips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 0 0 28px; }
+  .fchip { font: inherit; font-weight: 700; font-size: 14.5px; padding: 10px 22px; border-radius: 999px;
+           border: 1.5px solid #dfe3ec; background: #fff; color: #5c6675; cursor: pointer;
+           transition: background .15s, color .15s, border-color .15s; }
+  .fchip:hover { border-color: #2b6bff; color: #2b6bff; }
+  .fchip.on { background: #2b6bff; border-color: #2b6bff; color: #fff; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
   .course { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e6e9f0;
             border-radius: 20px; overflow: hidden; transition: transform .15s, box-shadow .15s;
@@ -140,8 +146,14 @@
   <section id="courses">
     <h2>Pick a lesson</h2>
     <p class="secsub">Every lesson is interactive — you do things, not just watch.</p>
+    <div class="fchips" id="fchips">
+      <button class="fchip on" data-f="all">All</button>
+      <button class="fchip" data-f="lesson">Lessons</button>
+      <button class="fchip" data-f="game">Games</button>
+      <button class="fchip" data-f="tool">Tools</button>
+    </div>
     <div class="grid">
-      <a class="course" href="projects/asl-basic-signs-1/">
+      <a class="course" data-cat="lesson" href="projects/asl-basic-signs-1/">
         <div class="art asl"><img src="assets/thumbs/asl.jpg" alt="ASL: Basic Signs 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>ASL: Basic Signs 1</h3>
@@ -150,7 +162,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-prek-day1/">
+      <a class="course" data-cat="lesson" href="projects/chess-prek-day1/">
         <div class="art chess"><img src="assets/thumbs/chess-day1.jpg" alt="Chess for Pre-K: Day 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 1</h3>
@@ -159,7 +171,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/spanish-kids-day1/">
+      <a class="course" data-cat="lesson" href="projects/spanish-kids-day1/">
         <div class="art spanish"><img src="assets/thumbs/spanish.jpg" alt="Spanish for Kids: Day 1" loading="lazy" /></div>
         <div class="cbody">
           <h3>Spanish for Kids: Day 1</h3>
@@ -168,7 +180,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-prek-day2/">
+      <a class="course" data-cat="lesson" href="projects/chess-prek-day2/">
         <div class="art chess2"><img src="assets/thumbs/chess-day2.jpg" alt="Chess for Pre-K: Day 2" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 2</h3>
@@ -177,7 +189,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-prek-day3/">
+      <a class="course" data-cat="lesson" href="projects/chess-prek-day3/">
         <div class="art chess3"><img src="assets/thumbs/chess-day3.jpg" alt="Chess for Pre-K: Day 3" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 3</h3>
@@ -186,7 +198,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-prek-day4/">
+      <a class="course" data-cat="lesson" href="projects/chess-prek-day4/">
         <div class="art chess4"><img src="assets/thumbs/chess-day4.jpg" alt="Chess for Pre-K: Day 4" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 4</h3>
@@ -195,7 +207,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-prek-day5/">
+      <a class="course" data-cat="lesson" href="projects/chess-prek-day5/">
         <div class="art chess5"><img src="assets/thumbs/chess-day5.jpg" alt="Chess for Pre-K: Day 5" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess for Pre-K: Day 5</h3>
@@ -204,7 +216,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/hello-morse/">
+      <a class="course" data-cat="lesson" href="projects/hello-morse/">
         <div class="art morse"><img src="assets/thumbs/morse.jpg" alt="Hello Morse Quiz" loading="lazy" /></div>
         <div class="cbody">
           <h3>Hello Morse Quiz</h3>
@@ -213,7 +225,7 @@
           <span class="go">Start &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/morse-match/">
+      <a class="course" data-cat="game" href="projects/morse-match/">
         <div class="art morse"><img src="assets/thumbs/morse.jpg" alt="Morse Matching Game" loading="lazy" /></div>
         <div class="cbody">
           <h3>Morse Matching Game</h3>
@@ -222,7 +234,7 @@
           <span class="go">Play &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/asl-match/">
+      <a class="course" data-cat="game" href="projects/asl-match/">
         <div class="art asl"><img src="assets/thumbs/asl.jpg" alt="ASL Matching Game" loading="lazy" /></div>
         <div class="cbody">
           <h3>ASL Matching Game</h3>
@@ -231,7 +243,7 @@
           <span class="go">Play &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/chess-match/">
+      <a class="course" data-cat="game" href="projects/chess-match/">
         <div class="art chess"><img src="assets/thumbs/chess-day1.jpg" alt="Chess Matching Game" loading="lazy" /></div>
         <div class="cbody">
           <h3>Chess Matching Game</h3>
@@ -240,7 +252,7 @@
           <span class="go">Play &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/spanish-match/">
+      <a class="course" data-cat="game" href="projects/spanish-match/">
         <div class="art spanish"><img src="assets/thumbs/spanish.jpg" alt="Spanish Matching Game" loading="lazy" /></div>
         <div class="cbody">
           <h3>Spanish Matching Game</h3>
@@ -249,7 +261,7 @@
           <span class="go">Play &rarr;</span>
         </div>
       </a>
-      <a class="course" href="projects/whiteboard/">
+      <a class="course" data-cat="tool" href="projects/whiteboard/">
         <div class="art whiteboard"><img src="assets/thumbs/whiteboard.jpg" alt="Classroom Whiteboard" loading="lazy" /></div>
         <div class="cbody">
           <h3>Classroom Whiteboard</h3>
@@ -321,6 +333,20 @@ document.getElementById("gateForm").addEventListener("submit", async (e) => {
     c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
   }
 });
+/* gallery filter chips */
+(function () {
+  var chips = document.querySelectorAll('#fchips .fchip');
+  var cards = document.querySelectorAll('#courses .course');
+  chips.forEach(function (ch) {
+    ch.addEventListener('click', function () {
+      chips.forEach(function (x) { x.classList.toggle('on', x === ch); });
+      var f = ch.dataset.f;
+      cards.forEach(function (c) {
+        c.style.display = (f === 'all' || c.dataset.cat === f) ? '' : 'none';
+      });
+    });
+  });
+})();
 </script>
 <!-- background music: lofi deep house mix (SoundCloud) -->
 <style>
