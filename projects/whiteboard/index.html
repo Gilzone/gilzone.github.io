@@ -909,7 +909,10 @@ document.getElementById('imageBtn').addEventListener('click', () => {
   drawer.classList.toggle('open');
   if (drawer.classList.contains('open')) setTimeout(() => imgQ.focus(), 250);
 });
-document.getElementById('imgClose').addEventListener('click', () => drawer.classList.remove('open'));
+const closeDrawer = () => drawer.classList.remove('open');
+document.getElementById('imgClose').addEventListener('click', closeDrawer);
+document.getElementById('imgClose').addEventListener('pointerdown', e => { e.stopPropagation(); closeDrawer(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 function stripHtml(s) {
   const d = document.createElement('div'); d.innerHTML = s || '';
   return (d.textContent || '').trim().slice(0, 80);
