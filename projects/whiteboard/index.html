@@ -424,6 +424,7 @@ function pushHist() {
   if (hist.length > 80) hist.shift();
   hIdx = hist.length - 1;
   syncHistBtns();
+  if (typeof wbScheduleSave === 'function') wbScheduleSave();
 }
 function applySnap(s) {
   pageIdx = s.page;
@@ -439,6 +440,142 @@ function syncHistBtns() {
   document.getElementById('redoBtn').disabled = hIdx >= hist.length - 1;
 }
 
+/* ---------------- autosave (never lose the board) ----------------
+   Full board state -> localStorage (key wb_board_v1), debounced 1.5s
+   after every change + synchronously on pagehide/beforeunload.
+   Not persisted: undo/redo history (starts fresh), name-wheel roster
+   (has its own keys), timer/score/wheel widgets (ephemeral). */
+const WB_SAVE_KEY = 'wb_board_v1';
+let wbSaveTimer = null;
+let wbSaveBare = false;   // set after a quota error: keep saving without images
+
+function wbImageToDataURL(img) {
+  try {
+    if (!img || !img.naturalWidth) return null;
+    const maxDim = 520;
+    const sc = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.max(1, Math.round(img.naturalWidth * sc));
+    const h = Math.max(1, Math.round(img.naturalHeight * sc));
+    const cv = document.createElement('canvas');
+    cv.width = w; cv.height = h;
+    const cx = cv.getContext('2d');
+    cx.drawImage(img, 0, 0, w, h);
+    let transparent = false;
+    try {
+      const d = cx.getImageData(0, 0, w, h).data;
+      for (let i = 3; i < d.length; i += 16) { if (d[i] < 250) { transparent = true; break; } }
+    } catch (e) { return null; }   // tainted canvas: this image cannot persist
+    return transparent ? cv.toDataURL('image/png') : cv.toDataURL('image/jpeg', 0.7);
+  } catch (e) { return null; }
+}
+function wbCleanObject(o, withImages) {
+  const c = {};
+  for (const k of Object.keys(o)) {
+    if (k === 'img' || k === '_lines' || k === '_ui' || k === 'dataUrl') continue;
+    c[k] = o[k];
+  }
+  if (c.kind === 'img') {
+    if (!withImages) return null;
+    const du = wbImageToDataURL(o.img || imgCache.get(o.imgId));
+    if (!du) return null;   // image unreadable: drop the object, not a broken shell
+    c.dataUrl = du;
+  }
+  return c;
+}
+function wbSerialize(withImages) {
+  savePage();   // flush live page globals into pages[pageIdx] first
+  return {
+    v: 1,
+    pageIdx: Math.max(0, Math.min(pageIdx, pages.length - 1)),
+    objSeq: objSeq,
+    pages: pages.map(p => ({
+      bg: p.bg,
+      strokes: JSON.parse(JSON.stringify(p.strokes)),
+      objects: p.objects.map(o => wbCleanObject(o, withImages)).filter(Boolean)
+    }))
+  };
+}
+function wbIsQuotaError(e) {
+  return !!e && (e.code === 22 || e.code === 1014 ||
+    e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED');
+}
+function wbSaveNow() {
+  let json;
+  try { json = JSON.stringify(wbSerialize(!wbSaveBare)); }
+  catch (e) { return; }
+  try {
+    localStorage.setItem(WB_SAVE_KEY, json);
+  } catch (e) {
+    if (wbIsQuotaError(e) && !wbSaveBare) {
+      wbSaveBare = true;   // sticky for this session: images won't fit
+      try {
+        localStorage.setItem(WB_SAVE_KEY, JSON.stringify(wbSerialize(false)));
+        status('Board saved without images (storage full)');
+      } catch (e2) { /* storage unusable: nothing more we can do */ }
+    }
+  }
+}
+function wbScheduleSave() {
+  if (wbSaveTimer) clearTimeout(wbSaveTimer);
+  wbSaveTimer = setTimeout(() => { wbSaveTimer = null; wbSaveNow(); }, 1500);
+}
+function wbRestore() {
+  let raw = null;
+  try { raw = localStorage.getItem(WB_SAVE_KEY); } catch (e) { return false; }
+  if (!raw) return false;
+  let data = null;
+  try { data = JSON.parse(raw); } catch (e) { return false; }
+  if (!data || data.v !== 1 || !Array.isArray(data.pages) || !data.pages.length) return false;
+  const BGS4 = ['white', 'dark', 'grid', 'dots'];
+  try {
+    let maxSeq = 0, hasContent = false;
+    const newPages = data.pages.map(p => {
+      const strokes = Array.isArray(p.strokes) ? JSON.parse(JSON.stringify(p.strokes)) : [];
+      const objects = (Array.isArray(p.objects) ? p.objects : []).map(o => {
+        if (!o || typeof o !== 'object') return null;
+        const obj = {};
+        for (const k of Object.keys(o)) {
+          if (k === 'img' || k === '_lines' || k === '_ui' || k === 'dataUrl') continue;
+          obj[k] = o[k];
+        }
+        if (obj.kind === 'img') {
+          const du = o.dataUrl;
+          if (typeof du !== 'string' || !du.startsWith('data:image/')) return null;
+          const img = new Image();
+          img.onload = () => { imgCache.set(obj.imgId, img); obj.img = img; render(); };
+          img.onerror = () => render();
+          img.src = du;
+          obj.img = undefined;
+        }
+        const m = /(\d+)$/.exec(obj.id || '');
+        if (m) maxSeq = Math.max(maxSeq, parseInt(m[1], 10));
+        return obj;
+      }).filter(Boolean);
+      if (strokes.length || objects.length) hasContent = true;
+      return { bg: BGS4.includes(p.bg) ? p.bg : 'white', strokes, objects };
+    });
+    if (!hasContent && newPages.length <= 1) return false;   // nothing meaningful was saved
+    pages = newPages;
+    pageIdx = Math.max(0, Math.min(data.pageIdx | 0, pages.length - 1));
+    objSeq = Math.max(typeof data.objSeq === 'number' ? data.objSeq : 0, maxSeq + 1, 1);
+    const p = pages[pageIdx];
+    strokes = p.strokes; objects = p.objects; bg = p.bg;
+    selection = null;
+    hist = []; hIdx = -1;   // undo history starts fresh
+    render(); renderPagesPanel(); syncBgDots(); syncHistBtns();
+    return true;
+  } catch (e) { return false; }
+}
+window.addEventListener('pagehide', () => {
+  if (wbSaveTimer) { clearTimeout(wbSaveTimer); wbSaveTimer = null; }
+  wbSaveNow();
+});
+window.addEventListener('beforeunload', () => {
+  if (wbSaveTimer) { clearTimeout(wbSaveTimer); wbSaveTimer = null; }
+  wbSaveNow();
+});
+/* -------------- end autosave -------------- */
+
 /* ---------------- pages ---------------- */
 function savePage() { pages[pageIdx] = { strokes, objects, bg }; }
 function loadPage(i) {
@@ -448,6 +585,7 @@ function loadPage(i) {
   strokes = p.strokes; objects = p.objects; bg = p.bg;
   selection = null;
   render(); renderPagesPanel(); syncBgDots();
+  if (typeof wbScheduleSave === 'function') wbScheduleSave();
 }
 function addPage() {
   savePage();
@@ -1609,8 +1747,9 @@ resize();
 syncToolUI();
 syncBgDots();
 renderPagesPanel();
+const wbWasRestored = (typeof wbRestore === 'function') ? wbRestore() : false;
 pushHist();
-status('Pick a pen and draw — tap △ for shapes, ⊞ for text & timers');
+status(wbWasRestored ? 'Board restored' : 'Pick a pen and draw — tap △ for shapes, ⊞ for text & timers');
 </script>
 <!-- background music: lofi deep house mix (SoundCloud) -->
 <style>
