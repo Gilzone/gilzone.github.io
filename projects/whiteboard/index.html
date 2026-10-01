@@ -863,7 +863,7 @@ document.getElementById('penThick').addEventListener('click', e => {
 /* main toolbar */
 document.getElementById('penBtn').addEventListener('click', () => {
   hidePopups();
-  setTool('pen');
+  setTool(tool === 'pen' ? 'select' : 'pen');
 });
 function togglePopup(id) {
   const el = document.getElementById(id);
