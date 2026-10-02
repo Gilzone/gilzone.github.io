@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shapes in the Garden — 3K to K</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7fbf3; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 34px; }
+  header.hero p { margin: 0; color: #5c6675; font-size: 16px; }
+  .teacher { background: #eaf0ff; border: 1px dashed #2b6bff; border-radius: 12px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #24407c; }
+  .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
+  .step { flex: 1 1 200px; background: #ffffff; border: 1px solid #e6e9f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
+  .step b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .step span { color: #5c6675; font-size: 13.5px; }
+  h2.part { margin: 44px 0 4px; font-size: 24px; }
+  p.partsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
+  .card { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
+  /* LEARN: shape cards */
+  .shapes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .shapecard { background: #f6f8fc; border: 2px solid #e6e9f0; border-radius: 18px; padding: 18px 10px 14px; text-align: center; cursor: pointer; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; transition: transform .12s, border-color .12s; }
+  .shapecard:hover { border-color: #31a24c; transform: translateY(-2px); }
+  .shapecard svg { width: 96px; height: 96px; }
+  .shapecard b { font-size: 19px; }
+  .shapecard span { color: #5c6675; font-size: 13.5px; line-height: 1.4; }
+  .shapecard.bounce svg { animation: pop .4s; }
+  @keyframes pop { 50% { transform: scale(1.25); } }
+  /* VIDEO */
+  .vidcap { text-align: center; font-size: 19px; font-weight: 800; margin: 0 0 12px; }
+  .vidwrap { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 14px; overflow: hidden; background: #000; }
+  .vidwrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  /* GAMES */
+  .prompt { text-align: center; font-size: 26px; font-weight: 800; margin: 6px 0 14px; min-height: 40px; }
+  .prompt b { color: #9a6b12; }
+  .gamegrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 520px; margin: 0 auto; }
+  .gopt { background: #f6f8fc; border: 3px solid #e6e9f0; border-radius: 20px; min-height: 130px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 12px; transition: transform .12s, border-color .12s; }
+  .gopt svg { width: 96px; height: 96px; }
+  .gopt:hover { border-color: #2b6bff; }
+  .gopt.burst svg { animation: burst .5s; }
+  @keyframes burst { 0% { transform: scale(1); } 40% { transform: scale(1.5) rotate(8deg); } 100% { transform: scale(1); } }
+  .gopt.shake { animation: shake .4s; border-color: #e5484d; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+  .say { text-align: center; font-size: 20px; font-weight: 700; min-height: 30px; margin: 14px 0 4px; }
+  .say.good { color: #1f8f57; }
+  .say.try { color: #9a6b12; }
+  .stars { text-align: center; font-size: 30px; min-height: 44px; margin-top: 10px; letter-spacing: 4px; overflow-wrap: anywhere; line-height: 1.5; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 16px 34px; font-size: 18px; font-weight: 700; background: #31a24c; color: #fff; min-height: 64px; }
+  button:hover { background: #248a3d; }
+  /* GARDEN HUNT scene */
+  .scene { position: relative; width: 100%; height: 380px; border-radius: 18px; overflow: hidden;
+           background: linear-gradient(to bottom, #aee3ff 0%, #d8f3ff 55%, #7dd956 55%, #5cb83c 100%);
+           border: 3px solid #e6e9f0; }
+  .hunt { position: absolute; background: none; border: 0; padding: 8px; font-size: 76px; line-height: 1; min-width: 88px; min-height: 88px; display: flex; align-items: center; justify-content: center; transition: transform .15s; }
+  .hunt:hover { transform: scale(1.08); }
+  .hunt.found { animation: foundpop .6s; pointer-events: none; opacity: .35; filter: grayscale(.4); }
+  @keyframes foundpop { 0% { transform: scale(1); } 40% { transform: scale(1.6) rotate(-10deg); } 100% { transform: scale(1); } }
+  .hunt.shake { animation: shake .4s; }
+  .pondsvg { position: absolute; cursor: pointer; background: none; border: 0; padding: 0; min-width: 88px; min-height: 88px; }
+  .pondsvg.found { animation: foundpop .6s; pointer-events: none; opacity: .45; }
+  .pondsvg.shake { animation: shake .4s; }
+  .finale { text-align: center; }
+  .finale .big { font-size: 64px; }
+  .finale h2 { font-size: 30px; margin: 8px 0 4px; }
+  .finale p { color: #5c6675; font-size: 16px; }
+  footer { margin-top: 56px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+
+  <header class="hero">
+    <h1>Shapes in the Garden &#x1F338;</h1>
+    <p>3K to Kindergarten &mdash; tap, play, and find shapes hiding in the garden!</p>
+  </header>
+
+  <div class="teacher">&#x1F4E2; <b>Teacher:</b> read everything out loud. Let the kids tap &mdash; tapping is the lesson.</div>
+
+  <div class="steps">
+    <div class="step"><b>&#x1F440; 1. Look</b><span>Meet the 8 shapes. Tap each card to hear its name!</span></div>
+    <div class="step"><b>&#x1F3B5; 2. Sing</b><span>Sing the Shapes Song together &mdash; 4 minutes of shape fun.</span></div>
+    <div class="step"><b>&#x1F3AE; 3. Play</b><span>Tap the shape I name, then find shapes hiding in the garden!</span></div>
+  </div>
+
+  <h2 class="part">Part 1 &mdash; Meet the shapes</h2>
+  <p class="partsub">Eight shapes live in our garden. Tap each card to hear its name!</p>
+  <div class="card">
+    <div class="shapes" id="learnGrid"></div>
+  </div>
+
+  <h2 class="part">Part 2 &mdash; Sing along</h2>
+  <p class="partsub">A 4-minute shapes song. Sing it loud!</p>
+  <div class="card">
+    <p class="vidcap">&#x1F3B5; Shapes Song &mdash; sing along! (4 minutes)</p>
+    <div class="vidwrap">
+      <iframe src="https://www.youtube-nocookie.com/embed/o3XibhWgFS0"
+              title="Shapes Song for Kids | Learn 10 Shapes — Tiny Tots Playroom"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <h2 class="part" id="gamepart">Part 3 &mdash; Game: tap the shape!</h2>
+  <p class="partsub">Listen, then tap the shape I name. Six rounds &mdash; earn a star each time!</p>
+  <div class="card">
+    <div class="prompt" id="prompt1">Press Start! &#x1F3B2;</div>
+    <div class="gamegrid" id="grid1"></div>
+    <div class="say" id="say1"></div>
+    <div class="stars" id="stars1"></div>
+    <div class="btnrow"><button id="startBtn1">Start the game</button></div>
+  </div>
+
+  <h2 class="part">Part 4 &mdash; Game: garden hunt!</h2>
+  <p class="partsub">Shapes are hiding in the garden. Can you find all 6?</p>
+  <div class="card">
+    <div class="prompt" id="prompt2">Press Start! &#x1F50D;</div>
+    <div class="scene" id="scene"></div>
+    <div class="say" id="say2"></div>
+    <div class="stars" id="stars2"></div>
+    <div class="btnrow"><button id="startBtn2">Start the hunt</button></div>
+  </div>
+
+  <h2 class="part">Part 5 &mdash; You did it!</h2>
+  <div class="card finale">
+    <div class="big">&#x1F3C6;</div>
+    <h2>You did it, shape explorer!</h2>
+    <p id="finalStars">Play the games above to earn stars!</p>
+    <div class="stars" id="starsAll"></div>
+    <div class="btnrow">
+      <button id="replayBtn">Play again</button>
+      <a href="../../" style="text-decoration:none"><button type="button" style="background:#2b6bff">All lessons</button></a>
+    </div>
+  </div>
+
+  <footer>Shapes in the Garden &mdash; made for Edwin&rsquo;s class.</footer>
+</div>
+
+<script>
+/* ---------- shared helpers ---------- */
+var enVoice = null;
+function pickVoice() {
+  try {
+    var vs = window.speechSynthesis.getVoices() || [];
+    enVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en-us") === 0; })
+           || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en") === 0; })
+           || null;
+  } catch (e) { enVoice = null; }
+}
+function say(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if (enVoice) u.voice = enVoice;
+    u.lang = "en-US"; u.rate = 0.9; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+/* happy chime via WebAudio */
+var AC = null;
+function chime() {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    var t = AC.currentTime;
+    [523.25, 659.25, 783.99].forEach(function (f, i) {
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + i * 0.12);
+      g.gain.exponentialRampToValueAtTime(0.35, t + i * 0.12 + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.12 + 0.35);
+      o.connect(g); g.connect(AC.destination);
+      o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
+    });
+  } catch (e) {}
+}
+function addStar(el) {
+  el.textContent += "\u2B50";
+}
+function starsCount() {
+  function n(id) {
+    var t = document.getElementById(id).textContent;
+    return (t.match(/\u2B50/g) || []).length;
+  }
+  return n("stars1") + n("stars2");
+}
+function updateFinale() {
+  var n = starsCount();
+  var el = document.getElementById("starsAll");
+  el.textContent = n ? "\u2B50".repeat(n) : "";
+  document.getElementById("finalStars").textContent =
+    n === 0 ? "Play the games above to earn stars!" :
+    n < 12 ? "You earned " + n + " of 12 stars! Can you get them all?" :
+             "WOW! All 12 stars! You are a shape superstar! \u2B50";
+}
+
+/* ---------- shape library ---------- */
+var SHAPES = [
+  { key: "circle",    name: "Circle",    color: "#ff5a5a", example: "The sun is a circle \u2600\uFE0F",   spoken: "The sun is a circle." },
+  { key: "square",    name: "Square",    color: "#2b6bff", example: "The garden sign is a square \u{1FAA7}", spoken: "The garden sign is a square." },
+  { key: "triangle",  name: "Triangle",  color: "#31a24c", example: "The birdhouse roof is a triangle \u{1F3E0}", spoken: "The birdhouse roof is a triangle." },
+  { key: "rectangle", name: "Rectangle", color: "#ff9600", example: "The garden bed is a rectangle \u{1F331}", spoken: "The garden bed is a rectangle." },
+  { key: "oval",      name: "Oval",      color: "#00b8d4", example: "The pond is an oval \u{1F986}",      spoken: "The pond is an oval." },
+  { key: "star",      name: "Star",      color: "#e8a800", example: "The star flower is a star \u2B50",   spoken: "The star flower is a star." },
+  { key: "heart",     name: "Heart",     color: "#ff5a7a", example: "This leaf is a heart \u{1F49A}",     spoken: "This leaf is a heart." },
+  { key: "diamond",   name: "Diamond",   color: "#9b5bff", example: "The kite is a diamond \u{1FA81}",    spoken: "The kite is a diamond." }
+];
+function shapeSVG(key, color) {
+  var inner = "";
+  if (key === "circle")    inner = '<circle cx="50" cy="50" r="44" fill="' + color + '"/>';
+  if (key === "square")    inner = '<rect x="10" y="10" width="80" height="80" rx="8" fill="' + color + '"/>';
+  if (key === "triangle")  inner = '<polygon points="50,8 92,88 8,88" fill="' + color + '"/>';
+  if (key === "rectangle") inner = '<rect x="5" y="26" width="90" height="48" rx="8" fill="' + color + '"/>';
+  if (key === "oval")      inner = '<ellipse cx="50" cy="50" rx="45" ry="30" fill="' + color + '"/>';
+  if (key === "star")      inner = '<polygon points="50,5 61,35 95,35 68,57 78,90 50,70 22,90 32,57 5,35 39,35" fill="' + color + '"/>';
+  if (key === "heart")     inner = '<path d="M50 88 C20 62 8 44 8 30 C8 16 18 8 30 8 C38 8 46 12 50 20 C54 12 62 8 70 8 C82 8 92 16 92 30 C92 44 80 62 50 88 Z" fill="' + color + '"/>';
+  if (key === "diamond")   inner = '<polygon points="50,5 95,50 50,95 5,50" fill="' + color + '"/>';
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">' + inner + "</svg>";
+}
+
+/* ---------- Part 1: learn cards ---------- */
+(function () {
+  var grid = document.getElementById("learnGrid");
+  SHAPES.forEach(function (s) {
+    var d = document.createElement("div");
+    d.className = "shapecard";
+    d.innerHTML = shapeSVG(s.key, s.color) + "<b>" + s.name + "</b><span>" + s.example + "</span>";
+    d.addEventListener("click", function () {
+      d.classList.remove("bounce"); void d.offsetWidth; d.classList.add("bounce");
+      say(s.name + ". " + s.spoken);
+    });
+    grid.appendChild(d);
+  });
+})();
+
+/* ---------- Part 3: tap-the-shape game ---------- */
+(function () {
+  var prompt = document.getElementById("prompt1");
+  var grid = document.getElementById("grid1");
+  var sayEl = document.getElementById("say1");
+  var starsEl = document.getElementById("stars1");
+  var startBtn = document.getElementById("startBtn1");
+  var target = null, playing = false, round = 0;
+  var ROUNDS = 6;
+  var CHEERS = ["Yes! \u2B50", "You got it! \uD83C\uDF89", "Amazing! \u2B50", "Superstar! \uD83C\uDF89"];
+
+  function newRound() {
+    round++;
+    if (round > ROUNDS) {
+      playing = false;
+      prompt.innerHTML = "All done! \uD83C\uDF89";
+      sayEl.textContent = "You found all 6 shapes!";
+      sayEl.className = "say good";
+      say("Wow! You found all the shapes!");
+      chime();
+      updateFinale();
+      startBtn.textContent = "Play again";
+      return;
+    }
+    target = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    var others = SHAPES.filter(function (s) { return s.key !== target.key; });
+    others.sort(function () { return Math.random() - 0.5; });
+    var opts = [target].concat(others.slice(0, 3));
+    opts.sort(function () { return Math.random() - 0.5; });
+    grid.innerHTML = "";
+    opts.forEach(function (s) {
+      var b = document.createElement("div");
+      b.className = "gopt";
+      b.dataset.key = s.key;
+      b.innerHTML = shapeSVG(s.key, s.color);
+      b.addEventListener("click", function () { pick(b, s); });
+      grid.appendChild(b);
+    });
+    prompt.innerHTML = "Tap the <b>" + target.name.toUpperCase() + "</b>!";
+    say("Tap the " + target.name + "!");
+    sayEl.textContent = "";
+    sayEl.className = "say";
+  }
+  function pick(btn, s) {
+    if (!playing) return;
+    if (s.key === target.key) {
+      btn.classList.remove("burst"); void btn.offsetWidth; btn.classList.add("burst");
+      addStar(starsEl);
+      sayEl.textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)] + " That's the " + s.name + "!";
+      sayEl.className = "say good";
+      say("Yes! That's the " + s.name + "!");
+      chime();
+      updateFinale();
+      setTimeout(newRound, 1500);
+    } else {
+      btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake");
+      sayEl.textContent = "Oops, try again! \uD83D\uDC40";
+      sayEl.className = "say try";
+    }
+  }
+  startBtn.addEventListener("click", function () {
+    starsEl.textContent = "";
+    round = 0; playing = true;
+    startBtn.textContent = "New round";
+    updateFinale();
+    newRound();
+  });
+})();
+
+/* ---------- Part 4: garden hunt ---------- */
+(function () {
+  var prompt = document.getElementById("prompt2");
+  var scene = document.getElementById("scene");
+  var sayEl = document.getElementById("say2");
+  var starsEl = document.getElementById("stars2");
+  var startBtn = document.getElementById("startBtn2");
+  var playing = false;
+  /* hidden shapes: garden object -> shape */
+  var ITEMS = [
+    { shape: "circle",   emoji: "\u2600\uFE0F", label: "sun",         spoken: "The sun is a circle!",       left: "6%",  top: "4%"  },
+    { shape: "diamond",  emoji: "\u{1FA81}",   label: "kite",        spoken: "The kite is a diamond!",     left: "72%", top: "6%"  },
+    { shape: "star",     emoji: "\u2B50",      label: "star flower", spoken: "The star flower is a star!", left: "40%", top: "62%" },
+    { shape: "square",   emoji: "\u{1FAA7}",   label: "garden sign", spoken: "The garden sign is a square!", left: "62%", top: "58%" },
+    { shape: "triangle", emoji: "\u{1F6A9}",   label: "flag",        spoken: "The flag is a triangle!",    left: "20%", top: "52%" },
+    { shape: "oval",     emoji: null,          label: "pond",        spoken: "The pond is an oval!",       left: "30%", top: "66%", pond: true }
+  ];
+  var order = [], found = 0;
+
+  function shapeName(k) { return k.charAt(0).toUpperCase() + k.slice(1); }
+
+  function buildScene() {
+    scene.innerHTML = "";
+    ITEMS.forEach(function (it) {
+      var b;
+      if (it.pond) {
+        b = document.createElement("button");
+        b.className = "pondsvg";
+        b.style.left = it.left; b.style.top = it.top;
+        b.setAttribute("aria-label", it.label);
+        b.innerHTML = '<svg viewBox="0 0 200 90" width="150" height="68"><ellipse cx="100" cy="45" rx="95" ry="40" fill="#4fc3f7" stroke="#2b9fd8" stroke-width="4"/><text x="100" y="62" font-size="40" text-anchor="middle">\u{1F986}</text></svg>';
+      } else {
+        b = document.createElement("button");
+        b.className = "hunt";
+        b.style.left = it.left; b.style.top = it.top;
+        b.textContent = it.emoji;
+        b.setAttribute("aria-label", it.label);
+      }
+      b.dataset.shape = it.shape;
+      b.dataset.label = it.label;
+      b.dataset.spoken = it.spoken;
+      b.addEventListener("click", function () { tap(b); });
+      scene.appendChild(b);
+    });
+  }
+
+  function newTarget() {
+    if (found >= order.length) {
+      playing = false;
+      prompt.innerHTML = "You found them all! \uD83C\uDF89";
+      sayEl.textContent = "Amazing garden explorer!";
+      sayEl.className = "say good";
+      say("Wow! You found every hidden shape!");
+      chime();
+      updateFinale();
+      startBtn.textContent = "Hunt again";
+      return;
+    }
+    var t = order[found];
+    prompt.innerHTML = "Find the hidden <b>" + shapeName(t).toUpperCase() + "</b>!";
+    say("Find the hidden " + shapeName(t) + "!");
+  }
+  function tap(btn) {
+    if (!playing) return;
+    if (btn.dataset.shape === order[found]) {
+      btn.classList.add("found");
+      addStar(starsEl);
+      sayEl.textContent = "\u2B50 " + btn.dataset.spoken;
+      sayEl.className = "say good";
+      say("Yes! " + btn.dataset.spoken);
+      chime();
+      found++;
+      updateFinale();
+      setTimeout(newTarget, 1400);
+    } else {
+      btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake");
+      sayEl.textContent = "Not that one \u2014 keep looking! \uD83D\uDC40";
+      sayEl.className = "say try";
+    }
+  }
+  startBtn.addEventListener("click", function () {
+    buildScene();
+    order = ITEMS.map(function (i) { return i.shape; });
+    order.sort(function () { return Math.random() - 0.5; });
+    found = 0; playing = true;
+    starsEl.textContent = "";
+    sayEl.textContent = ""; sayEl.className = "say";
+    startBtn.textContent = "New hunt";
+    updateFinale();
+    newTarget();
+  });
+})();
+
+/* ---------- finale: replay ---------- */
+document.getElementById("replayBtn").addEventListener("click", function () {
+  document.getElementById("startBtn1").click();
+  document.getElementById("startBtn2").click();
+  document.getElementById("gamepart").scrollIntoView({ behavior: "smooth" });
+  say("Let's play again!");
+});
+updateFinale();
+</script>
+<!-- background music: lofi deep house mix (SoundCloud) -->
+<style>
+  #bgm-btn { position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: 56px; height: 56px; border-radius: 999px; border: 0; cursor: pointer;
+    background: #2b6bff; color: #fff; font-size: 24px; line-height: 1; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(43,107,255,.35);
+    transition: transform .15s, background .15s; font-family: inherit; }
+  #bgm-btn:hover { background: #1f58e0; transform: scale(1.06); }
+  #bgm-btn.playing { animation: bgm-pulse 1.6s ease-in-out infinite; }
+  @keyframes bgm-pulse {
+    0%,100% { box-shadow: 0 8px 24px rgba(43,107,255,.35); }
+    50%     { box-shadow: 0 8px 34px rgba(43,107,255,.70); } }
+  #bgm-frame { position: absolute; width: 1px; height: 1px;
+    left: -9999px; top: -9999px; border: 0; visibility: hidden; }
+</style>
+<iframe id="bgm-frame" title="Background music" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrisandgreta%2Flofi-deep-house-music-mix-cozy-work-study-session-greta&amp;color=%232b6bff&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;show_teaser=false&amp;visual=false"></iframe>
+<button id="bgm-btn" aria-label="Play background music" title="Lofi deep house mix">&#9834;</button>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+(function () {
+  var btn = document.getElementById("bgm-btn");
+  var frame = document.getElementById("bgm-frame");
+  var NOTE = "&#9834;", PAUSE = "&#10074;&#10074;";
+  var widget = null, ready = false;
+  function setIcon(playing) {
+    btn.innerHTML = playing ? PAUSE : NOTE;
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-label", playing ? "Pause background music" : "Play background music");
+  }
+  function init() {
+    if (typeof SC === "undefined" || !SC.Widget) return;
+    try { widget = SC.Widget(frame); } catch (e) { return; }
+    widget.bind(SC.Widget.Events.READY, function () {
+      ready = true;
+      widget.bind(SC.Widget.Events.PLAY, function () { setIcon(true); });
+      widget.bind(SC.Widget.Events.PAUSE, function () { setIcon(false); });
+    });
+  }
+  btn.addEventListener("click", function () {
+    if (!ready || !widget) return;
+    try { widget.toggle(); } catch (e) {}
+  });
+  if (document.readyState === "complete") init();
+  else window.addEventListener("load", init);
+})();
+</script>
+</body>
+</html>
