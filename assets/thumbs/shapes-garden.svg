@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#aee3ff"/>
+      <stop offset="0.6" stop-color="#d8f3ff"/>
+      <stop offset="0.6" stop-color="#7dd956"/>
+      <stop offset="1" stop-color="#4da52e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- sun = circle -->
+  <circle cx="660" cy="90" r="62" fill="#ffd93d" stroke="#f5a524" stroke-width="8"/>
+  <!-- square garden sign -->
+  <rect x="90" y="250" width="120" height="120" rx="10" fill="#8d5a2b"/>
+  <rect x="110" y="225" width="80" height="80" rx="8" fill="#fff8e7" stroke="#8d5a2b" stroke-width="8"/>
+  <text x="150" y="278" font-size="44" text-anchor="middle">🌻</text>
+  <!-- triangle flower -->
+  <rect x="330" y="280" width="16" height="110" fill="#3e8e2f"/>
+  <polygon points="338,180 430,290 246,290" fill="#ff5a7a"/>
+  <circle cx="338" cy="250" r="26" fill="#ffd93d"/>
+  <!-- diamond kite -->
+  <polygon points="560,220 620,290 560,360 500,290" fill="#9b5bff"/>
+  <line x1="560" y1="360" x2="520" y2="430" stroke="#5c6675" stroke-width="5"/>
+  <!-- heart leaf -->
+  <path d="M250 90 C215 62 205 42 205 30 C205 16 216 8 228 8 C236 8 244 12 250 20 C256 12 264 8 272 8 C284 8 295 16 295 30 C295 42 285 62 250 90 Z" fill="#ff5a7a"/>
+  <text x="120" y="120" font-size="40">🌸</text>
+  <text x="450" y="120" font-size="40">🦋</text>
+</svg>
