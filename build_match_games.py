@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build the four matching-game pages for gilzone.github.io.
+"""Build the five matching-game pages for gilzone.github.io.
 
 One shared flip-card memory engine; each game plugs in its own lesson content:
   morse-match    letter  <->  Morse code pattern (tap a code to HEAR it)
   asl-match      sign photo  <->  English word
   chess-match    piece glyph  <->  piece name
   spanish-match  Spanish word  <->  English word (tap a card to hear it)
+  dear-primo-match  identical emoji picture  <->  identical emoji picture (pre-K: tap a card to hear the word)
 """
 import os
 
@@ -61,6 +62,7 @@ PAGE = """<!DOCTYPE html>
   .morse { font-size: 40px; font-weight: 800; color: #17202e; letter-spacing: 4px; line-height: 1; }
   .piece { font-size: 56px; line-height: 1; color: #17202e; }
   .emoji { font-size: 30px; }
+  .emoji.huge { font-size: 88px; line-height: 1.15; }
   .esword { font-size: 22px; font-weight: 800; color: #17202e; }
   .enword { font-size: 17px; font-weight: 600; color: #5c6675; }
   .signimg { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
@@ -185,8 +187,8 @@ function startTimer() {
 function build() {
   var deck = [];
   PAIRS.forEach(function (p, i) {
-    deck.push({ pair: i, html: p.a, fx: p.fx || null });
-    deck.push({ pair: i, html: p.b, fx: p.fx || null });
+    deck.push({ pair: i, html: p.a, fx: p.fx_a || p.fx || null });
+    deck.push({ pair: i, html: p.b, fx: p.fx_b || p.fx || null });
   });
   deck = shuffle(deck);
   board.innerHTML = "";
@@ -333,6 +335,24 @@ GAMES = {
         "fx": "say",
         "spanish": True,
     },
+    "dear-primo-match": {
+        "title": "Dear Primo Matching Game",
+        "emoji": "&#x2709;&#xFE0F;",
+        "back": "&#x2709;&#xFE0F;",
+        "hint": "Flip two cards and find the two that match! Tap an open card to hear its word. Based on 'Dear Primo: A Letter to My Cousin' by Duncan Tonatiuh.",
+        "pairs": [
+            ("subway", "&#x1F687;", "en-US"),
+            ("bicicleta", "&#x1F6B2;", "es-US"),
+            ("basketball", "&#x1F3C0;", "en-US"),
+            ("f\u00fatbol", "&#x26BD;", "es-US"),
+            ("pizza", "&#x1F355;", "en-US"),
+            ("quesadillas", "&#x1FAD3;", "es-US"),
+            ("Charlie", "&#x1F466;&#x1F3FB;", "en-US"),
+            ("Carlitos", "&#x1F466;&#x1F3FD;", "es-US"),
+        ],
+        "fx": "say",
+        "primo": True,
+    },
 }
 
 def build_pairs(slug, g):
@@ -355,6 +375,12 @@ def build_pairs(slug, g):
             b = '<div class="enword">%s</div>' % en
             fx = {"type": "say", "text": es, "lang": "es-US"}
             out.append({"a": a, "b": b, "fx": fx})
+    elif g.get("primo"):
+        # Pre-K: identical picture pairs, no text — tap to hear the word.
+        for word, emoji, lang in g["pairs"]:
+            a = '<div class="emoji huge">%s</div>' % emoji
+            fx = {"type": "say", "text": word, "lang": lang}
+            out.append({"a": a, "b": a, "fx": fx})
     else:  # morse
         for letter, a_html, b_html, pattern in g["pairs"]:
             a = a_html
