@@ -6,7 +6,7 @@ One shared flip-card memory engine; each game plugs in its own lesson content:
   asl-match      sign photo  <->  English word
   chess-match    piece glyph  <->  piece name
   spanish-match  Spanish word  <->  English word (tap a card to hear it)
-  dear-primo-match  identical emoji picture  <->  identical emoji picture (pre-K: tap a card to hear the word)
+  dear-primo-match  identical book-illustration picture  <->  identical book-illustration picture (pre-K: tap a card to hear the word)
 """
 import os
 
@@ -341,14 +341,14 @@ GAMES = {
         "back": "&#x2709;&#xFE0F;",
         "hint": "Flip two cards and find the two that match! Tap an open card to hear its word. Based on 'Dear Primo: A Letter to My Cousin' by Duncan Tonatiuh.",
         "pairs": [
-            ("subway", "&#x1F687;", "en-US"),
-            ("bicicleta", "&#x1F6B2;", "es-US"),
-            ("basketball", "&#x1F3C0;", "en-US"),
-            ("f\u00fatbol", "&#x26BD;", "es-US"),
-            ("pizza", "&#x1F355;", "en-US"),
-            ("quesadillas", "&#x1FAD3;", "es-US"),
-            ("Charlie", "&#x1F466;&#x1F3FB;", "en-US"),
-            ("Carlitos", "&#x1F466;&#x1F3FD;", "es-US"),
+            ("subway", "pair-subway.jpg", "en-US"),
+            ("bicicleta", "pair-bicicleta.jpg", "es-US"),
+            ("pizza", "pair-pizza.jpg", "en-US"),
+            ("quesadillas", "pair-quesadillas.jpg", "es-US"),
+            ("Charlie", "pair-charlie.jpg", "en-US"),
+            ("Carlitos", "pair-carlitos.jpg", "es-US"),
+            ("mariachis", "pair-mariachis.jpg", "es-US"),
+            ("mercado", "pair-mercado.jpg", "es-US"),
         ],
         "fx": "say",
         "primo": True,
@@ -376,9 +376,10 @@ def build_pairs(slug, g):
             fx = {"type": "say", "text": es, "lang": "es-US"}
             out.append({"a": a, "b": b, "fx": fx})
     elif g.get("primo"):
-        # Pre-K: identical picture pairs, no text — tap to hear the word.
-        for word, emoji, lang in g["pairs"]:
-            a = '<div class="emoji huge">%s</div>' % emoji
+        # Pre-K: identical picture pairs from the book's real illustrations,
+        # no text on cards — tap to hear the word.
+        for word, imgfile, lang in g["pairs"]:
+            a = '<img class="signimg" src="../dear-primo/img/%s" alt="%s" />' % (imgfile, word)
             fx = {"type": "say", "text": word, "lang": lang}
             out.append({"a": a, "b": a, "fx": fx})
     else:  # morse
