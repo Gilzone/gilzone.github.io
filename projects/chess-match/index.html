@@ -48,6 +48,7 @@
   .morse { font-size: 40px; font-weight: 800; color: #17202e; letter-spacing: 4px; line-height: 1; }
   .piece { font-size: 56px; line-height: 1; color: #17202e; }
   .emoji { font-size: 30px; }
+  .emoji.huge { font-size: 88px; line-height: 1.15; }
   .esword { font-size: 22px; font-weight: 800; color: #17202e; }
   .enword { font-size: 17px; font-weight: 600; color: #5c6675; }
   .signimg { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
@@ -172,8 +173,8 @@ function startTimer() {
 function build() {
   var deck = [];
   PAIRS.forEach(function (p, i) {
-    deck.push({ pair: i, html: p.a, fx: p.fx || null });
-    deck.push({ pair: i, html: p.b, fx: p.fx || null });
+    deck.push({ pair: i, html: p.a, fx: p.fx_a || p.fx || null });
+    deck.push({ pair: i, html: p.b, fx: p.fx_b || p.fx || null });
   });
   deck = shuffle(deck);
   board.innerHTML = "";
@@ -241,53 +242,6 @@ function win() {
 document.getElementById("restart").addEventListener("click", build);
 document.getElementById("again").addEventListener("click", build);
 build();
-</script>
-<!-- background music: lofi deep house mix (SoundCloud) -->
-<style>
-  #bgm-btn { position: fixed; right: 20px; bottom: 20px; z-index: 9999;
-    width: 56px; height: 56px; border-radius: 999px; border: 0; cursor: pointer;
-    background: #2b6bff; color: #fff; font-size: 24px; line-height: 1; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 8px 24px rgba(43,107,255,.35);
-    transition: transform .15s, background .15s; font-family: inherit; }
-  #bgm-btn:hover { background: #1f58e0; transform: scale(1.06); }
-  #bgm-btn.playing { animation: bgm-pulse 1.6s ease-in-out infinite; }
-  @keyframes bgm-pulse {
-    0%,100% { box-shadow: 0 8px 24px rgba(43,107,255,.35); }
-    50%     { box-shadow: 0 8px 34px rgba(43,107,255,.70); } }
-  #bgm-frame { position: absolute; width: 1px; height: 1px;
-    left: -9999px; top: -9999px; border: 0; visibility: hidden; }
-</style>
-<iframe id="bgm-frame" title="Background music" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrisandgreta%2Flofi-deep-house-music-mix-cozy-work-study-session-greta&amp;color=%232b6bff&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;show_teaser=false&amp;visual=false"></iframe>
-<button id="bgm-btn" aria-label="Play background music" title="Lofi deep house mix">&#9834;</button>
-<script src="https://w.soundcloud.com/player/api.js"></script>
-<script>
-(function () {
-  var btn = document.getElementById("bgm-btn");
-  var frame = document.getElementById("bgm-frame");
-  var NOTE = "&#9834;", PAUSE = "&#10074;&#10074;";
-  var widget = null, ready = false;
-  function setIcon(playing) {
-    btn.innerHTML = playing ? PAUSE : NOTE;
-    btn.classList.toggle("playing", playing);
-    btn.setAttribute("aria-label", playing ? "Pause background music" : "Play background music");
-  }
-  function init() {
-    if (typeof SC === "undefined" || !SC.Widget) return;
-    try { widget = SC.Widget(frame); } catch (e) { return; }
-    widget.bind(SC.Widget.Events.READY, function () {
-      ready = true;
-      widget.bind(SC.Widget.Events.PLAY, function () { setIcon(true); });
-      widget.bind(SC.Widget.Events.PAUSE, function () { setIcon(false); });
-    });
-  }
-  btn.addEventListener("click", function () {
-    if (!ready || !widget) return;
-    try { widget.toggle(); } catch (e) {}
-  });
-  if (document.readyState === "complete") init();
-  else window.addEventListener("load", init);
-})();
 </script>
 </body>
 </html>
