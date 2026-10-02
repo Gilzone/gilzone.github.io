@@ -31,6 +31,7 @@
   .cousin { background: #f6f8fc; border: 2px solid #e6e9f0; border-radius: 18px; padding: 22px 16px 18px; text-align: center; cursor: pointer; transition: transform .12s, border-color .12s; }
   .cousin:hover { border-color: #b73239; transform: translateY(-2px); }
   .cousin .face { font-size: 96px; line-height: 1.1; }
+  .cousin .face img { width: 100%; max-width: 220px; aspect-ratio: 1; object-fit: cover; border-radius: 14px; display: block; margin: 0 auto; }
   .cousin b { display: block; font-size: 22px; margin: 8px 0 6px; }
   .cousin span { color: #5c6675; font-size: 14.5px; line-height: 1.5; }
   .cousin.bounce .face { animation: pop .4s; }
@@ -42,7 +43,8 @@
   .speakbtn { background: #eef2ff; color: #2b6bff; border: 0; border-radius: 999px; padding: 12px 26px; font-size: 17px; font-weight: 700; cursor: pointer; min-height: 56px; }
   .speakbtn:hover { background: #dfe7ff; }
   .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 560px; margin: 0 auto; }
-  .qopt { background: #f6f8fc; border: 3px solid #e6e9f0; border-radius: 20px; min-height: 150px; min-width: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 76px; line-height: 1; padding: 12px; transition: transform .12s, border-color .12s; }
+  .qopt { background: #f6f8fc; border: 3px solid #e6e9f0; border-radius: 20px; min-height: 150px; min-width: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 76px; line-height: 1; padding: 12px; transition: transform .12s, border-color .12s; overflow: hidden; }
+  .qopt img { width: 100%; height: 170px; object-fit: cover; border-radius: 12px; display: block; pointer-events: none; }
   .qopt:hover { border-color: #b73239; }
   .qopt.burst { animation: burst .5s; border-color: #31a24c; }
   @keyframes burst { 0% { transform: scale(1); } 40% { transform: scale(1.3) rotate(6deg); } 100% { transform: scale(1); } }
@@ -225,10 +227,10 @@ function updateFinale() {
 
 /* ---------- Part 2: meet the cousins ---------- */
 var COUSINS = [
-  { face: "\u{1F466}\u{1F3FB}", name: "Charlie",
+  { photo: "../dear-primo/img/meet-charlie.jpg", name: "Charlie",
     text: "Charlie lives in America. He rides the subway to school. He loves pizza and basketball!",
     spoken: "Charlie lives in America. He rides the subway to school. He loves pizza and basketball!" },
-  { face: "\u{1F466}\u{1F3FD}", name: "Carlitos",
+  { photo: "../dear-primo/img/meet-carlitos.jpg", name: "Carlitos",
     text: "Carlitos lives in Mexico. He rides his bicicleta to school. He loves quesadillas and f\u00FAtbol!",
     spoken: "Carlitos lives in Mexico. He rides his bicicleta to school. He loves quesadillas and futbol!" }
 ];
@@ -237,7 +239,7 @@ var COUSINS = [
   COUSINS.forEach(function (c) {
     var d = document.createElement("div");
     d.className = "cousin";
-    d.innerHTML = '<div class="face">' + c.face + "</div><b>" + c.name + "</b><span>" + c.text + "</span>";
+    d.innerHTML = '<div class="face"><img src="' + c.photo + '" alt="' + c.name + '"></div><b>' + c.name + "</b><span>" + c.text + "</span>";
     d.addEventListener("click", function () {
       d.classList.remove("bounce"); void d.offsetWidth; d.classList.add("bounce");
       sayEn(c.spoken);
@@ -247,49 +249,50 @@ var COUSINS = [
 })();
 
 /* ---------- Part 3: story questions (picture quiz) ---------- */
+var IMG = "../dear-primo/img/";
 var QUESTIONS = [
   { q: "How does Charlie get to school?",
-    teacher: "Teacher: subway · bicycle · bus",
+    teacher: "Teacher: subway · bicicleta · charro on a horse",
     yes: "Yes! Charlie rides the subway!",
     choices: [
-      { e: "\u{1F687}", t: "subway", ok: true },
-      { e: "\u{1F6B2}", t: "bicycle", ok: false },
-      { e: "\u{1F68C}", t: "bus", ok: false } ] },
+      { img: IMG + "pair-subway.jpg", t: "subway", ok: true },
+      { img: IMG + "pair-bicicleta.jpg", t: "bicicleta", ok: false },
+      { img: IMG + "quiz-charro.jpg", t: "charro on a horse", ok: false } ] },
   { q: "How does Carlitos get to school?",
-    teacher: "Teacher: bicicleta · subway · walking",
+    teacher: "Teacher: bicicleta · subway · mercado",
     yes: "Yes! Carlitos rides his bicicleta!",
     choices: [
-      { e: "\u{1F6B2}", t: "bicicleta", ok: true },
-      { e: "\u{1F687}", t: "subway", ok: false },
-      { e: "\u{1F6B6}", t: "walking", ok: false } ] },
+      { img: IMG + "pair-bicicleta.jpg", t: "bicicleta", ok: true },
+      { img: IMG + "pair-subway.jpg", t: "subway", ok: false },
+      { img: IMG + "pair-mercado.jpg", t: "mercado", ok: false } ] },
   { q: "What does Charlie love to eat?",
-    teacher: "Teacher: pizza · quesadillas · tacos",
+    teacher: "Teacher: pizza · quesadillas · mariachis",
     yes: "Yes! Charlie loves pizza!",
     choices: [
-      { e: "\u{1F355}", t: "pizza", ok: true },
-      { e: "\u{1FAD3}", t: "quesadillas", ok: false },
-      { e: "\u{1F32E}", t: "tacos", ok: false } ] },
+      { img: IMG + "pair-pizza.jpg", t: "pizza", ok: true },
+      { img: IMG + "pair-quesadillas.jpg", t: "quesadillas", ok: false },
+      { img: IMG + "pair-mariachis.jpg", t: "mariachis", ok: false } ] },
   { q: "What does Carlitos love to eat?",
-    teacher: "Teacher: quesadillas · pizza · hamburger",
+    teacher: "Teacher: quesadillas · pizza · mercado",
     yes: "Yes! Carlitos loves quesadillas!",
     choices: [
-      { e: "\u{1FAD3}", t: "quesadillas", ok: true },
-      { e: "\u{1F355}", t: "pizza", ok: false },
-      { e: "\u{1F354}", t: "hamburger", ok: false } ] },
-  { q: "What cools Charlie off in the summer?",
-    teacher: "Teacher: water from the fire hydrant · ice cubes · the hot sun",
-    yes: "Yes! Water from the fire hydrant!",
+      { img: IMG + "pair-quesadillas.jpg", t: "quesadillas", ok: true },
+      { img: IMG + "pair-pizza.jpg", t: "pizza", ok: false },
+      { img: IMG + "pair-mercado.jpg", t: "mercado", ok: false } ] },
+  { q: "Who plays music at the fiestas?",
+    teacher: "Teacher: mariachis · Charlie · bicicleta",
+    yes: "Yes! The mariachis play and play!",
     choices: [
-      { e: "\u{1F4A6}", t: "water from the fire hydrant", ok: true },
-      { e: "\u{1F9CA}", t: "ice cubes", ok: false },
-      { e: "\u2600\uFE0F", t: "the hot sun", ok: false } ] },
+      { img: IMG + "pair-mariachis.jpg", t: "mariachis", ok: true },
+      { img: IMG + "pair-charlie.jpg", t: "Charlie", ok: false },
+      { img: IMG + "pair-bicicleta.jpg", t: "bicicleta", ok: false } ] },
   { q: "What is a mercado?",
-    teacher: "Teacher: an open-air market · a school · a soccer game",
+    teacher: "Teacher: open-air market · supermarket · pizza",
     yes: "Yes! A mercado is an open-air market!",
     choices: [
-      { e: "\u{1F3EA}", t: "an open-air market", ok: true },
-      { e: "\u{1F3EB}", t: "a school", ok: false },
-      { e: "\u26BD", t: "a soccer game", ok: false } ] }
+      { img: IMG + "pair-mercado.jpg", t: "an open-air market", ok: true },
+      { img: IMG + "quiz-supermarket.jpg", t: "supermarket", ok: false },
+      { img: IMG + "pair-pizza.jpg", t: "pizza", ok: false } ] }
 ];
 (function () {
   var prompt = document.getElementById("qprompt");
@@ -318,7 +321,7 @@ var QUESTIONS = [
       var b = document.createElement("button");
       b.className = "qopt";
       b.type = "button";
-      b.textContent = c.e;
+      b.innerHTML = '<img src="' + c.img + '" alt="' + c.t.replace(/"/g, "&quot;") + '">';
       b.setAttribute("aria-label", c.t);
       b.addEventListener("click", function () { pick(b, c); });
       grid.appendChild(b);
