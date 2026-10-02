@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dear Primo: Whose Is It? — Pre-K Sorting Game</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #fff8f2; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 16px; }
+  .topnav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 32px; }
+  header.hero p { margin: 4px 0; color: #5c6675; font-size: 16px; }
+  .hud { display: flex; gap: 10px; justify-content: center; margin: 18px 0 4px; flex-wrap: wrap; }
+  .pill { background: #fff; border: 1px solid #e6e9f0; border-radius: 999px; padding: 10px 20px; font-size: 16px; font-weight: 600; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
+  .card { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 26px 22px; margin: 14px 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
+  .prompt { text-align: center; font-size: 24px; font-weight: 800; margin: 6px 0 6px; min-height: 36px; }
+  .prompt .rnum { display: block; font-size: 14px; font-weight: 700; color: #8a93a5; margin-bottom: 4px; }
+  .itemwrap { text-align: center; margin: 12px 0 4px; }
+  .itemimg { width: 100%; max-width: 340px; height: 240px; object-fit: cover; border-radius: 18px; border: 4px solid #e6e9f0; display: inline-block; background: #f6f8fc; }
+  .speakrow { text-align: center; margin: 10px 0 16px; }
+  .speakbtn { background: #eef2ff; color: #2b6bff; border: 0; border-radius: 999px; padding: 12px 26px; font-size: 17px; font-weight: 700; cursor: pointer; min-height: 56px; font-family: inherit; }
+  .speakbtn:hover { background: #dfe7ff; }
+  .bins { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 560px; margin: 0 auto; }
+  .bin { background: #f6f8fc; border: 4px solid #e6e9f0; border-radius: 22px; padding: 16px 12px 14px; text-align: center; cursor: pointer; transition: transform .12s, border-color .12s; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .bin:hover { transform: translateY(-3px); }
+  .bin.charlie:hover { border-color: #2b6bff; }
+  .bin.carlitos:hover { border-color: #e8912d; }
+  .bin img { width: 100%; max-width: 170px; aspect-ratio: 1; object-fit: cover; border-radius: 14px; display: block; pointer-events: none; }
+  .bin b { font-size: 24px; }
+  .bin.burst { animation: burst .5s; border-color: #31a24c; }
+  @keyframes burst { 0% { transform: scale(1); } 40% { transform: scale(1.12) rotate(2deg); } 100% { transform: scale(1); } }
+  .bin.shake { animation: shake .4s; border-color: #e5484d; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+  .teacherline { text-align: center; color: #a0a8b8; font-size: 12.5px; margin-top: 12px; }
+  .say { text-align: center; font-size: 20px; font-weight: 700; min-height: 30px; margin: 14px 0 4px; }
+  .say.good { color: #1f8f57; }
+  .say.try { color: #9a6b12; }
+  .stars { text-align: center; font-size: 30px; min-height: 44px; margin-top: 10px; letter-spacing: 4px; overflow-wrap: anywhere; line-height: 1.5; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button.big { font-family: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 16px 34px; font-size: 18px; font-weight: 700; background: #b73239; color: #fff; min-height: 64px; }
+  button.big:hover { background: #96282e; }
+  footer { margin-top: 40px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
+  [hidden] { display: none !important; }
+  /* WIN OVERLAY (same as the matching game) */
+  .win { position: fixed; inset: 0; background: rgba(23,32,46,.55); display: flex;
+         align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+  .win[hidden] { display: none; }
+  .win .box { background: #fff; border-radius: 24px; padding: 36px 32px; text-align: center;
+              max-width: 380px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,.25); }
+  .win .trophy { font-size: 64px; }
+  .win h2 { margin: 8px 0 4px; font-size: 26px; }
+  .win .stars { font-size: 36px; margin: 6px 0; letter-spacing: 4px; }
+  .win p { color: #5c6675; margin: 0 0 20px; }
+  .rowbtns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .rowbtns button, .rowbtns a { border: 0; border-radius: 12px; padding: 14px 22px;
+      font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; font-family: inherit; }
+  #again { background: #2b6bff; color: #fff; }
+  #again:hover { background: #1f58e0; }
+  .rowbtns a { background: #eef1f6; color: #17202e; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a class="back" href="../../">&larr; All lessons</a>
+    <a class="back" href="../dear-primo-lesson/">&larr; Dear Primo story lesson</a>
+  </div>
+
+  <header class="hero">
+    <h1>&#x1F4E5; Dear Primo: Whose Is It?</h1>
+    <p>Does it belong to Charlie&rsquo;s world or Carlitos&rsquo;s world? From <i>Dear Primo: A Letter to My Cousin</i> by Duncan Tonatiuh.</p>
+  </header>
+
+  <div class="hud">
+    <div class="pill" id="hudItem">Item 0 of 8</div>
+    <div class="pill">&#x2B50; <b id="hudStars">0</b></div>
+  </div>
+
+  <div class="card">
+    <div class="prompt" id="prompt"><span class="rnum">Ready?</span>Press Start! &#x1F3B2;</div>
+    <div class="itemwrap"><img class="itemimg" id="itemimg" src="../dear-primo/img/pair-subway.jpg" alt="" hidden></div>
+    <div class="speakrow"><button class="speakbtn" id="speak" hidden>&#x1F50A; Hear it again</button></div>
+    <div class="bins" id="bins" hidden>
+      <div class="bin charlie" id="bin-charlie">
+        <img src="../dear-primo/img/pair-charlie.jpg" alt="">
+        <b>Charlie</b>
+      </div>
+      <div class="bin carlitos" id="bin-carlitos">
+        <img src="../dear-primo/img/pair-carlitos.jpg" alt="">
+        <b>Carlitos</b>
+      </div>
+    </div>
+    <div class="teacherline" id="teacher"></div>
+    <div class="say" id="say"></div>
+    <div class="stars" id="stars"></div>
+    <div class="btnrow"><button class="big" id="start">Start</button></div>
+  </div>
+
+  <footer>Dear Primo: Whose Is It? &mdash; made for Edwin&rsquo;s class.<br/>Pictures from &ldquo;Dear Primo: A Letter to My Cousin&rdquo; by Duncan Tonatiuh.</footer>
+</div>
+
+<div class="win" id="win" hidden>
+  <div class="box">
+    <div class="trophy">&#x1F3C6;</div>
+    <h2>Super sorter!</h2>
+    <div class="stars" id="winStars"></div>
+    <p id="winStats">You sorted all 8 pictures! &#x1F389;</p>
+    <div class="rowbtns">
+      <button id="again">PLAY AGAIN</button>
+      <a href="../dear-primo-lesson/">MORE DEAR PRIMO</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- shared helpers: voices, speech, chime ---------- */
+var enVoice = null, esVoice = null;
+function pickVoices() {
+  try {
+    var vs = window.speechSynthesis.getVoices() || [];
+    enVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en-us") === 0; })
+           || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en") === 0; })
+           || null;
+    esVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("es-us") === 0; })
+           || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("es") === 0; })
+           || null;
+  } catch (e) { enVoice = null; esVoice = null; }
+}
+function say(text, lang) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if (lang === "es-US" && esVoice) u.voice = esVoice;
+    else if (enVoice) u.voice = enVoice;
+    u.lang = lang; u.rate = 0.9; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if ("speechSynthesis" in window) {
+  pickVoices();
+  window.speechSynthesis.onvoiceschanged = pickVoices;
+}
+/* happy chime via WebAudio */
+var AC = null;
+function chime() {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    var t = AC.currentTime;
+    [523.25, 659.25, 783.99].forEach(function (f, i) {
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + i * 0.12);
+      g.gain.exponentialRampToValueAtTime(0.35, t + i * 0.12 + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.12 + 0.35);
+      o.connect(g); g.connect(AC.destination);
+      o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
+    });
+  } catch (e) {}
+}
+
+/* ---------- game data ---------- */
+var IMG = "../dear-primo/img/";
+var ITEMS = [
+  { w: "subway",      img: IMG + "pair-subway.jpg",      owner: "charlie",  ask: "Who rides the subway to school? Tap Charlie or Carlitos!" },
+  { w: "pizza",       img: IMG + "pair-pizza.jpg",       owner: "charlie",  ask: "Who loves to eat pizza? Tap Charlie or Carlitos!" },
+  { w: "supermarket", img: IMG + "quiz-supermarket.jpg", owner: "charlie",  ask: "Where does Charlie shop for food? Tap Charlie or Carlitos!" },
+  { w: "bicicleta",   img: IMG + "pair-bicicleta.jpg",   owner: "carlitos", ask: "Who rides his bicicleta to school? Tap Charlie or Carlitos!" },
+  { w: "quesadillas", img: IMG + "pair-quesadillas.jpg", owner: "carlitos", ask: "Who loves to eat quesadillas? Tap Charlie or Carlitos!" },
+  { w: "mariachis",   img: IMG + "pair-mariachis.jpg",   owner: "carlitos", ask: "Who hears the mariachis at the fiestas? Tap Charlie or Carlitos!" },
+  { w: "mercado",     img: IMG + "pair-mercado.jpg",     owner: "carlitos", ask: "Where does Carlitos shop for food? Tap Charlie or Carlitos!" },
+  { w: "charro",      img: IMG + "quiz-charro.jpg",      owner: "carlitos", ask: "Who watches the charros in Mexico? Tap Charlie or Carlitos!" }
+];
+var N = ITEMS.length;
+
+/* ---------- state ---------- */
+var order = [], idx = 0, stars = 0, locked = false, cur = null;
+var promptEl = document.getElementById("prompt"),
+    itemimg = document.getElementById("itemimg"),
+    binsEl = document.getElementById("bins"),
+    teacherEl = document.getElementById("teacher"),
+    sayEl = document.getElementById("say"),
+    starsEl = document.getElementById("stars"),
+    speakBtn = document.getElementById("speak"),
+    startBtn = document.getElementById("start"),
+    hudItem = document.getElementById("hudItem"),
+    hudStars = document.getElementById("hudStars"),
+    winEl = document.getElementById("win"),
+    binCharlie = document.getElementById("bin-charlie"),
+    binCarlitos = document.getElementById("bin-carlitos");
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function updateHUD() {
+  hudItem.textContent = "Item " + Math.min(idx + 1, N) + " of " + N;
+  hudStars.textContent = stars;
+}
+function setSay(msg, cls) {
+  sayEl.textContent = msg;
+  sayEl.className = "say" + (cls ? " " + cls : "");
+}
+function speakAsk() { if (cur) say(cur.ask, "en-US"); }
+
+function newItem() {
+  locked = false;
+  cur = ITEMS[order[idx]];
+  updateHUD();
+  promptEl.innerHTML = '<span class="rnum">Item ' + (idx + 1) + " of " + N + "</span>&#x1F914; Whose is it?";
+  itemimg.src = cur.img;
+  itemimg.hidden = false;
+  binsEl.hidden = false;
+  teacherEl.textContent = "Teacher: " + cur.w + " → " + (cur.owner === "charlie" ? "Charlie" : "Carlitos");
+  setSay("", "");
+  setTimeout(speakAsk, 350);
+}
+function pick(binEl, who) {
+  if (locked) return;
+  if (who === cur.owner) {
+    locked = true;
+    binEl.classList.add("burst");
+    chime();
+    stars++;
+    starsEl.textContent += "⭐";
+    var name = who === "charlie" ? "Charlie" : "Carlitos";
+    setSay("¡Correcto! 🎉 It belongs to " + name + "!", "good");
+    say("Yes! It belongs to " + name + "!", "en-US");
+    idx++;
+    setTimeout(function () {
+      binEl.classList.remove("burst");
+      if (idx >= N) win();
+      else newItem();
+    }, 1200);
+  } else {
+    binEl.classList.remove("shake"); void binEl.offsetWidth; binEl.classList.add("shake");
+    setSay("Oops, try again! 👀", "try");
+    setTimeout(speakAsk, 500);
+  }
+}
+function win() {
+  document.getElementById("winStars").textContent = "⭐".repeat(stars);
+  document.getElementById("winStats").textContent = "You sorted all " + N + " pictures! 🎉";
+  setTimeout(function () { winEl.hidden = false; }, 500);
+}
+function startGame() {
+  order = shuffle(ITEMS.map(function (_, i) { return i; }));
+  idx = 0; stars = 0;
+  starsEl.textContent = "";
+  winEl.hidden = true;
+  startBtn.hidden = true;
+  speakBtn.hidden = false;
+  newItem();
+}
+startBtn.addEventListener("click", startGame);
+speakBtn.addEventListener("click", speakAsk);
+binCharlie.addEventListener("click", function () { pick(binCharlie, "charlie"); });
+binCarlitos.addEventListener("click", function () { pick(binCarlitos, "carlitos"); });
+document.getElementById("again").addEventListener("click", startGame);
+</script>
+</body>
+</html>
