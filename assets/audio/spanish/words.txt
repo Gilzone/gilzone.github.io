@@ -1,0 +1,30 @@
+hola|hola
+adios|adiós
+buenos-dias|buenos días
+buenas-noches|buenas noches
+gracias|gracias
+por-favor|por favor
+si|sí
+no|no
+rojo|rojo
+azul|azul
+verde|verde
+amarillo|amarillo
+rosado|rosado
+negro|negro
+perro|perro
+gato|gato
+pajaro|pájaro
+pez|pez
+caballo|caballo
+mariposa|mariposa
+el-perro-rojo|el perro rojo
+la-gata-azul|la gata azul
+el-pajaro-amarillo|el pájaro amarillo
+el-pez-verde|el pez verde
+el-caballo-negro|el caballo negro
+la-mariposa-rosada|la mariposa rosada
+cheer-correcto|¡Correcto!
+cheer-muy-bien|¡Muy bien!
+cheer-excelente|¡Excelente!
+cheer-bravo|¡Bravo!
