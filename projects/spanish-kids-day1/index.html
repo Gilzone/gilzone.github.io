@@ -198,6 +198,41 @@ if ("speechSynthesis" in window) {
   window.speechSynthesis.onvoiceschanged = pickVoice;
 }
 
+/* ---- MP3 AUDIO: pre-recorded Spanish (fixes broken device TTS), speechSynthesis fallback ---- */
+var AUDIO_BASE = "../../assets/audio/spanish/";
+var audioCache = {};
+function playMp3(slug, cb) {
+  var settled = false;
+  function done(ok) { if (!settled) { settled = true; if (cb) cb(ok); } }
+  try {
+    var a = audioCache[slug];
+    if (!a) { a = new Audio(AUDIO_BASE + slug + ".mp3"); audioCache[slug] = a; }
+    try { a.pause(); } catch (e) {}
+    a.currentTime = 0;
+    a.onended = function () { done(true); };
+    a.onerror = function () { done(false); };
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () { done(false); });
+    setTimeout(function () { done(true); }, 6000);
+  } catch (e) { done(false); }
+}
+var MP3MAP = { "hola": "hola", "adi\u00F3s": "adios", "buenos d\u00EDas": "buenos-dias",
+  "buenas noches": "buenas-noches", "gracias": "gracias", "por favor": "por-favor",
+  "s\u00ED": "si", "no": "no" };
+var CHEERMP3 = { "\u00A1Correcto!": "cheer-correcto", "\u00A1Muy bien!": "cheer-muy-bien",
+  "\u00A1Excelente!": "cheer-excelente", "\u00A1Bravo!": "cheer-bravo" };
+var _ttsSay = say;
+say = function (text) {
+  var slug = MP3MAP[text];
+  if (slug) playMp3(slug, function (ok) { if (!ok) _ttsSay(text); });
+  else _ttsSay(text);
+};
+function sayCheerD1(text) {
+  var slug = CHEERMP3[text];
+  if (slug) playMp3(slug, function (ok) { if (!ok) _ttsSay(text); });
+  else _ttsSay(text);
+}
+
 /* ================= HELPERS ================= */
 function $(id) { return document.getElementById(id); }
 function shuffle(a) {
@@ -359,8 +394,10 @@ function grade(ok, word) {
   var fb = $("feedback");
   $("checkbar").hidden = true;
   if (ok) {
+    var cheerText = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    sayCheerD1(cheerText);
     fb.className = "show good";
-    $("fbTitle").textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    $("fbTitle").textContent = cheerText;
     $("fbText").textContent = word.es + " = " + word.en + " " + word.emoji;
   } else {
     mistakes++;
@@ -445,9 +482,11 @@ $("tolessons").addEventListener("click", function () { window.location.href = ".
     btn.setAttribute("aria-label", playing ? "Pause background music" : "Play background music");
   }
   function init() {
-    if (typeof SC === "undefined" || !SC.Widget) return;
-    try { widget = SC.Widget(frame); } catch (e) { return; }
+    if (typeof SC === "undefined" || !SC.Widget) { btn.style.display = "none"; return; }
+    try { widget = SC.Widget(frame); } catch (e) { btn.style.display = "none"; return; }
+    var timer = setTimeout(function () { if (!ready) btn.style.display = "none"; }, 8000);
     widget.bind(SC.Widget.Events.READY, function () {
+      clearTimeout(timer);
       ready = true;
       widget.bind(SC.Widget.Events.PLAY, function () { setIcon(true); });
       widget.bind(SC.Widget.Events.PAUSE, function () { setIcon(false); });
