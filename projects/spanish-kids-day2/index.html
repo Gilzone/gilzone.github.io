@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Español — Día 2: Colores y animales</title>
+<style>
+  :root { color-scheme: light; --green:#58cc02; --green-d:#58a700; --red:#ff4b4b; --ink:#3c3c3c; --mut:#777; --line:#e5e5e5; --card:#f7f7f7; --blue:#1cb0f6; --blue-d:#0b6d99; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; background: #fff; color: var(--ink); min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 20px 60px; }
+  a.back { color: var(--blue); text-decoration: none; font-weight: 700; font-size: 14px; }
+  header.hero { text-align: center; margin: 16px 0 6px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
+  header.hero p { margin: 0; color: var(--mut); font-size: 15px; }
+  .teacher { background: #ddf4ff; border: 2px dashed var(--blue); border-radius: 14px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: var(--blue-d); }
+  h2.part { margin: 30px 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: var(--mut); font-size: 14.5px; }
+
+  /* ---- word cards (learn screen) ---- */
+  .wgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .wcard { background: var(--card); border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 16px; padding: 16px 8px; text-align: center; cursor: pointer; transition: transform .1s; }
+  .wcard:active { transform: scale(.96); }
+  .wcard .e { font-size: 52px; line-height: 1.15; }
+  .wcard .sw { width: 52px; height: 52px; border-radius: 999px; margin: 0 auto; border: 3px solid rgba(0,0,0,.12); }
+  .wcard b { display: block; margin-top: 6px; font-size: 17px; color: var(--blue); }
+
+  .bigbtn { display: block; width: 100%; max-width: 340px; margin: 26px auto 0; padding: 15px; font-size: 17px; font-weight: 800; letter-spacing: 1px; color: #fff; background: var(--green); border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d); cursor: pointer; font-family: inherit; }
+  .bigbtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+
+  /* ---- quiz chrome ---- */
+  #topbar { display: flex; align-items: center; gap: 14px; padding: 6px 0 16px; }
+  #quit { border: 0; background: none; font-size: 22px; color: #afafaf; cursor: pointer; padding: 4px 8px; font-family: inherit; }
+  #pbar { flex: 1; height: 14px; background: #e5e5e5; border-radius: 999px; overflow: hidden; }
+  #pfill { height: 100%; width: 0%; background: var(--green); border-radius: 999px; transition: width .4s; }
+  #hearts { font-weight: 800; color: var(--red); font-size: 17px; white-space: nowrap; }
+  #prompt { font-size: 24px; font-weight: 800; margin: 8px 0 4px; }
+  #sub { color: var(--mut); font-size: 15px; margin: 0 0 18px; }
+  #speakbtn { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 10px 18px; font-size: 16px; font-weight: 800; color: var(--blue); background: #ddf4ff; border: 2px solid #bfe6fb; border-bottom-width: 4px; border-radius: 12px; cursor: pointer; font-family: inherit; }
+  #speakbtn:active { transform: translateY(2px); }
+
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 110px; }
+  .opt { background: #fff; border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; font-family: inherit; transition: transform .08s; }
+  .opt:active { transform: scale(.97); }
+  .opt .e { font-size: 46px; line-height: 1.15; }
+  .opt .sw { width: 46px; height: 46px; border-radius: 999px; margin: 0 auto; border: 3px solid rgba(0,0,0,.12); }
+  .opt b { display: block; margin-top: 6px; font-size: 16px; color: var(--ink); font-weight: 700; }
+  .opt.sel { border-color: var(--blue); background: #ddf4ff; }
+
+  /* big animal-on-color stage (¿De qué color es?) */
+  .bigstage { text-align: center; margin-bottom: 18px; }
+  .bigstage .disc { width: 170px; height: 170px; border-radius: 999px; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 4px solid rgba(0,0,0,.10); font-size: 84px; }
+  .bigstage .who { font-size: 20px; font-weight: 800; margin-top: 10px; color: var(--ink); }
+
+  /* word-bank builder */
+  #answerline { min-height: 64px; border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  #answerline .hint { color: #b5b5b5; font-size: 14px; }
+  .bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 110px; }
+  .chip { padding: 10px 20px; font-size: 17px; font-weight: 700; background: #fff; border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 12px; cursor: pointer; font-family: inherit; color: var(--ink); }
+  .chip:active { transform: scale(.95); }
+  .chip.used { opacity: .25; pointer-events: none; }
+  .chip.picked { background: #ddf4ff; border-color: var(--blue); color: var(--blue-d); }
+  .phrasehint { text-align: center; font-size: 64px; margin-bottom: 6px; }
+
+  /* memory match */
+  .memgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 110px; }
+  .mcard { aspect-ratio: 3/4; border-radius: 14px; border: 2px solid var(--line); border-bottom-width: 4px; background: var(--blue); color: #fff; font-size: 34px; font-weight: 800; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: inherit; padding: 4px; text-align: center; }
+  .mcard .sw { width: 44px; height: 44px; border-radius: 999px; border: 3px solid rgba(255,255,255,.5); }
+  .mcard.open { background: #fff; color: var(--ink); border-color: var(--blue); font-size: 20px; }
+  .mcard.open .e { font-size: 40px; }
+  .mcard.done { background: #d7ffb8; border-color: var(--green); color: var(--ink); opacity: .85; pointer-events: none; font-size: 20px; }
+  .mcard.done .e { font-size: 40px; }
+  @media (max-width: 520px) { .memgrid { grid-template-columns: repeat(3, 1fr); } }
+
+  /* say-it-loud card */
+  .saycard { text-align: center; background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 30px 20px; margin-bottom: 24px; }
+  .saycard .e { font-size: 84px; }
+  .saycard .es { font-size: 34px; font-weight: 800; color: var(--blue); margin: 10px 0 2px; }
+  .saycard .en { color: var(--mut); font-size: 16px; margin-bottom: 18px; }
+  .saybtns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .saybtns button { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 16px; font-weight: 800; border-radius: 12px; cursor: pointer; font-family: inherit; border: 2px solid var(--line); border-bottom-width: 4px; background: #fff; color: var(--ink); }
+  .saybtns button:active { transform: translateY(2px); }
+  .saybtns button:disabled { opacity: .4; }
+  #micBtn.rec { background: var(--red); border-color: #d33131; color: #fff; }
+
+  /* check bar + feedback */
+  #checkbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 16px 20px calc(18px + env(safe-area-inset-bottom)); background: #fff; border-top: 2px solid var(--line); }
+  #checkbar .inner { max-width: 720px; margin: 0 auto; }
+  #check { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff; background: var(--green); border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d); cursor: pointer; font-family: inherit; }
+  #check:disabled { background: #e5e5e5; box-shadow: 0 4px 0 #d0d0d0; color: #afafaf; cursor: default; }
+  #check:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+  #feedback { display: none; }
+  #feedback.show { display: block; }
+  #feedback.good { background: #d7ffb8; }
+  #feedback.bad { background: #ffdfe0; }
+  #feedback .inner { max-width: 720px; margin: 0 auto; padding: 18px 20px calc(18px + env(safe-area-inset-bottom)); }
+  #feedback h3 { margin: 0 0 4px; font-size: 22px; }
+  #feedback.good h3 { color: var(--green-d); }
+  #feedback.bad h3 { color: #e02626; }
+  #feedback p { margin: 0 0 14px; color: var(--ink); font-size: 15px; }
+  #cont { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff; border: 0; border-radius: 14px; cursor: pointer; font-family: inherit; }
+  #feedback.good #cont { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #feedback.bad #cont { background: var(--red); box-shadow: 0 4px 0 #d33131; }
+
+  /* done screen */
+  #doneScreen { text-align: center; padding: 30px 0; }
+  #doneScreen .trophy { font-size: 90px; }
+  #doneScreen h2 { font-size: 28px; margin: 12px 0 4px; color: #ff9600; }
+  #doneScreen .stars { font-size: 44px; letter-spacing: 6px; margin: 8px 0; }
+  #doneScreen p { color: var(--mut); font-size: 16px; }
+  .rowbtns { display: flex; gap: 12px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+  .rowbtns button { padding: 13px 30px; font-size: 15px; font-weight: 800; letter-spacing: 1px; border-radius: 14px; cursor: pointer; font-family: inherit; border: 0; }
+  #again { color: #fff; background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #tolessons { color: var(--blue); background: #fff; border: 2px solid var(--line) !important; box-shadow: 0 4px 0 var(--line); }
+
+  [hidden] { display: none !important; }
+  footer { margin-top: 46px; color: #afafaf; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; Todas las lecciones</a>
+
+  <!-- ============ LEARN SCREEN ============ -->
+  <div id="learnScreen">
+    <header class="hero">
+      <h1>&#x1F1EA;&#x1F1F8; Español — Día 2</h1>
+      <p>¡Colores y animales! <span style="color:#afafaf">(Colors &amp; animals)</span></p>
+    </header>
+    <div class="teacher">&#x1F4E2; <b>Maestra/o:</b> toca cada tarjeta para escucharla. ¡Después pulsa EMPEZAR y a jugar!</div>
+    <h2 class="part">Los colores</h2>
+    <p class="partsub">Toca una tarjeta para escucharla &#x1F50A;</p>
+    <div class="wgrid" id="cgrid"></div>
+    <h2 class="part">Los animales</h2>
+    <p class="partsub">¡El / la + el animal! &#x1F50A;</p>
+    <div class="wgrid" id="agrid"></div>
+    <button class="bigbtn" id="startBtn">¡EMPEZAR! &#x25B6;</button>
+    <footer>Día 2 de Español para niños &mdash; hecho para la clase de Edwin.<br/>Día 1: saludos.</footer>
+  </div>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <div id="quizScreen" hidden>
+    <div id="topbar">
+      <button id="quit" aria-label="Salir">&times;</button>
+      <div id="pbar"><div id="pfill"></div></div>
+      <div id="hearts">&#x2764;&#xFE0F; 5</div>
+    </div>
+    <h2 id="prompt"></h2>
+    <p id="sub"></p>
+    <div id="stage"></div>
+  </div>
+
+  <!-- ============ DONE SCREEN ============ -->
+  <div id="doneScreen" hidden>
+    <div class="trophy">&#x1F3C6;</div>
+    <h2 id="doneTitle">¡Lección completa!</h2>
+    <div class="stars" id="doneStars"></div>
+    <p id="doneSub"></p>
+    <div class="rowbtns">
+      <button id="again">OTRA VEZ</button>
+      <button id="tolessons">LECCIONES</button>
+    </div>
+  </div>
+</div>
+
+<div id="checkbar" hidden><div class="inner"><button id="check" disabled>REVISAR</button></div></div>
+<div id="feedback"><div class="inner">
+  <h3 id="fbTitle"></h3>
+  <p id="fbText"></p>
+  <button id="cont">CONTINÚA</button>
+</div></div>
+<script>
+/* ================= DATA ================= */
+var COLORS = [
+  { es: "rojo",     slug: "rojo",     hex: "#ff4b4b" },
+  { es: "azul",     slug: "azul",     hex: "#1cb0f6" },
+  { es: "verde",    slug: "verde",    hex: "#58cc02" },
+  { es: "amarillo", slug: "amarillo", hex: "#ffc800" },
+  { es: "rosado",   slug: "rosado",   hex: "#ff86d0" },
+  { es: "negro",    slug: "negro",    hex: "#3c3c3c" }
+];
+var ANIMALS = [
+  { es: "el perro",    slug: "perro",    emoji: "\uD83D\uDC36" },
+  { es: "la gata",     slug: "gata",     emoji: "\uD83D\uDC31" },
+  { es: "el p\u00E1jaro", slug: "pajaro", emoji: "\uD83D\uDC26" },
+  { es: "el pez",      slug: "pez",      emoji: "\uD83D\uDC1F" },
+  { es: "el caballo",  slug: "caballo",  emoji: "\uD83D\uDC34" },
+  { es: "la mariposa", slug: "mariposa", emoji: "\uD83E\uDD8B" }
+];
+var PHRASES = [
+  { es: "el perro rojo",      slug: "el-perro-rojo",      emoji: "\uD83D\uDC36", hex: "#ff4b4b", parts: ["el", "perro", "rojo"] },
+  { es: "la gata azul",       slug: "la-gata-azul",       emoji: "\uD83D\uDC31", hex: "#1cb0f6", parts: ["la", "gata", "azul"] },
+  { es: "el p\u00E1jaro amarillo", slug: "el-pajaro-amarillo", emoji: "\uD83D\uDC26", hex: "#ffc800", parts: ["el", "p\u00E1jaro", "amarillo"] },
+  { es: "el pez verde",       slug: "el-pez-verde",       emoji: "\uD83D\uDC1F", hex: "#58cc02", parts: ["el", "pez", "verde"] }
+];
+var CHEERS = [
+  { t: "\u00A1Correcto!",  slug: "cheer-correcto" },
+  { t: "\u00A1Muy bien!",  slug: "cheer-muy-bien" },
+  { t: "\u00A1Excelente!", slug: "cheer-excelente" },
+  { t: "\u00A1Bravo!",     slug: "cheer-bravo" }
+];
+
+/* ================= AUDIO (MP3 first, device TTS fallback) ================= */
+var AUDIO_BASE = "../../assets/audio/spanish/";
+var audioCache = {};
+function playMp3(slug, cb) {
+  var settled = false;
+  function done(ok) { if (!settled) { settled = true; if (cb) cb(ok); } }
+  try {
+    var a = audioCache[slug];
+    if (!a) { a = new Audio(AUDIO_BASE + slug + ".mp3"); audioCache[slug] = a; }
+    try { a.pause(); } catch (e) {}
+    a.currentTime = 0;
+    a.onended = function () { done(true); };
+    a.onerror = function () { done(false); };
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () { done(false); });
+    setTimeout(function () { done(true); }, 6000);
+  } catch (e) { done(false); }
+}
+var esVoice = null;
+function pickVoice() {
+  try {
+    var vs = window.speechSynthesis.getVoices();
+    esVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("es") === 0; }) || null;
+  } catch (e) { esVoice = null; }
+}
+function ttsEs(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if (esVoice) u.voice = esVoice;
+    u.lang = "es-US"; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if ("speechSynthesis" in window) { pickVoice(); window.speechSynthesis.onvoiceschanged = pickVoice; }
+function say(slug, text) { playMp3(slug, function (ok) { if (!ok) ttsEs(text); }); }
+function sayCheer() { var c = CHEERS[Math.floor(Math.random() * CHEERS.length)]; say(c.slug, c.t); return c.t; }
+
+/* ================= HELPERS ================= */
+function $(id) { return document.getElementById(id); }
+function shuffle(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function others(arr, item, n) {
+  return shuffle(arr.filter(function (w) { return w.es !== item.es; })).slice(0, n);
+}
+
+/* ================= LEARN SCREEN ================= */
+(function () {
+  var cg = $("cgrid");
+  COLORS.forEach(function (w) {
+    var d = document.createElement("div");
+    d.className = "wcard";
+    d.innerHTML = "<div class='sw' style='background:" + w.hex + "'></div><b>" + w.es + "</b>";
+    d.addEventListener("click", function () { say(w.slug, w.es); });
+    cg.appendChild(d);
+  });
+  var ag = $("agrid");
+  ANIMALS.forEach(function (w) {
+    var d = document.createElement("div");
+    d.className = "wcard";
+    d.innerHTML = "<div class='e'>" + w.emoji + "</div><b>" + w.es + "</b>";
+    d.addEventListener("click", function () { say(w.slug, w.es); });
+    ag.appendChild(d);
+  });
+  $("startBtn").addEventListener("click", startQuiz);
+})();
+
+/* ================= QUIZ ENGINE ================= */
+var TOTAL = 17; // 4 listen + 4 color + 2 memory (2 units each) + 3 build + 2 sayit
+var rounds = [], ri = 0, hearts = 5, mistakes = 0, current = null;
+
+function buildRounds() {
+  var r = [];
+  shuffle(COLORS.concat(ANIMALS)).slice(0, 4).forEach(function (w) { r.push({ type: "listen", word: w }); });
+  shuffle(ANIMALS).slice(0, 4).forEach(function (a) {
+    var c = COLORS[Math.floor(Math.random() * COLORS.length)];
+    r.push({ type: "color", animal: a, color: c });
+  });
+  r.push({ type: "memory" });
+  r.push({ type: "memory" });
+  shuffle(PHRASES).slice(0, 3).forEach(function (p) { r.push({ type: "build", phrase: p }); });
+  shuffle(ANIMALS).slice(0, 2).forEach(function (a) { r.push({ type: "sayit", word: a }); });
+  return shuffle(r);
+}
+
+function startQuiz() {
+  rounds = buildRounds(); ri = 0; hearts = 5; mistakes = 0;
+  $("learnScreen").hidden = true;
+  $("doneScreen").hidden = true;
+  $("quizScreen").hidden = false;
+  $("checkbar").hidden = false;
+  updateHearts();
+  nextRound();
+}
+
+function updateHearts() { $("hearts").innerHTML = "\u2764\uFE0F; " + hearts; }
+function updateProgress() { $("pfill").style.width = Math.round((ri / TOTAL) * 100) + "%"; }
+
+function picCard(w, onPick) {
+  var b = document.createElement("button");
+  b.className = "opt";
+  b.innerHTML = (w.emoji
+    ? "<div class='e'>" + w.emoji + "</div>"
+    : "<div class='sw' style='background:" + w.hex + "'></div>") + "<b>" + w.es + "</b>";
+  b.addEventListener("click", function () { say(w.slug, w.es); onPick(w, b); });
+  return b;
+}
+
+function nextRound() {
+  updateProgress();
+  if (ri >= TOTAL) return finish(true);
+  current = rounds[ri];
+  var stage = $("stage"); stage.innerHTML = "";
+  var prompt = $("prompt"), sub = $("sub");
+  hideFeedback();
+  var checkbar = $("checkbar");
+  checkbar.hidden = false;
+  $("check").disabled = true;
+  $("check").onclick = null;
+  $("check").textContent = "REVISAR";
+
+  if (current.type === "listen") {
+    var w = current.word;
+    prompt.textContent = "Escucha y toca";
+    sub.innerHTML = "Toca lo que escuchas. \uD83D\uDD0A;";
+    var sp = document.createElement("button");
+    sp.id = "speakbtn";
+    sp.innerHTML = "\uD83D\uDD0A; Otra vez";
+    sp.addEventListener("click", function () { say(w.slug, w.es); });
+    stage.appendChild(sp);
+    var pool = (w.hex ? COLORS : ANIMALS);
+    var opts = document.createElement("div");
+    opts.className = "opts";
+    shuffle([w].concat(others(pool, w, 3))).forEach(function (o) {
+      opts.appendChild(picCard(o, function (picked, btn) {
+        var prev = opts.querySelector(".sel");
+        if (prev) prev.classList.remove("sel");
+        btn.classList.add("sel");
+        current.picked = picked; $("check").disabled = false;
+      }));
+    });
+    stage.appendChild(opts);
+    $("check").onclick = function () { grade(current.picked.es === w.es, w.es, null); };
+    setTimeout(function () { say(w.slug, w.es); }, 450);
+  }
+  else if (current.type === "color") {
+    var a = current.animal, c = current.color;
+    prompt.textContent = "¿De qué color es?";
+    sub.innerHTML = "Mira el animal y toca el color. \uD83D\uDC40;";
+    var bs = document.createElement("div");
+    bs.className = "bigstage";
+    bs.innerHTML = "<div class='disc' style='background:" + c.hex + "'>" + a.emoji + "</div><div class='who'>" + a.es + "</div>";
+    stage.appendChild(bs);
+    var opts2 = document.createElement("div");
+    opts2.className = "opts";
+    shuffle([c].concat(others(COLORS, c, 3))).forEach(function (o) {
+      opts2.appendChild(picCard(o, function (picked, btn) {
+        var prev = opts2.querySelector(".sel");
+        if (prev) prev.classList.remove("sel");
+        btn.classList.add("sel");
+        current.picked = picked; $("check").disabled = false;
+      }));
+    });
+    stage.appendChild(opts2);
+    $("check").onclick = function () { grade(current.picked.es === c.es, c.es, null); };
+    setTimeout(function () { say(a.slug, a.es); }, 450);
+  }
+  else if (current.type === "memory") {
+    prompt.textContent = "Memoria";
+    sub.innerHTML = "Encuentra los pares. ¡Toca una tarjeta para escucharla!";
+    checkbar.hidden = true;
+    buildMemory(stage);
+  }
+  else if (current.type === "build") {
+    var p = current.phrase;
+    prompt.textContent = "Construye la frase";
+    sub.textContent = "Toca las palabras en orden.";
+    var ph = document.createElement("div");
+    ph.className = "phrasehint";
+    ph.innerHTML = p.emoji + " <span class='sw' style='display:inline-block;width:44px;height:44px;border-radius:999px;background:" + p.hex + ";border:3px solid rgba(0,0,0,.12);vertical-align:middle'></span>";
+    stage.appendChild(ph);
+    var line = document.createElement("div");
+    line.id = "answerline";
+    line.innerHTML = "<span class='hint'>Toca las palabras…</span>";
+    stage.appendChild(line);
+    var bank = document.createElement("div");
+    bank.className = "bank";
+    var distract = shuffle(["la", "el", "gato", "perro", "azul", "rojo", "verde", "amarillo"]
+      .filter(function (x) { return p.parts.indexOf(x) < 0; })).slice(0, 3);
+    var picked = [];
+    shuffle(p.parts.concat(distract)).forEach(function (wd) {
+      var ch = document.createElement("button");
+      ch.className = "chip"; ch.textContent = wd;
+      ch.addEventListener("click", function () {
+        if (ch.classList.contains("used")) return;
+        say("build-" + wd, wd); // falls back to TTS (no mp3 for lone words)
+        ch.classList.add("used");
+        picked.push({ w: wd, el: ch });
+        var p2 = document.createElement("button");
+        p2.className = "chip picked"; p2.textContent = wd;
+        p2.addEventListener("click", function () {
+          ch.classList.remove("used");
+          line.removeChild(p2);
+          picked = picked.filter(function (x) { return x.el !== ch; });
+          if (!picked.length) line.innerHTML = "<span class='hint'>Toca las palabras…</span>";
+          $("check").disabled = picked.length === 0;
+        });
+        var hint = line.querySelector(".hint");
+        if (hint) line.removeChild(hint);
+        line.appendChild(p2);
+        $("check").disabled = false;
+      });
+      bank.appendChild(ch);
+    });
+    stage.appendChild(bank);
+    $("check").onclick = function () {
+      var got = picked.map(function (x) { return x.w; }).join(" ");
+      grade(got === p.es, p.es, p);
+    };
+    setTimeout(function () { say(p.slug, p.es); }, 450);
+  }
+  else if (current.type === "sayit") {
+    var sw = current.word;
+    prompt.textContent = "¡Dilo tú!";
+    sub.innerHTML = "Escucha, repite en voz alta… ¡o grábate! \uD83C\uDFA4;";
+    checkbar.hidden = true;
+    var card = document.createElement("div");
+    card.className = "saycard";
+    card.innerHTML = "<div class='e'>" + sw.emoji + "</div><div class='es'>" + sw.es + "</div>";
+    var btns = document.createElement("div");
+    btns.className = "saybtns";
+    var lb = document.createElement("button");
+    lb.innerHTML = "\uD83D\uDD0A; Escúchala";
+    lb.addEventListener("click", function () { say(sw.slug, sw.es); });
+    btns.appendChild(lb);
+    var micB = document.createElement("button");
+    micB.id = "micBtn"; micB.innerHTML = "\uD83C\uDFA4; Grábate";
+    var playB = document.createElement("button");
+    playB.innerHTML = "\u25B6; Escúchate"; playB.disabled = true;
+    var recUrl = null, recorder = null, chunks = [];
+    function micOK() { return navigator.mediaDevices && window.MediaRecorder; }
+    if (!micOK()) { micB.disabled = true; micB.title = "Micrófono no disponible"; }
+    micB.addEventListener("click", function () {
+      if (!micOK() || recorder) return;
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+        chunks = [];
+        recorder = new MediaRecorder(stream);
+        recorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        recorder.onstop = function () {
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          var blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+          if (recUrl) URL.revokeObjectURL(recUrl);
+          recUrl = URL.createObjectURL(blob);
+          playB.disabled = false;
+          micB.classList.remove("rec"); micB.innerHTML = "\uD83C\uDFA4; Grábate";
+          recorder = null;
+        };
+        recorder.start();
+        micB.classList.add("rec"); micB.innerHTML = "⏺ Grabando… (3s)";
+        setTimeout(function () { if (recorder && recorder.state !== "inactive") recorder.stop(); }, 3000);
+      }).catch(function () { micB.disabled = true; });
+    });
+    playB.addEventListener("click", function () { if (recUrl) new Audio(recUrl).play(); });
+    btns.appendChild(micB); btns.appendChild(playB);
+    card.appendChild(btns);
+    stage.appendChild(card);
+    var nb = document.createElement("button");
+    nb.className = "bigbtn"; nb.textContent = "¡LISTO! SIGUE \u25B6;";
+    nb.style.marginBottom = "40px";
+    nb.addEventListener("click", function () { sayCheer(); ri++; nextRound(); });
+    stage.appendChild(nb);
+    setTimeout(function () { say(sw.slug, sw.es); }, 450);
+  }
+}
+
+/* ---- memory match ---- */
+function buildMemory(stage) {
+  var pool = shuffle(ANIMALS).slice(0, 3).concat(shuffle(COLORS).slice(0, 3));
+  var cards = [];
+  pool.forEach(function (w) {
+    cards.push({ word: w, face: "pic" });
+    cards.push({ word: w, face: "word" });
+  });
+  cards = shuffle(cards);
+  var grid = document.createElement("div");
+  grid.className = "memgrid";
+  var first = null, lock = false, found = 0;
+  cards.forEach(function (cd) {
+    var b = document.createElement("button");
+    b.className = "mcard";
+    b.innerHTML = "?";
+    b.addEventListener("click", function () {
+      if (lock || b.classList.contains("open") || b.classList.contains("done")) return;
+      b.classList.add("open");
+      b.innerHTML = cd.face === "pic"
+        ? (cd.word.emoji ? "<span class='e'>" + cd.word.emoji + "</span>"
+                         : "<span class='sw' style='background:" + cd.word.hex + "'></span>")
+        : cd.word.es;
+      say(cd.word.slug, cd.word.es);
+      if (!first) { first = { cd: cd, el: b }; return; }
+      if (first.cd.word.es === cd.word.es) {
+        var f = first; first = null;
+        setTimeout(function () {
+          f.el.classList.add("done"); b.classList.add("done");
+          sayCheer();
+          found++;
+          if (found === pool.length) setTimeout(function () { ri += 2; nextRound(); }, 900);
+        }, 350);
+      } else {
+        lock = true;
+        var g = first; first = null;
+        setTimeout(function () {
+          g.el.classList.remove("open"); g.el.innerHTML = "?";
+          b.classList.remove("open"); b.innerHTML = "?";
+          lock = false;
+        }, 900);
+      }
+    });
+    grid.appendChild(b);
+  });
+  stage.appendChild(grid);
+}
+
+function grade(ok, answerEs, phrase) {
+  var fb = $("feedback");
+  $("checkbar").hidden = true;
+  if (ok) {
+    var cheer = sayCheer();
+    fb.className = "show good";
+    $("fbTitle").textContent = cheer;
+    $("fbText").textContent = answerEs + (phrase ? " " + phrase.emoji : "");
+  } else {
+    mistakes++;
+    hearts--;
+    updateHearts();
+    fb.className = "show bad";
+    $("fbTitle").textContent = "¡Casi!";
+    $("fbText").innerHTML = "La respuesta es <b>" + answerEs + "</b>";
+    say("answer-" + answerEs, answerEs);
+  }
+  $("cont").onclick = function () {
+    ri++;
+    if (hearts <= 0) return finish(false);
+    nextRound();
+  };
+}
+
+function hideFeedback() { $("feedback").className = ""; }
+
+function finish(won) {
+  $("quizScreen").hidden = true;
+  $("checkbar").hidden = true;
+  hideFeedback();
+  var d = $("doneScreen");
+  d.hidden = false;
+  if (!won) {
+    $("doneTitle").textContent = "¡Sin corazones!";
+    $("doneStars").textContent = "\uD83D\uDC94";
+    $("doneSub").textContent = "¡Buen intento! Practica las palabras y juega otra vez.";
+  } else {
+    var stars = hearts >= 5 ? 3 : hearts >= 3 ? 2 : 1;
+    $("doneTitle").textContent = "¡Lección completa!";
+    $("doneStars").textContent = "\u2B50".repeat(stars) + "\u2606".repeat(3 - stars);
+    $("doneSub").textContent = mistakes === 0
+      ? "¡Perfecto, sin errores! ¡Increíble! \uD83C\uDF89;"
+      : "Terminaste con " + hearts + " " + (hearts === 1 ? "corazón" : "corazones") + ". ¡Buen trabajo!";
+    sayCheer();
+  }
+  window.scrollTo(0, 0);
+}
+
+$("quit").addEventListener("click", function () {
+  if (confirm("¿Salir de la lección? Se pierde el progreso.")) {
+    $("quizScreen").hidden = true;
+    $("checkbar").hidden = true;
+    hideFeedback();
+    $("learnScreen").hidden = false;
+    window.scrollTo(0, 0);
+  }
+});
+$("again").addEventListener("click", startQuiz);
+$("tolessons").addEventListener("click", function () { window.location.href = "../../"; });
+</script>
+<!-- background music: lofi deep house mix (SoundCloud) -->
+<style>
+  #bgm-btn { position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: 56px; height: 56px; border-radius: 999px; border: 0; cursor: pointer;
+    background: #2b6bff; color: #fff; font-size: 24px; line-height: 1; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(43,107,255,.35);
+    transition: transform .15s, background .15s; font-family: inherit; }
+  #bgm-btn:hover { background: #1f58e0; transform: scale(1.06); }
+  #bgm-btn.playing { animation: bgm-pulse 1.6s ease-in-out infinite; }
+  @keyframes bgm-pulse {
+    0%,100% { box-shadow: 0 8px 24px rgba(43,107,255,.35); }
+    50%     { box-shadow: 0 8px 34px rgba(43,107,255,.70); } }
+  #bgm-frame { position: absolute; width: 1px; height: 1px;
+    left: -9999px; top: -9999px; border: 0; visibility: hidden; }
+</style>
+<iframe id="bgm-frame" title="Background music" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrisandgreta%2Flofi-deep-house-music-mix-cozy-work-study-session-greta&amp;color=%232b6bff&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;show_teaser=false&amp;visual=false"></iframe>
+<button id="bgm-btn" aria-label="Play background music" title="Lofi deep house mix">&#9834;</button>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+(function () {
+  var btn = document.getElementById("bgm-btn");
+  var frame = document.getElementById("bgm-frame");
+  var NOTE = "&#9834;", PAUSE = "&#10074;&#10074;";
+  var widget = null, ready = false;
+  function setIcon(playing) {
+    btn.innerHTML = playing ? PAUSE : NOTE;
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-label", playing ? "Pause background music" : "Play background music");
+  }
+  function init() {
+    if (typeof SC === "undefined" || !SC.Widget) { btn.style.display = "none"; return; }
+    try { widget = SC.Widget(frame); } catch (e) { btn.style.display = "none"; return; }
+    var timer = setTimeout(function () { if (!ready) btn.style.display = "none"; }, 8000);
+    widget.bind(SC.Widget.Events.READY, function () {
+      clearTimeout(timer);
+      ready = true;
+      widget.bind(SC.Widget.Events.PLAY, function () { setIcon(true); });
+      widget.bind(SC.Widget.Events.PAUSE, function () { setIcon(false); });
+    });
+  }
+  btn.addEventListener("click", function () {
+    if (!ready || !widget) return;
+    try { widget.toggle(); } catch (e) {}
+  });
+  if (document.readyState === "complete") init();
+  else window.addEventListener("load", init);
+})();
+</script>
+</body>
+</html>
