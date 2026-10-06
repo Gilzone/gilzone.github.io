@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Space for Pre-K: Day 1 — Astronauts &amp; Planets</title>
+<style>
+  :root { color-scheme: light; --green:#58cc02; --green-d:#58a700; --ink:#3c3c3c; --mut:#777;
+          --line:#e5e5e5; --card:#f7f7f7; --blue:#1cb0f6; --blue-d:#0b6d99; --space:#0d1442; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+         background: linear-gradient(180deg, #0d1442 0%, #1b2560 60%, #2a3578 100%);
+         color: #fff; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 20px 60px; }
+  a.back { color: #9fd8ff; text-decoration: none; font-weight: 700; font-size: 14px; }
+  header.hero { text-align: center; margin: 16px 0 6px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; }
+  header.hero p { margin: 0; color: #c9d4f5; font-size: 15px; }
+  .teacher { background: rgba(255,255,255,.10); border: 2px dashed #9fd8ff; border-radius: 14px;
+             padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #dff1ff; }
+  h2.part { margin: 30px 0 4px; font-size: 22px; }
+  p.partsub { margin: 0 0 16px; color: #c9d4f5; font-size: 14.5px; }
+  .wgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .wcard { background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.18);
+           border-bottom-width: 4px; border-radius: 16px; padding: 10px; text-align: center;
+           cursor: pointer; transition: transform .1s; }
+  .wcard:active { transform: scale(.96); }
+  .wcard img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; display: block; }
+  .wcard b { display: block; margin-top: 8px; font-size: 17px; color: #fff; }
+  .bigbtn { display: block; width: 100%; max-width: 340px; margin: 26px auto 0; padding: 15px;
+             font-size: 17px; font-weight: 800; letter-spacing: 1px; color: #fff; background: var(--green);
+             border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d); cursor: pointer; font-family: inherit; }
+  .bigbtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+
+  /* ---- quiz chrome ---- */
+  #topbar { display: flex; align-items: center; gap: 14px; padding: 6px 0 16px; }
+  #quit { border: 0; background: none; font-size: 22px; color: #9fb3d9; cursor: pointer; padding: 4px 8px; font-family: inherit; }
+  #pbar { flex: 1; height: 14px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; }
+  #pfill { height: 100%; width: 0%; background: var(--green); border-radius: 999px; transition: width .4s; }
+  #prompt { font-size: 24px; font-weight: 800; margin: 8px 0 4px; }
+  #sub { color: #c9d4f5; font-size: 15px; margin: 0 0 18px; }
+  #speakbtn { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 12px 22px;
+              font-size: 18px; font-weight: 800; color: var(--blue-d); background: #ddf4ff;
+              border: 2px solid #bfe6fb; border-bottom-width: 4px; border-radius: 12px; cursor: pointer; font-family: inherit; }
+  #speakbtn:active { transform: translateY(2px); }
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 110px; }
+  .opt { background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.18); border-bottom-width: 4px;
+         border-radius: 14px; padding: 10px; cursor: pointer; font-family: inherit; transition: transform .08s; }
+  .opt:active { transform: scale(.97); }
+  .opt img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; display: block; pointer-events: none; }
+  .opt.sel { border-color: var(--blue); background: rgba(28,176,246,.25); }
+  .opt.right { border-color: var(--green); background: rgba(88,204,2,.25); }
+
+  /* memory match */
+  .memgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 110px; }
+  .mcard { aspect-ratio: 1/1; border-radius: 14px; border: 2px solid rgba(255,255,255,.25); border-bottom-width: 4px;
+           background: linear-gradient(135deg, #2b3a8f, #4a5fc1); color: #fff; font-size: 40px; font-weight: 800;
+           display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: inherit; padding: 6px; }
+  .mcard img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; }
+  .mcard.open, .mcard.done { background: #fff; border-color: var(--blue); padding: 6px; }
+  .mcard.open img, .mcard.done img { display: block; }
+  .mcard.open { font-size: 0; }
+  .mcard.done { border-color: var(--green); opacity: .9; pointer-events: none; font-size: 0; }
+  @media (max-width: 520px) { .memgrid { grid-template-columns: repeat(4, 1fr); gap: 8px; } }
+
+  /* check bar + feedback */
+  #checkbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 16px 20px calc(18px + env(safe-area-inset-bottom));
+              background: #101a45; border-top: 2px solid rgba(255,255,255,.15); }
+  #checkbar .inner { max-width: 720px; margin: 0 auto; }
+  #check { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff;
+           background: var(--green); border: 0; border-radius: 14px; box-shadow: 0 4px 0 var(--green-d);
+           cursor: pointer; font-family: inherit; }
+  #check:disabled { background: #3a4670; box-shadow: 0 4px 0 #2a3454; color: #8fa0c8; cursor: default; }
+  #feedback { display: none; }
+  #feedback.show { display: block; }
+  #feedback.good { background: #d7ffb8; }
+  #feedback.bad { background: #ffdfe0; }
+  #feedback .inner { max-width: 720px; margin: 0 auto; padding: 18px 20px calc(18px + env(safe-area-inset-bottom)); }
+  #feedback h3 { margin: 0 0 4px; font-size: 22px; }
+  #feedback.good h3 { color: var(--green-d); }
+  #feedback.bad h3 { color: #e02626; }
+  #feedback p { margin: 0 0 14px; color: var(--ink); font-size: 15px; }
+  #cont { width: 100%; padding: 14px; font-size: 16px; font-weight: 800; letter-spacing: 1.5px; color: #fff;
+          border: 0; border-radius: 14px; cursor: pointer; font-family: inherit; }
+  #feedback.good #cont { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #feedback.bad #cont { background: #ff4b4b; box-shadow: 0 4px 0 #d33131; }
+
+  #doneScreen { text-align: center; padding: 30px 0; }
+  #doneScreen .trophy { font-size: 90px; }
+  #doneScreen h2 { font-size: 28px; margin: 12px 0 4px; color: #ffcf40; }
+  #doneScreen .stars { font-size: 44px; letter-spacing: 6px; margin: 8px 0; }
+  #doneScreen p { color: #c9d4f5; font-size: 16px; }
+  .rowbtns { display: flex; gap: 12px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+  .rowbtns button { padding: 13px 30px; font-size: 15px; font-weight: 800; letter-spacing: 1px;
+                    border-radius: 14px; cursor: pointer; font-family: inherit; border: 0; }
+  #again { color: #fff; background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+  #togame { color: #fff; background: var(--blue); box-shadow: 0 4px 0 var(--blue-d); }
+  #tolessons { color: var(--blue); background: #fff; border: 2px solid var(--line) !important; box-shadow: 0 4px 0 var(--line); }
+  [hidden] { display: none !important; }
+  footer { margin-top: 46px; color: #8fa0c8; font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+
+  <!-- ============ LEARN SCREEN ============ -->
+  <div id="learnScreen">
+    <header class="hero">
+      <h1>&#x1F680; Space for Pre-K: Day 1</h1>
+      <p>Astronauts &amp; planets &mdash; tap a picture to hear its name! &#x1F50A;</p>
+    </header>
+    <div class="teacher">&#x1F4E2; <b>Teacher:</b> tap each picture with the class and say the name together. Then press START to play!</div>
+    <h2 class="part">Meet space</h2>
+    <p class="partsub">Tap a picture to hear it &#x1F50A;</p>
+    <div class="wgrid" id="wgrid"></div>
+    <button class="bigbtn" id="startBtn">START! &#x25B6;</button>
+    <footer>Space for Pre-K: Day 1 &mdash; made for Edwin&rsquo;s class.</footer>
+  </div>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <div id="quizScreen" hidden>
+    <div id="topbar">
+      <button id="quit" aria-label="Quit">&times;</button>
+      <div id="pbar"><div id="pfill"></div></div>
+    </div>
+    <h2 id="prompt"></h2>
+    <p id="sub"></p>
+    <div id="stage"></div>
+  </div>
+
+  <!-- ============ DONE SCREEN ============ -->
+  <div id="doneScreen" hidden>
+    <div class="trophy">&#x1F3C6;</div>
+    <h2 id="doneTitle">You did it!</h2>
+    <div class="stars" id="doneStars"></div>
+    <p id="doneSub"></p>
+    <div class="rowbtns">
+      <button id="again">PLAY AGAIN</button>
+      <button id="togame">MATCHING GAME</button>
+      <button id="tolessons">LESSONS</button>
+    </div>
+  </div>
+</div>
+
+<div id="checkbar" hidden><div class="inner"><button id="check" disabled>CHECK</button></div></div>
+<div id="feedback"><div class="inner">
+  <h3 id="fbTitle"></h3>
+  <p id="fbText"></p>
+  <button id="cont">CONTINUE</button>
+</div></div>
+
+<script>
+/* ================= DATA (lesson content — games pull from here) ================= */
+var IMG = "../../assets/img/space/";
+var ITEMS = [
+  { name: "astronaut", img: IMG + "astronaut.webp" },
+  { name: "rocket",    img: IMG + "rocket.webp" },
+  { name: "sun",       img: IMG + "sun.webp" },
+  { name: "moon",      img: IMG + "moon.webp" },
+  { name: "stars",     img: IMG + "stars.webp" },
+  { name: "earth",     img: IMG + "earth.webp" },
+  { name: "mars",      img: IMG + "mars.webp" },
+  { name: "saturn",    img: IMG + "saturn.webp" }
+];
+var CHEERS = ["Great job!", "Amazing!", "You got it!", "Wow!", "Superstar!"];
+
+/* ================= SPEECH (device TTS carries all words) ================= */
+function speak(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US"; u.rate = 0.9; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function cheer() {
+  var c = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  speak(c);
+  return c;
+}
+
+/* ================= HELPERS ================= */
+function $(id) { return document.getElementById(id); }
+function shuffle(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function others(arr, item, n) {
+  return shuffle(arr.filter(function (w) { return w.name !== item.name; })).slice(0, n);
+}
+
+/* ================= LEARN SCREEN ================= */
+(function () {
+  var g = $("wgrid");
+  ITEMS.forEach(function (w) {
+    var d = document.createElement("div");
+    d.className = "wcard";
+    d.innerHTML = "<img src='" + w.img + "' alt='" + w.name + "' /><b>" + w.name + "</b>";
+    d.addEventListener("click", function () { speak(w.name); });
+    g.appendChild(d);
+  });
+  $("startBtn").addEventListener("click", startQuiz);
+})();
+
+/* ================= QUIZ ================= */
+var rounds = [], ri = 0, mistakes = 0, current = null;
+var TOTAL = 8; // 6 listen + 2 memory (memory counts 2)
+
+function buildRounds() {
+  var r = [];
+  shuffle(ITEMS).slice(0, 6).forEach(function (w) { r.push({ type: "listen", word: w }); });
+  r.push({ type: "memory" });
+  r.push({ type: "memory" });
+  return shuffle(r);
+}
+function startQuiz() {
+  rounds = buildRounds(); ri = 0; mistakes = 0;
+  $("learnScreen").hidden = true;
+  $("doneScreen").hidden = true;
+  $("quizScreen").hidden = false;
+  $("checkbar").hidden = false;
+  nextRound();
+}
+function updateProgress() { $("pfill").style.width = Math.round((ri / TOTAL) * 100) + "%"; }
+
+function nextRound() {
+  updateProgress();
+  if (ri >= TOTAL) return finish();
+  current = rounds[ri];
+  var stage = $("stage"); stage.innerHTML = "";
+  hideFeedback();
+  $("checkbar").hidden = false;
+  $("check").disabled = true;
+  $("check").onclick = null;
+  $("check").textContent = "CHECK";
+
+  if (current.type === "listen") {
+    var w = current.word;
+    $("prompt").textContent = "Listen…";
+    $("sub").textContent = "Tap the picture you hear! \uD83D\uDD0A";
+    var sp = document.createElement("button");
+    sp.id = "speakbtn";
+    sp.innerHTML = "\uD83D\uDD0A Hear it again";
+    sp.addEventListener("click", function () { speak("Find the " + w.name); });
+    stage.appendChild(sp);
+    var opts = document.createElement("div");
+    opts.className = "opts";
+    shuffle([w].concat(others(ITEMS, w, 3))).forEach(function (o) {
+      var b = document.createElement("button");
+      b.className = "opt";
+      b.innerHTML = "<img src='" + o.img + "' alt='' />";
+      b.addEventListener("click", function () {
+        speak(o.name);
+        var prev = opts.querySelector(".sel");
+        if (prev) prev.classList.remove("sel");
+        b.classList.add("sel");
+        current.picked = o; $("check").disabled = false;
+      });
+      opts.appendChild(b);
+    });
+    stage.appendChild(opts);
+    $("check").onclick = function () { grade(current.picked.name === w.name, w); };
+    setTimeout(function () { speak("Find the " + w.name); }, 500);
+  } else {
+    $("prompt").textContent = "Memory!";
+    $("sub").textContent = "Find the matching pictures! Tap a card to hear it.";
+    $("checkbar").hidden = true;
+    buildMemory(stage);
+  }
+}
+
+function buildMemory(stage) {
+  var pool = shuffle(ITEMS).slice(0, 4);
+  var cards = [];
+  pool.forEach(function (w) { cards.push(w); cards.push(w); });
+  cards = shuffle(cards);
+  var grid = document.createElement("div");
+  grid.className = "memgrid";
+  var first = null, lock = false, found = 0;
+  cards.forEach(function (w) {
+    var b = document.createElement("button");
+    b.className = "mcard";
+    b.innerHTML = "&#x1F680;<img src='" + w.img + "' alt='' />";
+    b.addEventListener("click", function () {
+      if (lock || b.classList.contains("open") || b.classList.contains("done")) return;
+      b.classList.add("open");
+      speak(w.name);
+      if (!first) { first = { w: w, el: b }; return; }
+      if (first.w.name === w.name) {
+        var f = first; first = null;
+        setTimeout(function () {
+          f.el.classList.add("done"); b.classList.add("done");
+          cheer();
+          found++;
+          if (found === pool.length) setTimeout(function () { ri += 2; nextRound(); }, 900);
+        }, 350);
+      } else {
+        lock = true;
+        var g = first; first = null;
+        setTimeout(function () {
+          g.el.classList.remove("open"); b.classList.remove("open");
+          lock = false;
+        }, 900);
+      }
+    });
+    grid.appendChild(b);
+  });
+  stage.appendChild(grid);
+}
+
+function grade(ok, w) {
+  var fb = $("feedback");
+  $("checkbar").hidden = true;
+  if (ok) {
+    var c = cheer();
+    fb.className = "show good";
+    $("fbTitle").textContent = c;
+    $("fbText").textContent = "Yes! That's the " + w.name + "!";
+  } else {
+    mistakes++;
+    fb.className = "show bad";
+    $("fbTitle").textContent = "Try again!";
+    $("fbText").textContent = "Listen once more…";
+    speak("Try again! Find the " + w.name);
+  }
+  $("cont").onclick = function () {
+    if (ok) { ri++; nextRound(); }
+    else { nextRound(); } // retry same round
+  };
+}
+function hideFeedback() { $("feedback").className = ""; }
+
+function finish() {
+  $("quizScreen").hidden = true;
+  $("checkbar").hidden = true;
+  hideFeedback();
+  $("doneScreen").hidden = false;
+  var stars = mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1;
+  $("doneStars").textContent = "\u2B50".repeat(stars) + "\u2606".repeat(3 - stars);
+  $("doneSub").textContent = mistakes === 0 ? "Perfect! You know space!" : "Great exploring, astronaut!";
+  cheer();
+  window.scrollTo(0, 0);
+}
+
+$("quit").addEventListener("click", function () {
+  if (confirm("Quit the lesson?")) {
+    $("quizScreen").hidden = true; $("checkbar").hidden = true; hideFeedback();
+    $("learnScreen").hidden = false; window.scrollTo(0, 0);
+  }
+});
+$("again").addEventListener("click", startQuiz);
+$("togame").addEventListener("click", function () { window.location.href = "../space-match/"; });
+$("tolessons").addEventListener("click", function () { window.location.href = "../../"; });
+</script>
+</body>
+</html>
