@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>October 19 — Please and Thank You | TLE After-School</title>
+<style>
+  :root { color-scheme: light; --teal:#0E6B6B; --teal-d:#0a4f4f; --ink:#2b2b2b; --mut:#6b6b6b;
+          --line:#e3e3e3; --bg:#fffdf5; --green:#58cc02; --green-d:#58a700;
+          --blue:#1cb0f6; --red:#ff5a5a; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin:0; font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+         background: var(--bg); color: var(--ink); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 18px 18px 60px; }
+  a.back { color: var(--teal); text-decoration:none; font-weight:700; font-size:14px; }
+  .tstrip { background:#0a4f4f; color:#eaf6f5; border-radius:14px; padding:12px 16px; margin:14px 0 6px; font-size:13.5px; }
+  .tstrip b { color:#ffd93b; } .tstrip ol { margin:8px 0 2px; padding-left:20px; } .tstrip li { margin:3px 0; }
+  header.hero { text-align:center; margin:14px 0 4px; }
+  header.hero .bigface { font-size:96px; line-height:1; }
+  header.hero h1 { margin:8px 0 4px; font-size:30px; color:var(--teal-d); }
+  header.hero p { margin:0; color:var(--mut); font-size:15px; }
+  section.part { background:#fff; border:2px solid var(--line); border-bottom-width:4px; border-radius:18px;
+                 padding:18px; margin:18px 0; }
+  section.part h2 { margin:0 0 4px; font-size:22px; color:var(--teal-d); }
+  section.part .time { display:inline-block; background:#eaf6f5; color:var(--teal-d); font-weight:800; font-size:12.5px;
+                 padding:4px 12px; border-radius:999px; margin-bottom:10px; }
+  section.part p.big { font-size:18px; line-height:1.55; }
+  .speak { display:inline-flex; align-items:center; gap:8px; margin:6px 6px 6px 0; padding:12px 20px; font-size:16px;
+           font-weight:800; color:#fff; background:var(--blue); border:0; border-bottom:4px solid #0b6d99;
+           border-radius:12px; cursor:pointer; font-family:inherit; }
+  .speak:active { transform:translateY(2px); }
+  .speak.hear { background:var(--green); border-bottom-color:var(--green-d); }
+  .feelrow { display:flex; gap:12px; justify-content:center; margin:14px 0; flex-wrap:wrap; }
+  .feelface { font-size:64px; background:#f2faf9; border:3px solid var(--line); border-radius:18px; padding:10px 18px;
+              cursor:pointer; } .feelface:active { transform:scale(.93); }
+  .feelface.star { border-color:#ffd93b; background:#fff8dd; box-shadow:0 0 0 4px #ffe98a; }
+  .vid { position:relative; padding-bottom:56.25%; height:0; border-radius:14px; overflow:hidden; margin-top:10px; }
+  .vid iframe, .vid video { position:absolute; top:0; left:0; width:100%; height:100%; border:0; }
+  #gprompt { font-size:24px; font-weight:800; text-align:center; margin:6px 0 12px; }
+  #ggrid { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; }
+  #crow { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .gface { font-size:72px; background:#f7f7f7; border:3px solid var(--line); border-bottom-width:6px; border-radius:18px;
+           padding:18px 0; cursor:pointer; font-family:inherit; }
+  .gface:active { transform:scale(.95); }
+  .gface.right { border-color:var(--green); background:#e9ffd2; }
+  .gface.wrong { border-color:var(--red); background:#ffe3e3; }
+  .gface.done { opacity:.45; }
+  .gface.cnt { font-size:56px; padding:10px 14px; }
+  .gtile { font-size:64px; font-weight:800; background:#1cb0f6; color:#fff; border:3px solid #0b6d99;
+           border-bottom-width:6px; border-radius:18px; padding:18px 0; cursor:pointer; font-family:inherit; }
+  .gtile.right { background:var(--green); border-color:var(--green-d); }
+  .gtile.wrong { background:var(--red); border-color:#b00; }
+  .numb { font-size:44px; font-weight:800; background:#fff; border:3px solid var(--line); border-bottom-width:5px;
+          border-radius:16px; padding:10px 26px; margin:6px; cursor:pointer; font-family:inherit; }
+  #gscore { text-align:center; font-size:20px; font-weight:800; color:var(--teal-d); margin-top:12px; }
+  #gdone { display:none; text-align:center; padding:10px; } #gdone.show { display:block; }
+  #gdone .stars { font-size:54px; }
+  .ws-pick { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin:12px 0; }
+  .ws-opt { background:#f7f7f7; border:3px solid var(--line); border-radius:16px; padding:14px 6px; text-align:center;
+            cursor:pointer; font-family:inherit; }
+  .ws-opt .e { font-size:52px; } .ws-opt b { display:block; margin-top:6px; font-size:15px; }
+  .ws-opt.picked { border-color:var(--green); background:#e9ffd2; }
+  .printbtn { display:block; width:100%; max-width:320px; margin:16px auto 0; padding:14px; font-size:16px; font-weight:800;
+              color:#fff; background:var(--teal); border:0; border-radius:14px; box-shadow:0 4px 0 var(--teal-d);
+              cursor:pointer; font-family:inherit; }
+  .drawbox { border:3px dashed var(--line); border-radius:14px; min-height:150px; margin-top:12px;
+             display:flex; align-items:center; justify-content:center; color:var(--mut); font-size:15px; padding:12px; text-align:center; }
+  footer { text-align:center; color:var(--mut); font-size:13px; margin-top:26px; }
+  @media print { a.back, .tstrip, .speak, .printbtn, #ggrid, #crow, #cnums { display:none !important; }
+    section.part { break-inside:avoid; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../tle-october-lessons/">&larr; October plan</a>
+  <div class="tstrip">
+    <b>🍎 Teacher plan — 45 minutes (October 19)</b>
+    <ol>
+      <li>Opener movie + words of the day: <b>Please</b> — 7 min</li>
+      <li>Mini-lesson — 10 min</li>
+      <li>Video: Magic Words song — 5 min</li>
+      <li>Game — 13 min</li>
+      <li>Worksheet — 10 min</li>
+    </ol>
+  </div>
+  <header class="hero">
+    <div class="bigface">🍽️</div>
+    <h1>Please and Thank You</h1>
+    <p>October 19 &middot; TLE After-School &middot; My Emotions and Feelings</p>
+  </header>
+
+  <section class="part">
+    <span class="time">2 min</span>
+    <h2>🎬 Our Feelings Movie</h2>
+    <p class="big">Start the lesson with our 10-second movie!</p>
+    <div class="vid"><video controls playsinline preload="metadata">
+      <source src="opener.mp4" type="video/mp4"></video></div>
+  </section>
+
+  <section class="part">
+    <span class="time">5 min</span>
+    <h2>1 &middot; Words of the day: Please</h2>
+    <p class="big">Tap, say it, <b>show it!</b></p>
+    <div class="feelrow"><button class="feelface star" data-say="Please!">🙏</button>
+<button class="feelface" data-say="Thank you!">😊</button>
+<button class="feelface" data-say="Hello!">👋</button>
+<button class="feelface" data-say="Share!">🤝</button></div>
+    <button class="speak hear" data-say="Today&#x27;s words of the day is Please! Everybody say it: Please!">🔊 Say it with me</button>
+  </section>
+
+  <section class="part">
+    <span class="time">10 min</span>
+    <h2>2 &middot; Mini-Lesson</h2>
+    <p class="big">Please and thank you are magic words. They make people feel good — the giver AND the getter!</p>
+<button class="speak" data-say="Please and thank you are magic words. They make people feel good. The giver and the getter!">🔊 Read to me</button>
+<p class="big">Penny Polite eats with her tummy to the table. Show me: tummy to the table, please!</p>
+<button class="speak" data-say="Penny Polite eats with her tummy to the table. Show me. Tummy to the table, please!">🔊 Read to me</button>
+
+  </section>
+
+  <section class="part">
+    <span class="time">5 min</span>
+    <h2>3 &middot; Watch &amp; Sing</h2>
+    <p class="big">The magic words song! Sing about please and thank you.</p>
+    <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/rmfzTVzsWrc?rel=0" title="Magic Words song" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+  </section>
+
+  <section class="part">
+    <span class="time">13 min</span>
+    <h2>4 &middot; Game <span id="gstars">⭐ 0</span></h2>
+    
+    <p id="gprompt">Tap the POLITE choices!</p>
+    <div id="ggrid"></div><div id="gscore"></div>
+    <div id="gdone"><div class="stars">🌟🌟🌟</div><p class="big"><b>Amazing!</b></p>
+      <button class="speak" id="gagain">🔁 Play again</button></div>
+    <script>
+    const GOODS=[{e:"🙏",n:"say please"},{e:"🤝",n:"share"},{e:"😊",n:"say thank you"}], BADS=[{e:"🫳",n:"grab"},{e:"📢",n:"shout"},{e:"😤",n:"push"}]; const grid=document.getElementById('ggrid');
+    const prompt=document.getElementById('gprompt'), starsEl=document.getElementById('gstars');
+    const doneEl=document.getElementById('gdone');
+    let need,stars=0,round=0; const ROUNDS=3;
+    function newRound(){ if(round>=ROUNDS){ grid.innerHTML=''; prompt.textContent='You did it!';
+      doneEl.classList.add('show'); speak('Amazing!'); return; }
+      round++;
+      const items=[...GOODS.map(g=>({...g,ok:true})),...BADS.map(b=>({...b,ok:false}))]
+        .sort(()=>Math.random()-0.5);
+      need=GOODS.length; grid.innerHTML='';
+      prompt.textContent='Round '+round+' of '+ROUNDS+'. Tap the POLITE choices!';
+      items.forEach(it=>{
+        const b=document.createElement('button'); b.className='gface'; b.textContent=it.e;
+        b.addEventListener('click',()=>{ if(b.classList.contains('right'))return;
+          if(it.ok){ b.classList.add('right'); need--; speak(it.n+'! Yes!');
+            if(need===0){ stars++; starsEl.textContent='⭐ '+stars; setTimeout(newRound,900); } }
+          else{ b.classList.add('wrong'); speak('Not quite, try again!');
+            setTimeout(()=>b.classList.remove('wrong'),600); } });
+        grid.appendChild(b); });
+      speak('Tap the POLITE choices!'); }
+    document.getElementById('gagain').addEventListener('click',()=>{ stars=0;round=0;
+      starsEl.textContent='⭐ 0'; doneEl.classList.remove('show'); newRound(); });
+    newRound();
+    </script>
+  </section>
+
+  <section class="part">
+    <span class="time">10 min</span>
+    <h2>5 &middot; Worksheet</h2>
+    <p class="big">Tap: <b>I am polite when I…</b></p>
+    <div class="ws-pick"><button class="ws-opt" data-say="I say please!"><span class="e">🙏</span><b>say please</b></button>
+<button class="ws-opt" data-say="I say thank you!"><span class="e">😊</span><b>say thank you</b></button>
+<button class="ws-opt" data-say="I share!"><span class="e">🤝</span><b>share</b></button>
+<button class="ws-opt" data-say="I listen!"><span class="e">👂</span><b>listen</b></button>
+<button class="ws-opt" data-say="I give hugs!"><span class="e">🤗</span><b>hug</b></button>
+<button class="ws-opt" data-say="I say hello!"><span class="e">👋</span><b>say hello</b></button></div>
+    <div class="drawbox">✏️ Draw yourself being polite</div>
+    <button class="printbtn" onclick="window.print()">🖨️ Print the worksheet</button>
+  </section>
+
+  <footer>TLE After-School &middot; October 2026 &middot; My Emotions and Feelings</footer>
+</div>
+<script>
+function speak(text){ try{ speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.rate = 0.92; u.pitch = 1.05;
+  speechSynthesis.speak(u); } catch(e){} }
+document.querySelectorAll('[data-say]').forEach(el =>
+  el.addEventListener('click', () => speak(el.getAttribute('data-say'))));
+document.querySelectorAll('.ws-opt').forEach(el =>
+  el.addEventListener('click', () => el.classList.toggle('picked')));
+</script>
+</body>
+</html>
