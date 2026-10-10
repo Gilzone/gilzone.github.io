@@ -27,13 +27,16 @@
     font-size:14px; font-weight:600; pointer-events:none; min-height:20px; }
 </style>
 <script type="importmap">
-{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
 </script>
 </head>
 <body>
 <div id="app"></div>
 <div id="hud">
-  <div class="title">TIC<span class="red">·</span>TAC<span class="red">·</span>TOE VR <span class="red">v4</span></div>
+  <div class="title">TIC<span class="red">·</span>TAC<span class="red">·</span>TOE VR <span class="red">v6</span></div>
   <div class="score" id="scoreHud">You 0 · X 0 · Draws 0</div>
 </div>
 <div id="msg"></div>
@@ -45,6 +48,8 @@
 
 <script type="module">
 import * as THREE from 'three';
+import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+import { XRHandModelFactory } from 'three/addons/webxr/XRHandModelFactory.js';
 
 /* ---------- renderer / scene ---------- */
 const app = document.getElementById('app');
@@ -238,6 +243,7 @@ scene.add(hint);
 /* ---------- game state ---------- */
 const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 let grid, over, turn, wins = { O:0, X:0, D:0 };
+const pieceAnims = []; // driven by the XR-safe animation loop, never window.rAF
 const msgEl = document.getElementById('msg');
 const scoreHud = document.getElementById('scoreHud');
 
@@ -261,6 +267,7 @@ function baseCellMat(i){ return ((Math.floor(i/3)+i%3)%2) ? cellMatA : cellMatB;
 
 function resetBoard(first=true) {
   grid = Array(9).fill(null); over = false; turn = 'O';
+  pieceAnims.length = 0;
   for (const c of cells) {
     while (c.children.length) { const k = c.children.pop(); c.remove(k); }
     c.material = baseCellMat(c.userData.index);
@@ -278,12 +285,7 @@ function place(i, who) {
   piece.position.y = 0.055;
   cells[i].add(piece);
   piece.scale.setScalar(0.01);
-  const t0 = performance.now();
-  (function grow(){
-    const k = Math.min(1, (performance.now()-t0)/180);
-    piece.scale.setScalar(0.01 + 0.99*k*k);
-    if (k<1) requestAnimationFrame(grow);
-  })();
+  pieceAnims.push({ piece, t: 0 });
 }
 function highlightWin(line) { for (const i of line) cells[i].material = hoverMat; }
 function endRound(res) {
@@ -341,6 +343,8 @@ function setHovered(i) {
 }
 setHovered.cur = -1;
 
+const controllerModelFactory = new XRControllerModelFactory();
+const handModelFactory = new XRHandModelFactory();
 for (let i=0;i<2;i++) {
   const ctl = renderer.xr.getController(i);
   ctl.addEventListener('selectstart', ()=>{
@@ -351,8 +355,14 @@ for (let i=0;i<2;i++) {
   ctl.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0xe01b1b, transparent:true, opacity:.75 })));
   scene.add(ctl); controllers.push(ctl);
 
+  // visible controller body (Quest renders nothing by default — the app must)
+  const grip = renderer.xr.getControllerGrip(i);
+  grip.add(controllerModelFactory.createControllerModel(grip));
+  scene.add(grip);
+
   const hand = renderer.xr.getHand(i);
   hand.addEventListener('pinchstart', ()=>{ if (aimFromHand(hand)) tryPick(); });
+  hand.add(handModelFactory.createHandModel(hand, 'mesh'));
   const hgeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-4)]);
   const hray = new THREE.Line(hgeo, new THREE.LineBasicMaterial({ color:0xe01b1b, transparent:true, opacity:.0 }));
   hand.add(hray); hand.userData.ray = hray;
@@ -488,6 +498,13 @@ renderer.setAnimationLoop(()=>{
     c.rotation.y += c.userData.spin * dt;
     c.rotation.x += c.userData.spin * 0.6 * dt;
     c.position.y = c.userData.y + Math.sin(t*0.8 + c.userData.bob) * 0.12;
+  }
+  for (let i=pieceAnims.length-1; i>=0; i--) {
+    const a = pieceAnims[i];
+    a.t += dt;
+    const k = Math.min(1, a.t/0.18);
+    a.piece.scale.setScalar(0.01 + 0.99*k*k);
+    if (k>=1) pieceAnims.splice(i,1);
   }
   if (renderer.xr.isPresenting) {
     locomotion(dt);
