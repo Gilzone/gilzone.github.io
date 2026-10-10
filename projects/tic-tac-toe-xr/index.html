@@ -45,7 +45,7 @@
 <script type="module">
 import * as THREE from 'three';
 
-/* ---------- basics ---------- */
+/* ---------- renderer / scene ---------- */
 const app = document.getElementById('app');
 const renderer = new THREE.WebGLRenderer({ antialias:true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -53,25 +53,30 @@ renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.xr.enabled = true;
+renderer.toneMappingExposure = 1.12;
 app.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xe9e9e9);
-scene.fog = new THREE.Fog(0xe9e9e9, 9, 24);
+scene.background = new THREE.Color(0xf2f2f2);
+scene.fog = new THREE.Fog(0xf2f2f2, 9, 26);
 
+/* movement rig : camera rides inside it so thumbstick can move you */
+const rig = new THREE.Group();
+rig.position.set(0, 0, 2.4);
+scene.add(rig);
 const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.05, 60);
-camera.position.set(0, 1.6, 2.4);
+camera.position.set(0, 1.6, 0);
+rig.add(camera);
 
-/* ---------- SUPERHOT-style room : stark white, flat shaded ---------- */
+/* ---------- SUPERHOT room : pure white, faceted ---------- */
 const ROOM = 14;
-const wallMat = new THREE.MeshStandardMaterial({ color:0xf4f4f4, roughness:.95, flatShading:true, side:THREE.BackSide });
+const wallMat = new THREE.MeshStandardMaterial({ color:0xffffff, roughness:.95, flatShading:true, side:THREE.BackSide });
 const room = new THREE.Mesh(new THREE.BoxGeometry(ROOM, 6, ROOM), wallMat);
 room.position.y = 3;
 scene.add(room);
 
-const floorMat = new THREE.MeshStandardMaterial({ color:0xdcdcdc, roughness:.85, flatShading:true });
+const floorMat = new THREE.MeshStandardMaterial({ color:0xe4e4e4, roughness:.85, flatShading:true });
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM, ROOM, 8, 8), floorMat);
-// subtle low-poly ripple in the floor
 {
   const p = floor.geometry.attributes.position;
   for (let i=0;i<p.count;i++){ p.setZ(i, (Math.sin(p.getX(i)*1.7)+Math.cos(p.getY(i)*2.3))*0.02 ); }
@@ -81,70 +86,87 @@ floor.rotation.x = -Math.PI/2;
 floor.receiveShadow = true;
 scene.add(floor);
 
-// red accent pillars on the back wall
+/* red pillars */
+const pillarMat = new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.55, flatShading:true });
 for (let i=-2; i<=2; i++) {
-  const pil = new THREE.Mesh(
-    new THREE.BoxGeometry(0.16, 2.6, 0.16),
-    new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.6, flatShading:true })
-  );
-  pil.position.set(i*1.6, 2.4, -ROOM/2 + 0.1);
+  const pil = new THREE.Mesh(new THREE.BoxGeometry(0.18, 2.8, 0.18), pillarMat);
+  pil.position.set(i*1.7, 2.5, -ROOM/2 + 0.12);
   pil.castShadow = true;
   scene.add(pil);
 }
-// scattered low-poly shards for the look
-const shardMat = new THREE.MeshStandardMaterial({ color:0xc9c9c9, roughness:.9, flatShading:true });
-for (let i=0;i<14;i++) {
-  const s = new THREE.Mesh(new THREE.TetrahedronGeometry(0.14 + Math.random()*0.22), shardMat);
-  const a = Math.random()*Math.PI*2, r = 3.2 + Math.random()*3;
-  s.position.set(Math.cos(a)*r, 0.12, Math.sin(a)*r - 1);
+
+/* floating red crystals — the SUPERHOT signature */
+const crystals = [];
+const crystalMat = new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.35, flatShading:true, emissive:0x6e0a0a, emissiveIntensity:.5 });
+for (let i=0;i<12;i++) {
+  const c = new THREE.Mesh(new THREE.OctahedronGeometry(0.1 + Math.random()*0.16), crystalMat);
+  const a = Math.random()*Math.PI*2, r = 2.6 + Math.random()*3.4;
+  c.position.set(Math.cos(a)*r, 1 + Math.random()*2.4, Math.sin(a)*r - 0.8);
+  c.userData = { spin:(Math.random()-.5)*1.4, bob:Math.random()*6.28, y:c.position.y };
+  c.castShadow = true;
+  scene.add(c); crystals.push(c);
+}
+/* grey floor shards */
+const shardMat = new THREE.MeshStandardMaterial({ color:0xcfcfcf, roughness:.9, flatShading:true });
+for (let i=0;i<12;i++) {
+  const s = new THREE.Mesh(new THREE.TetrahedronGeometry(0.12 + Math.random()*0.2), shardMat);
+  const a = Math.random()*Math.PI*2, r = 3.4 + Math.random()*2.6;
+  s.position.set(Math.cos(a)*r, 0.1, Math.sin(a)*r - 1);
   s.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
   s.castShadow = true;
   scene.add(s);
 }
 
-/* ---------- lights : bright, clinical ---------- */
-scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.9));
-const key = new THREE.DirectionalLight(0xffffff, 2.0);
+/* ---------- lights ---------- */
+scene.add(new THREE.HemisphereLight(0xffffff, 0xa8a8a8, 1.0));
+const key = new THREE.DirectionalLight(0xffffff, 2.1);
 key.position.set(2.5, 5, 3);
 key.castShadow = true;
 key.shadow.mapSize.set(1024, 1024);
 scene.add(key);
-const fill = new THREE.DirectionalLight(0xffffff, 0.5);
-fill.position.set(-3, 2.5, 2);
+const fill = new THREE.DirectionalLight(0xffffff, 0.55);
+fill.position.set(-3, 2.5, 2.5);
 scene.add(fill);
 
-/* ---------- table : faceted white slab ---------- */
+/* ---------- table ---------- */
 const TABLE_H = 0.95;
-const tableMat = new THREE.MeshStandardMaterial({ color:0xefefef, roughness:.7, flatShading:true });
-const top = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.95, 0.08, 9), tableMat);
+const tableMat = new THREE.MeshStandardMaterial({ color:0xf6f6f6, roughness:.65, flatShading:true });
+const top = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.96, 0.08, 9), tableMat);
 top.position.y = TABLE_H;
 top.castShadow = top.receiveShadow = true;
 scene.add(top);
-const legMat = new THREE.MeshStandardMaterial({ color:0x8f8f8f, roughness:.8, flatShading:true });
-const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.16, TABLE_H, 7), legMat);
-leg.position.y = TABLE_H/2;
-leg.castShadow = true;
+const legMat = new THREE.MeshStandardMaterial({ color:0x9a9a9a, roughness:.8, flatShading:true });
+const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.17, TABLE_H, 7), legMat);
+leg.position.y = TABLE_H/2; leg.castShadow = true;
 scene.add(leg);
-const base = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 0.06, 8), legMat);
-base.position.y = 0.03;
-base.castShadow = true;
+const base = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.42, 0.06, 8), legMat);
+base.position.y = 0.03; base.castShadow = true;
 scene.add(base);
 
-/* ---------- board : 3x3 cells ---------- */
+/* ---------- board ---------- */
 const CELL = 0.30, GAP = 0.025, GRID = CELL + GAP;
 const boardY = TABLE_H + 0.04 + 0.012;
 const cellGeo = new THREE.BoxGeometry(CELL, 0.024, CELL);
-const cellMatA = new THREE.MeshStandardMaterial({ color:0xd4d4d4, roughness:.7, flatShading:true });
-const cellMatB = new THREE.MeshStandardMaterial({ color:0xc2c2c2, roughness:.7, flatShading:true });
+const cellMatA = new THREE.MeshStandardMaterial({ color:0xd8d8d8, roughness:.7, flatShading:true });
+const cellMatB = new THREE.MeshStandardMaterial({ color:0xc4c4c4, roughness:.7, flatShading:true });
 const hoverMat = new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.5, flatShading:true, emissive:0xe01b1b, emissiveIntensity:.45 });
 const cells = [];
+const hitTargets = [];
 const board = new THREE.Group();
+const hitGeo = new THREE.PlaneGeometry(GRID*1.15, GRID*1.15);
+const hitMat = new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false });
 for (let r=0; r<3; r++) for (let c=0; c<3; c++) {
+  const idx = r*3+c;
   const m = new THREE.Mesh(cellGeo, (r+c)%2 ? cellMatA : cellMatB);
   m.position.set((c-1)*GRID, boardY, (r-1)*GRID);
   m.receiveShadow = true;
-  m.userData.index = r*3 + c;
+  m.userData.index = idx;
   board.add(m); cells.push(m);
+  const hit = new THREE.Mesh(hitGeo, hitMat);
+  hit.rotation.x = -Math.PI/2;
+  hit.position.set((c-1)*GRID, boardY+0.03, (r-1)*GRID);
+  hit.userData.index = idx;
+  board.add(hit); hitTargets.push(hit);
 }
 scene.add(board);
 
@@ -152,15 +174,15 @@ scene.add(board);
 const lineMat = new THREE.MeshBasicMaterial({ color:0xe01b1b });
 for (const o of [-GRID/2, GRID/2]) {
   for (const horiz of [true,false]) {
-    const l = new THREE.Mesh(new THREE.BoxGeometry(horiz? GRID*3 : 0.014, 0.008, horiz? 0.014 : GRID*3), lineMat);
+    const l = new THREE.Mesh(new THREE.BoxGeometry(horiz? GRID*3 : 0.016, 0.008, horiz? 0.016 : GRID*3), lineMat);
     l.position.set(horiz?0:o, boardY+0.016, horiz?o:0);
     board.add(l);
   }
 }
 
-/* ---------- pieces : you = white, X = enemy red ---------- */
-const oMat = new THREE.MeshStandardMaterial({ color:0xf8f8f8, roughness:.45, flatShading:true });
-const xMat = new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.45, flatShading:true, emissive:0x7a0d0d, emissiveIntensity:.6 });
+/* ---------- pieces : white O, crystalline red X ---------- */
+const oMat = new THREE.MeshStandardMaterial({ color:0xfbfbfb, roughness:.4, flatShading:true });
+const xMat = new THREE.MeshStandardMaterial({ color:0xe01b1b, roughness:.3, flatShading:true, emissive:0x7a0d0d, emissiveIntensity:.65 });
 function makeO() {
   const g = new THREE.Group();
   const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.034, 8, 14), oMat);
@@ -169,24 +191,48 @@ function makeO() {
 }
 function makeX() {
   const g = new THREE.Group();
-  const bar = new THREE.BoxGeometry(0.23, 0.055, 0.065);
+  const geo = new THREE.OctahedronGeometry(0.08);
   for (const s of [1,-1]) {
-    const b = new THREE.Mesh(bar, xMat);
-    b.rotation.y = s*Math.PI/4; b.castShadow = true;
-    g.add(b);
+    const m = new THREE.Mesh(geo, xMat);
+    m.scale.set(1, 2.4, 0.55);
+    m.rotation.y = s*Math.PI/4;
+    m.castShadow = true;
+    g.add(m);
   }
   return g;
 }
 
-/* ---------- scoreboard ---------- */
+/* ---------- scoreboard + controls hint ---------- */
+function textPanel(w, h, draw) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = Math.round(512*h/w);
+  draw(cv.getContext('2d'), cv.width, cv.height);
+  const tex = new THREE.CanvasTexture(cv);
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({ map:tex, transparent:true }));
+}
 const sbCanvas = document.createElement('canvas');
 sbCanvas.width = 512; sbCanvas.height = 160;
 const sbCtx = sbCanvas.getContext('2d');
 const sbTex = new THREE.CanvasTexture(sbCanvas);
 const sb = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 0.53),
   new THREE.MeshBasicMaterial({ map:sbTex, transparent:true }));
-sb.position.set(0, 2.5, -3.2);
+sb.position.set(0, 2.55, -3.2);
 scene.add(sb);
+
+const hint = textPanel(1.5, 0.75, (ctx,W,H)=>{
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.beginPath(); ctx.roundRect(4,4,W-8,H-8,14); ctx.fill();
+  ctx.strokeStyle = '#e01b1b'; ctx.lineWidth = 6; ctx.stroke();
+  ctx.fillStyle = '#1a1a1a'; ctx.textAlign = 'center';
+  ctx.font = '800 34px system-ui, sans-serif';
+  ctx.fillText('HOW TO PLAY', W/2, 58);
+  ctx.font = '600 27px system-ui, sans-serif'; ctx.fillStyle = '#444';
+  ctx.fillText('Aim + trigger / pinch: place ⭕', W/2, 112);
+  ctx.fillText('Left stick: walk · Right stick: turn', W/2, 158);
+});
+hint.position.set(2.1, 1.7, -0.6);
+hint.rotation.y = -0.5;
+scene.add(hint);
 
 /* ---------- game state ---------- */
 const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
@@ -196,26 +242,27 @@ const scoreHud = document.getElementById('scoreHud');
 
 function drawScoreboard(text) {
   sbCtx.clearRect(0,0,512,160);
-  sbCtx.fillStyle = 'rgba(255,255,255,0.88)';
+  sbCtx.fillStyle = 'rgba(255,255,255,0.92)';
   sbCtx.beginPath(); sbCtx.roundRect(6,6,500,148,10); sbCtx.fill();
   sbCtx.strokeStyle = '#e01b1b'; sbCtx.lineWidth = 6; sbCtx.stroke();
   sbCtx.fillStyle = '#1a1a1a';
   sbCtx.font = '800 42px system-ui, sans-serif';
   sbCtx.textAlign = 'center'; sbCtx.textBaseline = 'middle';
   sbCtx.fillText(text, 256, 60);
-  sbCtx.font = '600 30px system-ui, sans-serif';
+  sbCtx.font = '700 30px system-ui, sans-serif';
   sbCtx.fillStyle = '#e01b1b';
   sbCtx.fillText(`YOU ${wins.O}  ·  X ${wins.X}  ·  DRAW ${wins.D}`, 256, 116);
   sbTex.needsUpdate = true;
   scoreHud.textContent = `You ${wins.O} · X ${wins.X} · Draws ${wins.D}`;
 }
 function setMsg(t){ msgEl.textContent = t; }
+function baseCellMat(i){ return ((Math.floor(i/3)+i%3)%2) ? cellMatA : cellMatB; }
 
 function resetBoard(first=true) {
   grid = Array(9).fill(null); over = false; turn = 'O';
   for (const c of cells) {
     while (c.children.length) { const k = c.children.pop(); c.remove(k); }
-    c.material = ( (Math.floor(c.userData.index/3) + c.userData.index%3) %2 ) ? cellMatA : cellMatB;
+    c.material = baseCellMat(c.userData.index);
   }
   drawScoreboard('YOUR MOVE');
   if (!first) setMsg('New round. Your move.');
@@ -237,9 +284,7 @@ function place(i, who) {
     if (k<1) requestAnimationFrame(grow);
   })();
 }
-function highlightWin(line) {
-  for (const i of line) cells[i].material = hoverMat;
-}
+function highlightWin(line) { for (const i of line) cells[i].material = hoverMat; }
 function endRound(res) {
   over = true;
   if (res.who==='D') { wins.D++; drawScoreboard('DRAW'); setMsg("Draw. Hit reset for another round."); }
@@ -272,46 +317,130 @@ function playerMove(i) {
 }
 document.getElementById('resetBtn').addEventListener('click', ()=>resetBoard(false));
 
-/* ---------- picking : controllers + mouse ---------- */
+/* ---------- input : controllers AND hand tracking ---------- */
 const raycaster = new THREE.Raycaster();
+const controllers = [], hands = [];
+
+function tryPick() {
+  const hits = raycaster.intersectObjects(hitTargets, false);
+  if (!hits.length) return;
+  playerMove(hits[0].object.userData.index);
+}
+function setHovered(i) {
+  if (i === setHovered.cur) return;
+  if (setHovered.cur >= 0 && !over && !grid[setHovered.cur]) cells[setHovered.cur].material = baseCellMat(setHovered.cur);
+  setHovered.cur = i;
+  if (i >= 0 && !over && !grid[i] && turn==='O') cells[i].material = hoverMat;
+}
+setHovered.cur = -1;
+
 for (let i=0;i<2;i++) {
   const ctl = renderer.xr.getController(i);
   ctl.addEventListener('selectstart', ()=>{
     raycaster.setFromXRController(ctl);
     tryPick();
   });
-  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-3)]);
-  const ray = new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0xe01b1b, transparent:true, opacity:.7 }));
-  ctl.add(ray);
-  scene.add(ctl);
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-4)]);
+  ctl.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0xe01b1b, transparent:true, opacity:.75 })));
+  scene.add(ctl); controllers.push(ctl);
+
+  const hand = renderer.xr.getHand(i);
+  hand.addEventListener('pinchstart', ()=>{ if (aimFromHand(hand)) tryPick(); });
+  const hgeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-4)]);
+  const hray = new THREE.Line(hgeo, new THREE.LineBasicMaterial({ color:0xe01b1b, transparent:true, opacity:.0 }));
+  hand.add(hray); hand.userData.ray = hray;
+  scene.add(hand); hands.push(hand);
 }
+
+const _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3(), _d = new THREE.Vector3();
+function aimFromHand(hand) {
+  const j = hand.joints;
+  if (!j) return false;
+  const tip = j['index-finger-tip'], pro = j['index-finger-phalanx-proximal'];
+  if (!tip || !pro) return false;
+  tip.getWorldPosition(_p1); pro.getWorldPosition(_p2);
+  _d.copy(_p1).sub(_p2);
+  if (_d.lengthSq() < 1e-8) return false;
+  _d.normalize();
+  raycaster.set(_p1, _d);
+  return true;
+}
+function updateHandRays() {
+  for (const hand of hands) {
+    const ray = hand.userData.ray;
+    if (aimFromHand(hand)) {
+      ray.material.opacity = 0.6;
+      const pos = ray.geometry.attributes.position;
+      pos.setXYZ(0, _p1.x, _p1.y, _p1.z);
+      pos.setXYZ(1, _p1.x + _d.x*4, _p1.y + _d.y*4, _p1.z + _d.z*4);
+      pos.needsUpdate = true;
+      ray.parent.updateWorldMatrix(true, false);
+    } else ray.material.opacity = 0;
+  }
+}
+function vrHover() {
+  let idx = -1;
+  for (const ctl of controllers) {
+    raycaster.setFromXRController(ctl);
+    const h = raycaster.intersectObjects(hitTargets, false);
+    if (h.length) { idx = h[0].object.userData.index; break; }
+  }
+  if (idx < 0) for (const hand of hands) {
+    if (aimFromHand(hand)) {
+      const h = raycaster.intersectObjects(hitTargets, false);
+      if (h.length) { idx = h[0].object.userData.index; break; }
+    }
+  }
+  setHovered(idx);
+}
+
+/* desktop mouse */
 const pointer = new THREE.Vector2();
-let hovered = -1;
 renderer.domElement.addEventListener('pointermove', e=>{
   pointer.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
 });
 renderer.domElement.addEventListener('pointerdown', e=>{
   pointer.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
   raycaster.setFromCamera(pointer, camera);
-  tryPick();
+  const hits = raycaster.intersectObjects(hitTargets, false);
+  if (hits.length) playerMove(hits[0].object.userData.index);
 });
-function tryPick() {
-  const hits = raycaster.intersectObjects(cells, false);
-  if (!hits.length) return;
-  playerMove(hits[0].object.userData.index);
-}
-function updateHover() {
-  if (renderer.xr.isPresenting) return;
+function desktopHover() {
   raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(cells, false);
-  const i = hits.length ? hits[0].object.userData.index : -1;
-  if (i !== hovered) {
-    if (hovered>=0 && !over && !grid[hovered]) cells[hovered].material =
-      ((Math.floor(hovered/3)+hovered%3)%2) ? cellMatA : cellMatB;
-    hovered = i;
-    if (hovered>=0 && !over && !grid[hovered] && turn==='O') cells[hovered].material = hoverMat;
-    renderer.domElement.style.cursor = (hovered>=0 && !over && !grid[hovered]) ? 'pointer' : 'default';
+  const hits = raycaster.intersectObjects(hitTargets, false);
+  setHovered(hits.length ? hits[0].object.userData.index : -1);
+  renderer.domElement.style.cursor =
+    (setHovered.cur>=0 && !over && !grid[setHovered.cur] && turn==='O') ? 'pointer' : 'default';
+}
+
+/* ---------- thumbstick locomotion + snap turn ---------- */
+const clock = new THREE.Clock();
+let snapCooldown = 0;
+const _e = new THREE.Euler(), _fwd = new THREE.Vector3(), _rgt = new THREE.Vector3();
+function locomotion(dt) {
+  const session = renderer.xr.getSession();
+  if (!session) return;
+  _e.setFromQuaternion(rig.quaternion, 'YXZ');
+  const yaw = _e.y;
+  _fwd.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+  _rgt.set(Math.cos(yaw), 0, -Math.sin(yaw));
+  snapCooldown -= dt;
+  for (const src of session.inputSources) {
+    const gp = src.gamepad;
+    if (!gp || gp.axes.length < 4) continue;
+    const sx = gp.axes[2], sy = gp.axes[3];
+    if (src.handedness === 'left') {
+      if (Math.abs(sx) > 0.18) rig.position.addScaledVector(_rgt, sx * 1.8 * dt);
+      if (Math.abs(sy) > 0.18) rig.position.addScaledVector(_fwd, -sy * 1.8 * dt);
+    } else if (src.handedness === 'right') {
+      if (Math.abs(sx) > 0.7 && snapCooldown <= 0) {
+        rig.rotation.y -= Math.sign(sx) * Math.PI/4;
+        snapCooldown = 0.35;
+      }
+    }
   }
+  const r = Math.hypot(rig.position.x, rig.position.z);
+  if (r > 5.2) { rig.position.x *= 5.2/r; rig.position.z *= 5.2/r; }
 }
 
 /* ---------- VR button ---------- */
@@ -338,9 +467,22 @@ async function setupVR() {
 }
 setupVR();
 
-/* ---------- loop ---------- */
+/* ---------- main loop ---------- */
 renderer.setAnimationLoop(()=>{
-  updateHover();
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+  for (const c of crystals) {
+    c.rotation.y += c.userData.spin * dt;
+    c.rotation.x += c.userData.spin * 0.6 * dt;
+    c.position.y = c.userData.y + Math.sin(t*0.8 + c.userData.bob) * 0.12;
+  }
+  if (renderer.xr.isPresenting) {
+    locomotion(dt);
+    updateHandRays();
+    vrHover();
+  } else {
+    desktopHover();
+  }
   renderer.render(scene, camera);
 });
 addEventListener('resize', ()=>{
