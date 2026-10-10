@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tic-Tac-Toe XR — Fish Build</title>
+<style>
+  html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#0b0e14;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color:#eef2f7; }
+  #app { position:fixed; inset:0; }
+  canvas { display:block; }
+  #hud { position:fixed; top:0; left:0; right:0; padding:12px 16px; display:flex;
+    justify-content:space-between; align-items:center; pointer-events:none; z-index:5; }
+  #hud .title { font-weight:700; letter-spacing:.5px; font-size:15px; opacity:.95; }
+  #hud .score { font-size:13px; opacity:.85; background:rgba(255,255,255,.08);
+    padding:6px 12px; border-radius:999px; }
+  #controls { position:fixed; bottom:18px; left:0; right:0; display:flex; gap:10px;
+    justify-content:center; z-index:5; }
+  button { pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,.25);
+    background:#1c64f2; color:#fff; font-size:15px; font-weight:600;
+    padding:12px 22px; border-radius:12px; }
+  button.ghost { background:rgba(255,255,255,.08); }
+  button:disabled { opacity:.45; cursor:default; }
+  #msg { position:fixed; bottom:76px; left:0; right:0; text-align:center; z-index:5;
+    font-size:14px; opacity:.9; pointer-events:none; min-height:20px; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="app"></div>
+<div id="hud">
+  <div class="title">⭕ Tic-Tac-Toe XR</div>
+  <div class="score" id="scoreHud">You 0 · X 0 · Draws 0</div>
+</div>
+<div id="msg"></div>
+<div id="controls">
+  <button id="vrBtn" disabled>Checking VR…</button>
+  <button id="resetBtn" class="ghost">Reset board</button>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ---------- basics ---------- */
+const app = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.xr.enabled = true;
+app.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0e14);
+scene.fog = new THREE.Fog(0x0b0e14, 8, 22);
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.05, 60);
+camera.position.set(0, 1.6, 2.4);
+
+/* ---------- studio room ---------- */
+const ROOM = 14;
+const wallMat = new THREE.MeshStandardMaterial({ color:0x1a2233, roughness:.95, side:THREE.BackSide });
+const room = new THREE.Mesh(new THREE.BoxGeometry(ROOM, 6, ROOM), wallMat);
+room.position.y = 3;
+scene.add(room);
+
+const floorMat = new THREE.MeshStandardMaterial({ color:0x11161f, roughness:.6, metalness:.35 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM, ROOM), floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// soft glowing strips on the back wall (studio vibe)
+for (let i=-2; i<=2; i++) {
+  const strip = new THREE.Mesh(
+    new THREE.BoxGeometry(0.08, 2.2, 0.08),
+    new THREE.MeshBasicMaterial({ color:0x2f7bff })
+  );
+  strip.position.set(i*1.4, 2.2, -ROOM/2 + 0.06);
+  scene.add(strip);
+}
+
+/* ---------- lights ---------- */
+scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a1410, 0.55));
+const key = new THREE.DirectionalLight(0xffffff, 1.6);
+key.position.set(2.5, 5, 3);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+scene.add(key);
+const rim = new THREE.PointLight(0x2f7bff, 12, 12);
+rim.position.set(-2.5, 2.5, -2.5);
+scene.add(rim);
+const warm = new THREE.PointLight(0xffb46b, 8, 10);
+warm.position.set(0, 2.2, 1.6);
+scene.add(warm);
+
+/* ---------- table ---------- */
+const TABLE_H = 0.95;
+const tableMat = new THREE.MeshStandardMaterial({ color:0x2a2118, roughness:.35, metalness:.55 });
+const top = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.07, 48), tableMat);
+top.position.y = TABLE_H;
+top.castShadow = top.receiveShadow = true;
+scene.add(top);
+const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, TABLE_H, 24),
+  new THREE.MeshStandardMaterial({ color:0x14181f, roughness:.5, metalness:.6 }));
+leg.position.y = TABLE_H/2;
+leg.castShadow = true;
+scene.add(leg);
+const base = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.05, 32),
+  new THREE.MeshStandardMaterial({ color:0x14181f, roughness:.5, metalness:.6 }));
+base.position.y = 0.025;
+scene.add(base);
+
+/* ---------- board : 3x3 cells on the table ---------- */
+const CELL = 0.30, GAP = 0.025, GRID = CELL + GAP;
+const boardY = TABLE_H + 0.035 + 0.012;
+const cellGeo = new THREE.BoxGeometry(CELL, 0.024, CELL);
+const cellMatA = new THREE.MeshStandardMaterial({ color:0x223148, roughness:.4, metalness:.25 });
+const cellMatB = new THREE.MeshStandardMaterial({ color:0x1b2740, roughness:.4, metalness:.25 });
+const hoverMat = new THREE.MeshStandardMaterial({ color:0x2f7bff, roughness:.35, metalness:.3, emissive:0x1c64f2, emissiveIntensity:.35 });
+const cells = [];
+const board = new THREE.Group();
+for (let r=0; r<3; r++) for (let c=0; c<3; c++) {
+  const m = new THREE.Mesh(cellGeo, (r+c)%2 ? cellMatA : cellMatB);
+  m.position.set((c-1)*GRID, boardY, (r-1)*GRID);
+  m.receiveShadow = true;
+  m.userData.index = r*3 + c;
+  board.add(m); cells.push(m);
+}
+scene.add(board);
+
+/* grid frame lines */
+const lineMat = new THREE.MeshBasicMaterial({ color:0x3b82f6 });
+for (const o of [-GRID/2, GRID/2]) {
+  for (const horiz of [true,false]) {
+    const l = new THREE.Mesh(new THREE.BoxGeometry(horiz? GRID*3 : 0.012, 0.006, horiz? 0.012 : GRID*3), lineMat);
+    l.position.set(horiz?0:o, boardY+0.014, horiz?o:0);
+    board.add(l);
+  }
+}
+
+/* ---------- pieces ---------- */
+const oMat = new THREE.MeshStandardMaterial({ color:0x38e08c, roughness:.3, metalness:.4, emissive:0x0b3d24, emissiveIntensity:.5 });
+const xMat = new THREE.MeshStandardMaterial({ color:0xff5d5d, roughness:.3, metalness:.4, emissive:0x3d0b0b, emissiveIntensity:.5 });
+function makeO() {
+  const g = new THREE.Group();
+  const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.032, 20, 40), oMat);
+  t.rotation.x = Math.PI/2; t.castShadow = true;
+  g.add(t); return g;
+}
+function makeX() {
+  const g = new THREE.Group();
+  const bar = new THREE.BoxGeometry(0.22, 0.05, 0.06);
+  for (const s of [1,-1]) {
+    const b = new THREE.Mesh(bar, xMat);
+    b.rotation.y = s*Math.PI/4; b.castShadow = true;
+    g.add(b);
+  }
+  return g;
+}
+
+/* ---------- scoreboard (in-world) ---------- */
+const sbCanvas = document.createElement('canvas');
+sbCanvas.width = 512; sbCanvas.height = 160;
+const sbCtx = sbCanvas.getContext('2d');
+const sbTex = new THREE.CanvasTexture(sbCanvas);
+const sb = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 0.53),
+  new THREE.MeshBasicMaterial({ map:sbTex, transparent:true }));
+sb.position.set(0, 2.5, -3.2);
+scene.add(sb);
+
+/* ---------- game state ---------- */
+const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let grid, over, turn, wins = { O:0, X:0, D:0 };
+const msgEl = document.getElementById('msg');
+const scoreHud = document.getElementById('scoreHud');
+
+function drawScoreboard(text) {
+  sbCtx.clearRect(0,0,512,160);
+  sbCtx.fillStyle = 'rgba(10,14,22,0.72)';
+  sbCtx.beginPath(); sbCtx.roundRect(6,6,500,148,28); sbCtx.fill();
+  sbCtx.fillStyle = '#eef2f7';
+  sbCtx.font = '700 44px system-ui, sans-serif';
+  sbCtx.textAlign = 'center'; sbCtx.textBaseline = 'middle';
+  sbCtx.fillText(text, 256, 62);
+  sbCtx.font = '400 30px system-ui, sans-serif';
+  sbCtx.fillStyle = '#9fb2cc';
+  sbCtx.fillText(`You ${wins.O}  ·  X ${wins.X}  ·  Draws ${wins.D}`, 256, 116);
+  sbTex.needsUpdate = true;
+  scoreHud.textContent = `You ${wins.O} · X ${wins.X} · Draws ${wins.D}`;
+}
+function setMsg(t){ msgEl.textContent = t; }
+
+function resetBoard(first=true) {
+  grid = Array(9).fill(null); over = false; turn = 'O';
+  for (const c of cells) {
+    while (c.children.length) { const k = c.children.pop(); c.remove(k); }
+    c.material = ( (Math.floor(c.userData.index/3) + c.userData.index%3) %2 ) ? cellMatA : cellMatB;
+  }
+  drawScoreboard('Your move — place ⭕');
+  if (!first) setMsg('New round. Your move.');
+}
+function winner(g) {
+  for (const [a,b,c] of LINES) if (g[a] && g[a]===g[b] && g[a]===g[c]) return { who:g[a], line:[a,b,c] };
+  return g.every(Boolean) ? { who:'D', line:[] } : null;
+}
+function place(i, who) {
+  grid[i] = who;
+  const piece = who==='O' ? makeO() : makeX();
+  piece.position.y = 0.055;
+  cells[i].add(piece);
+  // pop-in animation
+  piece.scale.setScalar(0.01);
+  const t0 = performance.now();
+  (function grow(){
+    const k = Math.min(1, (performance.now()-t0)/180);
+    piece.scale.setScalar(0.01 + 0.99*k*k);
+    if (k<1) requestAnimationFrame(grow);
+  })();
+}
+function highlightWin(line) {
+  for (const i of line) cells[i].material = hoverMat;
+}
+function endRound(res) {
+  over = true;
+  if (res.who==='D') { wins.D++; drawScoreboard('Draw!'); setMsg("It's a draw. Hit reset for another round."); }
+  else {
+    wins[res.who]++;
+    highlightWin(res.line);
+    if (res.who==='O') { drawScoreboard('You win! 🎉'); setMsg('Nice — you win! Hit reset to play again.'); }
+    else { drawScoreboard('X wins'); setMsg('X takes this one. Hit reset to try again.'); }
+  }
+}
+function aiMove() {
+  if (over) return;
+  const empty = grid.map((v,i)=>v?null:i).filter(v=>v!==null);
+  if (!empty.length) return;
+  const pick = empty[Math.floor(Math.random()*empty.length)];
+  place(pick, 'X');
+  const res = winner(grid);
+  if (res) endRound(res);
+  else { turn = 'O'; drawScoreboard('Your move — place ⭕'); }
+}
+function playerMove(i) {
+  if (over || turn!=='O' || grid[i]) return;
+  place(i, 'O');
+  const res = winner(grid);
+  if (res) { endRound(res); return; }
+  turn = 'X';
+  drawScoreboard('X is thinking…');
+  setMsg('');
+  setTimeout(aiMove, 700);
+}
+document.getElementById('resetBtn').addEventListener('click', ()=>resetBoard(false));
+
+/* ---------- picking : controllers + mouse ---------- */
+const raycaster = new THREE.Raycaster();
+const controllers = [];
+for (let i=0;i<2;i++) {
+  const ctl = renderer.xr.getController(i);
+  ctl.addEventListener('selectstart', ()=>{
+    raycaster.setFromXRController(ctl);
+    tryPick();
+  });
+  // visible ray
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-3)]);
+  const ray = new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0x3b82f6, transparent:true, opacity:.6 }));
+  ctl.add(ray);
+  scene.add(ctl); controllers.push(ctl);
+}
+const pointer = new THREE.Vector2();
+let hovered = -1;
+renderer.domElement.addEventListener('pointermove', e=>{
+  pointer.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+});
+renderer.domElement.addEventListener('pointerdown', e=>{
+  pointer.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+  raycaster.setFromCamera(pointer, camera);
+  tryPick();
+});
+function tryPick() {
+  const hits = raycaster.intersectObjects(cells, false);
+  if (!hits.length) return;
+  const i = hits[0].object.userData.index;
+  playerMove(i);
+}
+function updateHover() {
+  if (renderer.xr.isPresenting) return;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(cells, false);
+  const i = hits.length ? hits[0].object.userData.index : -1;
+  if (i !== hovered) {
+    if (hovered>=0 && !over && !grid[hovered]) cells[hovered].material =
+      ((Math.floor(hovered/3)+hovered%3)%2) ? cellMatA : cellMatB;
+    hovered = i;
+    if (hovered>=0 && !over && !grid[hovered] && turn==='O') cells[hovered].material = hoverMat;
+    renderer.domElement.style.cursor = (hovered>=0 && !over && !grid[hovered]) ? 'pointer' : 'default';
+  }
+}
+
+/* ---------- VR button ---------- */
+const vrBtn = document.getElementById('vrBtn');
+let xrSession = null;
+async function setupVR() {
+  if (!('xr' in navigator)) { vrBtn.textContent = 'WebXR not supported'; return; }
+  try {
+    const ok = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!ok) { vrBtn.textContent = 'VR not available'; return; }
+    vrBtn.disabled = false;
+    vrBtn.textContent = 'Enter VR 🥽';
+    vrBtn.onclick = async () => {
+      if (xrSession) { await xrSession.end(); return; }
+      try {
+        xrSession = await navigator.xr.requestSession('immersive-vr',
+          { optionalFeatures:['local-floor','bounded-floor'] });
+        vrBtn.textContent = 'Exit VR';
+        xrSession.addEventListener('end', ()=>{ xrSession=null; vrBtn.textContent='Enter VR 🥽'; });
+        await renderer.xr.setSession(xrSession);
+      } catch(err) { setMsg('Could not start VR: ' + err.message); }
+    };
+  } catch(e) { vrBtn.textContent = 'VR check failed'; }
+}
+setupVR();
+
+/* ---------- loop ---------- */
+renderer.setAnimationLoop(()=>{
+  updateHover();
+  renderer.render(scene, camera);
+});
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+resetBoard(true);
+setMsg('Click / tap a square to place ⭕ — or hit Enter VR on your Quest.');
+</script>
+</body>
+</html>
