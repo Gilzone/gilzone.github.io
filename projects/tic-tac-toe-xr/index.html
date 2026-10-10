@@ -37,6 +37,7 @@
   <div class="score" id="scoreHud">You 0 · X 0 · Draws 0</div>
 </div>
 <div id="msg"></div>
+<div id="err" style="position:fixed;top:60px;left:8px;right:8px;z-index:50;display:none;background:#7a0d0d;color:#fff;font:600 13px/1.5 system-ui,sans-serif;padding:10px 12px;border-radius:8px;white-space:pre-wrap;"></div>
 <div id="controls">
   <button id="vrBtn" disabled>Checking VR…</button>
   <button id="resetBtn" class="ghost">Reset</button>
@@ -319,6 +320,12 @@ document.getElementById('resetBtn').addEventListener('click', ()=>resetBoard(fal
 
 /* ---------- input : controllers AND hand tracking ---------- */
 const raycaster = new THREE.Raycaster();
+const _m4 = new THREE.Matrix4();
+function aimFromController(ctl) {
+  _m4.identity().extractRotation(ctl.matrixWorld);
+  raycaster.ray.origin.setFromMatrixPosition(ctl.matrixWorld);
+  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(_m4);
+}
 const controllers = [], hands = [];
 
 function tryPick() {
@@ -337,7 +344,7 @@ setHovered.cur = -1;
 for (let i=0;i<2;i++) {
   const ctl = renderer.xr.getController(i);
   ctl.addEventListener('selectstart', ()=>{
-    raycaster.setFromXRController(ctl);
+    aimFromController(ctl);
     tryPick();
   });
   const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0,0,-4)]);
@@ -381,7 +388,7 @@ function updateHandRays() {
 function vrHover() {
   let idx = -1;
   for (const ctl of controllers) {
-    raycaster.setFromXRController(ctl);
+    aimFromController(ctl);
     const h = raycaster.intersectObjects(hitTargets, false);
     if (h.length) { idx = h[0].object.userData.index; break; }
   }
@@ -457,7 +464,7 @@ async function setupVR() {
       if (xrSession) { await xrSession.end(); return; }
       try {
         xrSession = await navigator.xr.requestSession('immersive-vr',
-          { optionalFeatures:['local-floor','bounded-floor'] });
+          { optionalFeatures:['local-floor','bounded-floor','hand-tracking'] });
         vrBtn.textContent = 'Exit VR';
         xrSession.addEventListener('end', ()=>{ xrSession=null; vrBtn.textContent='Enter VR'; });
         await renderer.xr.setSession(xrSession);
@@ -468,7 +475,13 @@ async function setupVR() {
 setupVR();
 
 /* ---------- main loop ---------- */
+const errBox = document.getElementById('err');
+window.addEventListener('error', e=>{
+  errBox.style.display = 'block';
+  errBox.textContent = 'Error: ' + (e.message || e.error);
+});
 renderer.setAnimationLoop(()=>{
+  try {
   const dt = Math.min(clock.getDelta(), 0.05);
   const t = clock.elapsedTime;
   for (const c of crystals) {
@@ -484,6 +497,10 @@ renderer.setAnimationLoop(()=>{
     desktopHover();
   }
   renderer.render(scene, camera);
+  } catch(err) {
+    errBox.style.display = 'block';
+    errBox.textContent = 'Loop error: ' + (err.message || err);
+  }
 });
 addEventListener('resize', ()=>{
   camera.aspect = innerWidth/innerHeight;
