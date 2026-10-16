@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>I Am a Classroom Helper! (Pre-K)</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #17202e; min-height: 100vh; overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  a.back { color: #2b6bff; text-decoration: none; font-weight: 600; font-size: 14px; }
+  header.hero { text-align: center; margin: 18px 0 8px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 32px; }
+  header.hero p { margin: 0; color: #5c6675; font-size: 15px; }
+  .teacher { background: #eaf0ff; border: 1px dashed #2b6bff; border-radius: 12px; padding: 12px 16px; margin: 18px 0; font-size: 14px; color: #24407c; }
+  .teacher a { color: #2b6bff; font-weight: 700; }
+  .steps { display: flex; gap: 12px; margin: 22px 0 8px; flex-wrap: wrap; }
+  .step { flex: 1 1 200px; background: #ffffff; border: 1px solid #e6e9f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(23,32,46,.05); }
+  .step b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .step span { color: #5c6675; font-size: 13.5px; }
+  h2.part { margin: 44px 0 4px; font-size: 24px; }
+  p.partsub { margin: 0 0 18px; color: #5c6675; font-size: 14.5px; }
+  .card { background: #ffffff; border: 1px solid #e6e9f0; border-radius: 16px; padding: 22px; margin: 0 0 22px; box-shadow: 0 4px 16px rgba(23,32,46,.06); }
+  .say { text-align: center; font-size: 19px; font-weight: 700; min-height: 30px; margin: 14px 0 4px; }
+  .say.good { color: #1f8f57; }
+  .say.try { color: #9a6b12; }
+  .stars { text-align: center; font-size: 30px; min-height: 40px; margin-top: 10px; letter-spacing: 4px; overflow-wrap: anywhere; line-height: 1.5; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 12px 26px; font-size: 16px; font-weight: 700; background: #2b6bff; color: #fff; min-height: 56px; }
+  button:hover { background: #1f58e0; }
+  /* vocabulary strip */
+  .vocab { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .vcard { background: #f6f8fc; border: 2px solid #e6e9f0; border-radius: 16px; padding: 18px 10px; text-align: center; cursor: pointer; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .vcard .e { font-size: 52px; line-height: 1.2; }
+  .vcard b { font-size: 17px; }
+  .vcard:active { transform: scale(.96); }
+  /* cleanup game */
+  .timerow { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+  #timer { font-size: 34px; font-weight: 800; background: #17202e; color: #fff; border-radius: 14px; padding: 8px 20px; min-width: 130px; text-align: center; }
+  #timer.low { background: #e5484d; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .55; } }
+  .rug { background: #fdf3e3; border: 3px dashed #d9a400; border-radius: 18px; padding: 20px; margin: 6px 0 16px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; min-height: 120px; }
+  .item { font-size: 64px; line-height: 1; cursor: pointer; padding: 10px 14px; border-radius: 16px; border: 3px solid transparent; user-select: none; min-width: 88px; min-height: 88px; display: flex; align-items: center; justify-content: center; }
+  .item.sel { border-color: #2b6bff; background: #eaf0ff; transform: scale(1.12); }
+  .item.gone { animation: flyaway .5s forwards; pointer-events: none; }
+  @keyframes flyaway { to { transform: translateY(-70px) scale(.2); opacity: 0; } }
+  .bins { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .bin { flex: 1 1 150px; max-width: 220px; background: #f6f8fc; border: 3px solid #e6e9f0; border-radius: 16px; padding: 16px 8px; text-align: center; cursor: pointer; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .bin .e { font-size: 52px; }
+  .bin b { font-size: 15px; }
+  .bin .n { font-size: 13px; color: #5c6675; }
+  .bin:active { transform: scale(.96); }
+  .celebrate { text-align: center; font-size: 72px; margin: 10px 0; animation: pop .5s; }
+  @keyframes pop { 50% { transform: scale(1.25); } }
+  /* Barnaby */
+  .barnaby { text-align: center; font-size: 110px; line-height: 1.2; cursor: pointer; user-select: none; min-height: 130px; }
+  .barnaby:active { transform: scale(.94); }
+  .bigword { background: #fff8e1; border: 3px solid #d9a400; border-radius: 16px; padding: 20px; text-align: center; margin-top: 16px; }
+  .bigword b { display: block; font-size: 26px; margin-bottom: 8px; }
+  .bigword span { font-size: 17px; color: #5c6675; }
+  /* song */
+  .songline { display: flex; align-items: center; gap: 16px; background: #f6f8fc; border: 2px solid #e6e9f0; border-radius: 16px; padding: 16px 18px; margin: 0 0 12px; cursor: pointer; min-height: 84px; }
+  .songline .e { font-size: 48px; flex: 0 0 auto; }
+  .songline .t { font-size: 20px; font-weight: 700; }
+  .songline .g { display: block; font-size: 13px; color: #5c6675; font-weight: 400; margin-top: 2px; }
+  .songline:active { transform: scale(.98); border-color: #2b6bff; }
+  /* help or oops */
+  .scencard { text-align: center; background: #f6f8fc; border: 2px solid #e6e9f0; border-radius: 16px; padding: 24px 16px; margin-bottom: 14px; cursor: pointer; min-height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .scencard .e { font-size: 76px; }
+  .scencard .tap { font-size: 14px; color: #5c6675; }
+  .choicebtns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .choicebtns button { min-width: 170px; min-height: 84px; font-size: 22px; }
+  #btnHelper { background: #1f8f57; }
+  #btnHelper:hover { background: #177245; }
+  #btnOops { background: #e5484d; }
+  #btnOops:hover { background: #c93a3f; }
+  footer { margin-top: 56px; color: #8a93a5; font-size: 13px; text-align: center; line-height: 1.7; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">&larr; All lessons</a>
+
+  <header class="hero">
+    <h1>🧹 I Am a Classroom Helper!</h1>
+    <p>Taking care of ourselves, our toys, and our friends!</p>
+  </header>
+
+  <div class="teacher">📢 <b>Teacher:</b> read everything out loud. Let the kids tap — tapping is the lesson. Every word the children need is spoken when they tap.</div>
+
+  <div class="teacher">📺 <b>Watch together:</b> <a href="https://www.youtube.com/watch?v=JfgVU6ceso4" target="_blank" rel="noopener">"Teaching Kids Responsibility" — Everyday Character Building Actions (SKIDOS)</a> — a visual intro on cleaning play areas, feeding pets, and respecting classmates.</div>
+
+  <div class="steps">
+    <div class="step"><b>🧹 1. Clean up</b><span>Tap the mess and put every toy where it lives!</span></div>
+    <div class="step"><b>🧸 2. Barnaby</b><span>Help Barnaby the Bear clean his blocks!</span></div>
+    <div class="step"><b>🎵 3. Sing</b><span>Sing the helper song, one line at a time!</span></div>
+    <div class="step"><b>👍 4. Help or Oops?</b><span>You decide — was that a helper or an oops?</span></div>
+  </div>
+
+  <h2 class="part">Our helper words</h2>
+  <p class="partsub">Tap each word to hear it!</p>
+  <div class="card">
+    <div class="vocab" id="vocab"></div>
+  </div>
+
+  <h2 class="part">Part 1 &mdash; The 60-Second Helper Challenge 🧹</h2>
+  <p class="partsub">Tap an item on the rug, then tap the bin where it lives. Clean it all up before the timer ends!</p>
+  <div class="card">
+    <div class="timerow">
+      <div id="timer">⏱️ 60</div>
+      <button id="cleanStart">Start cleaning!</button>
+    </div>
+    <div class="rug" id="rug"></div>
+    <div class="bins" id="bins"></div>
+    <div class="say" id="cleanSay">Tap Start, little helper! 🧹</div>
+    <div class="stars" id="cleanStars"></div>
+    <div id="cleanDone" hidden>
+      <div class="celebrate">🎉</div>
+      <div class="say good" style="font-size:24px">SUPER HELPER!</div>
+    </div>
+  </div>
+
+  <h2 class="part">Part 2 &mdash; Meet Barnaby 🧸</h2>
+  <p class="partsub">Barnaby the Bear made a big tower&hellip; and now blocks are everywhere! Tap Barnaby to hear the story, then tap the blocks to help him clean up.</p>
+  <div class="card">
+    <div class="barnaby" id="barnaby" title="Barnaby">🧸</div>
+    <div class="say" id="barnSay">Tap Barnaby! 👆</div>
+    <div class="rug" id="barnRug"></div>
+    <div id="bigword" class="bigword" hidden>
+      <b>Responsibility</b>
+      <span>Responsibility means being a good helper and taking care of what we use!</span>
+    </div>
+  </div>
+
+  <h2 class="part">Part 3 &mdash; The Helper Song 🎵</h2>
+  <p class="partsub">To the tune of <i>Twinkle, Twinkle, Little Star</i>. Tap each line to hear it, and copy the move!</p>
+  <div class="card">
+    <div id="song"></div>
+  </div>
+
+  <h2 class="part">Part 4 &mdash; Help or Oops? 🤔</h2>
+  <p class="partsub">Tap the picture to hear what happened. Then you decide: Helper 👍 or Oops 🙈?</p>
+  <div class="card">
+    <div class="scencard" id="scenCard">
+      <div class="e" id="scenEmoji">🎬</div>
+      <div class="tap" id="scenTap">Tap the picture to hear what happened! 👆</div>
+    </div>
+    <div class="choicebtns">
+      <button id="btnHelper">👍 Helper!</button>
+      <button id="btnOops">🙈 Oops!</button>
+    </div>
+    <div class="say" id="scenSay"></div>
+    <div class="stars" id="scenStars"></div>
+    <div class="btnrow"><button id="scenNext" hidden>Next one! ➡️</button></div>
+  </div>
+
+  <div class="teacher">📢 <b>Teacher — adaptations:</b><br/>
+    🟢🔴 <b>Non-verbal / emerging communicators:</b> use dual-sided visual paddles — Green Smiley = Helper, Red Circle = Oops — so children can answer the game without speaking.<br/>
+    🤝 <b>Sensory / motor support:</b> pair the child with a peer buddy or educator and complete the clean-up taps with hand-over-hand modeling.
+  </div>
+
+  <footer>I Am a Classroom Helper! &mdash; made for Edwin&rsquo;s class.<br/><a href="../../" style="color:#2b6bff;font-weight:700">&larr; All lessons</a></footer>
+</div>
+
+<script>
+/* ================= TTS ================= */
+var enVoice = null;
+function pickVoice() {
+  try {
+    var vs = window.speechSynthesis.getVoices();
+    enVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en-us") === 0; })
+           || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf("en") === 0; })
+           || null;
+  } catch (e) { enVoice = null; }
+}
+function sayEn(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if (enVoice) u.voice = enVoice;
+    u.lang = "en-US"; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+/* ================= Vocabulary ================= */
+var VOCAB = [
+  { e: "🤝", w: "Helper",    d: "A helper is someone who helps!" },
+  { e: "🙌", w: "Gentle hands", d: "Gentle hands are soft and kind. We use gentle hands with our friends!" },
+  { e: "🧽", w: "Clean up",  d: "Clean up means put every toy back where it lives!" },
+  { e: "💞", w: "Share",      d: "Share means you let a friend have a turn too!" }
+];
+(function () {
+  var box = document.getElementById("vocab");
+  VOCAB.forEach(function (v) {
+    var d = document.createElement("div");
+    d.className = "vcard";
+    d.innerHTML = "<div class='e'>" + v.e + "</div><b>" + v.w + "</b>";
+    d.addEventListener("click", function () { sayEn(v.w + ". " + v.d); });
+    box.appendChild(d);
+  });
+})();
+
+/* ================= Part 1: 60-Second Helper Challenge ================= */
+var ITEMS = [
+  { e: "🧱", name: "block",  bin: "blocks", said: "A block! Where does it go?" },
+  { e: "📕", name: "book",   bin: "books",  said: "A book! Where does it go?" },
+  { e: "🧻", name: "napkin", bin: "trash",  said: "A napkin! Where does it go?" },
+  { e: "🥤", name: "cup",    bin: "trash",  said: "A cup! Where does it go?" }
+];
+var BINS = [
+  { id: "blocks", e: "📦", label: "Blocks bin", said: "blocks bin" },
+  { id: "books",  e: "📚", label: "Book shelf", said: "book shelf" },
+  { id: "trash",  e: "🗑️", label: "Trash",     said: "trash" }
+];
+var PRAISE = ["Yay! ⭐", "Great job! 🎉", "You did it! ⭐", "Super! 🎉"];
+(function () {
+  var rug = document.getElementById("rug");
+  var binsEl = document.getElementById("bins");
+  var say = document.getElementById("cleanSay");
+  var starsEl = document.getElementById("cleanStars");
+  var timerEl = document.getElementById("timer");
+  var startBtn = document.getElementById("cleanStart");
+  var doneBox = document.getElementById("cleanDone");
+  var selected = null, sorted = 0, stars = 0, timeLeft = 60, timerId = null, playing = false, finished = false;
+
+  ITEMS.forEach(function (it) {
+    var d = document.createElement("div");
+    d.className = "item"; d.textContent = it.e; d.dataset.bin = it.bin;
+    d.addEventListener("click", function () {
+      if (finished) return;
+      document.querySelectorAll("#rug .item").forEach(function (x) { x.classList.remove("sel"); });
+      d.classList.add("sel");
+      selected = { el: d, it: it };
+      say.textContent = it.said;
+      say.className = "say";
+      sayEn(it.said);
+    });
+    rug.appendChild(d);
+    it._el = d;
+  });
+  BINS.forEach(function (b) {
+    var d = document.createElement("div");
+    d.className = "bin";
+    d.innerHTML = "<div class='e'>" + b.e + "</div><b>" + b.label + "</b>";
+    d.addEventListener("click", function () {
+      if (finished) return;
+      if (!selected) {
+        say.textContent = "First pick something from the rug! 👆";
+        say.className = "say try";
+        sayEn("First pick something from the rug!");
+        return;
+      }
+      if (b.id === selected.it.bin) {
+        sorted++; stars++;
+        starsEl.textContent = "⭐".repeat(stars);
+        say.textContent = PRAISE[Math.floor(Math.random() * PRAISE.length)] + " The " + selected.it.name + " goes in the " + b.label.toLowerCase() + "!";
+        say.className = "say good";
+        sayEn("Yay! The " + selected.it.name + " goes in the " + b.said + "!");
+        selected.el.classList.add("gone");
+        selected = null;
+        if (sorted === ITEMS.length) { celebrate(); }
+      } else {
+        say.textContent = "Oops, try again! Where does the " + selected.it.name + " live?";
+        say.className = "say try";
+        sayEn("Oops, try again! Where does the " + selected.it.name + " live?");
+      }
+    });
+    binsEl.appendChild(d);
+  });
+
+  function celebrate() {
+    finished = true; playing = false;
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    doneBox.hidden = false;
+    say.textContent = "High five! 🙌";
+    say.className = "say good";
+    sayEn("High five! You are a Super Helper!");
+  }
+  startBtn.addEventListener("click", function () {
+    if (playing || finished) return;
+    playing = true;
+    startBtn.textContent = "Go go go! 🧹";
+    say.textContent = "Tap an item, then tap its bin! ⏱️";
+    say.className = "say";
+    sayEn("Clean up! Tap an item, then tap the bin where it lives!");
+    timerId = setInterval(function () {
+      timeLeft--;
+      timerEl.textContent = "⏱️ " + timeLeft;
+      if (timeLeft <= 10) timerEl.classList.add("low");
+      if (timeLeft <= 0) {
+        clearInterval(timerId); timerId = null;
+        if (!finished) {
+          finished = true; playing = false;
+          say.textContent = "Time! Good trying, helper! 💛";
+          say.className = "say try";
+          sayEn("Time! Good trying, helper! You cleaned up " + sorted + " things!");
+        }
+      }
+    }, 1000);
+  });
+})();
+
+/* ================= Part 2: Meet Barnaby ================= */
+(function () {
+  var barn = document.getElementById("barnaby");
+  var rug = document.getElementById("barnRug");
+  var say = document.getElementById("barnSay");
+  var bigword = document.getElementById("bigword");
+  var left = 5;
+  for (var i = 0; i < 5; i++) {
+    var d = document.createElement("div");
+    d.className = "item"; d.textContent = "🧱";
+    d.addEventListener("click", function () {
+      if (this.classList.contains("gone")) return;
+      this.classList.add("gone");
+      left--;
+      if (left > 0) {
+        say.textContent = "Thank you, helper! 💛";
+        say.className = "say good";
+        sayEn("Thank you, helper!");
+      } else {
+        say.textContent = "All clean! 🎉";
+        say.className = "say good";
+        bigword.hidden = false;
+        sayEn("All clean! Responsibility means being a good helper and taking care of what we use!");
+      }
+    });
+    rug.appendChild(d);
+  }
+  barn.addEventListener("click", function () {
+    say.textContent = "Oh no! 🧸";
+    say.className = "say";
+    sayEn("Oh no! Barnaby made a big tower, but now blocks are all over the rug. Who can be a helper and show Barnaby how we take care of our room? Tap the blocks to clean them up!");
+  });
+})();
+
+/* ================= Part 3: The Helper Song ================= */
+var SONG = [
+  { e: "👉", t: "I can be a helper, see!", g: "Point your thumbs to your chest!" },
+  { e: "🧹", t: "I clean up so happily.", g: "Pretend to sweep or pick up!" },
+  { e: "📚", t: "Books on shelves and toys in bins,", g: "Pretend to stack and put away!" },
+  { e: "🙆", t: "That is how our day begins!", g: "Make big circle arms!" },
+  { e: "👉", t: "I can be a helper, see!", g: "Point your thumbs to your chest!" },
+  { e: "😊👏", t: "Happy as can truly be!", g: "Smile and clap!" }
+];
+(function () {
+  var box = document.getElementById("song");
+  SONG.forEach(function (s) {
+    var d = document.createElement("div");
+    d.className = "songline";
+    d.innerHTML = "<div class='e'>" + s.e + "</div><div class='t'>" + s.t + "<span class='g'>" + s.g + "</span></div>";
+    d.addEventListener("click", function () { sayEn(s.t); });
+    box.appendChild(d);
+  });
+})();
+
+/* ================= Part 4: Help or Oops? ================= */
+var SCEN = [
+  { e: "🖍️", text: "Leaving crayons on the floor after coloring.", answer: "oops",
+    prompt: "Where do crayons go so they don't break? Put them in the crayon bin!" },
+  { e: "🚰", text: "Turning the sink faucet off after washing hands.", answer: "helper",
+    prompt: "We save water and keep the floor dry!" },
+  { e: "🧃", text: "Walking away from the snack table with trash left behind.", answer: "oops",
+    prompt: "Let's take the cup to the recycling bin together!" },
+  { e: "🧱", text: "Handing a toy block to a friend who is building.", answer: "helper",
+    prompt: "Kind hands and sharing make us great teammates!" }
+];
+(function () {
+  var card = document.getElementById("scenCard");
+  var emoji = document.getElementById("scenEmoji");
+  var tap = document.getElementById("scenTap");
+  var say = document.getElementById("scenSay");
+  var starsEl = document.getElementById("scenStars");
+  var nextBtn = document.getElementById("scenNext");
+  var idx = 0, stars = 0, answered = false;
+
+  function show() {
+    var s = SCEN[idx];
+    emoji.textContent = s.e;
+    tap.textContent = "Tap the picture to hear what happened! 👆";
+    say.textContent = ""; say.className = "say";
+    nextBtn.hidden = true; answered = false;
+  }
+  card.addEventListener("click", function () {
+    sayEn(SCEN[idx].text);
+    tap.textContent = "Helper 👍 or Oops 🙈?";
+  });
+  function choose(pick) {
+    if (answered) return;
+    var s = SCEN[idx];
+    if (pick === s.answer) {
+      answered = true; stars++;
+      starsEl.textContent = "⭐".repeat(stars);
+      say.textContent = (pick === "helper" ? "Yes! That was a Helper! 👍" : "Yes! That was an Oops! 🙈");
+      say.className = "say good";
+      sayEn((pick === "helper" ? "Yes! That was a helper!" : "Yes! That was an oops!") + " " + s.prompt);
+      nextBtn.hidden = (idx === SCEN.length - 1);
+      if (idx === SCEN.length - 1) {
+        setTimeout(function () { sayEn("You are such a good helper!"); }, 2500);
+      }
+    } else {
+      say.textContent = "Hmm, try again! 🤔";
+      say.className = "say try";
+      sayEn("Hmm, try again!");
+    }
+  }
+  document.getElementById("btnHelper").addEventListener("click", function () { choose("helper"); });
+  document.getElementById("btnOops").addEventListener("click", function () { choose("oops"); });
+  nextBtn.addEventListener("click", function () {
+    if (idx < SCEN.length - 1) { idx++; show(); }
+  });
+  show();
+})();
+</script>
+<!-- background music: lofi deep house mix (SoundCloud) -->
+<style>
+  #bgm-btn { position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: 56px; height: 56px; border-radius: 999px; border: 0; cursor: pointer;
+    background: #2b6bff; color: #fff; font-size: 24px; line-height: 1; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(43,107,255,.35);
+    transition: transform .15s, background .15s; font-family: inherit; }
+  #bgm-btn:hover { background: #1f58e0; transform: scale(1.06); }
+  #bgm-btn.playing { animation: bgm-pulse 1.6s ease-in-out infinite; }
+  @keyframes bgm-pulse {
+    0%,100% { box-shadow: 0 8px 24px rgba(43,107,255,.35); }
+    50%     { box-shadow: 0 8px 34px rgba(43,107,255,.70); } }
+  #bgm-frame { position: absolute; width: 1px; height: 1px;
+    left: -9999px; top: -9999px; border: 0; visibility: hidden; }
+</style>
+<iframe id="bgm-frame" title="Background music" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrisandgreta%2Flofi-deep-house-music-mix-cozy-work-study-session-greta&amp;color=%232b6bff&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;show_teaser=false&amp;visual=false"></iframe>
+<button id="bgm-btn" aria-label="Play background music" title="Lofi deep house mix">&#9834;</button>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+(function () {
+  var btn = document.getElementById("bgm-btn");
+  var frame = document.getElementById("bgm-frame");
+  var NOTE = "&#9834;", PAUSE = "&#10074;&#10074;";
+  var widget = null, ready = false;
+  function setIcon(playing) {
+    btn.innerHTML = playing ? PAUSE : NOTE;
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-label", playing ? "Pause background music" : "Play background music");
+  }
+  function init() {
+    if (typeof SC === "undefined" || !SC.Widget) return;
+    try { widget = SC.Widget(frame); } catch (e) { return; }
+    widget.bind(SC.Widget.Events.READY, function () {
+      ready = true;
+      widget.bind(SC.Widget.Events.PLAY, function () { setIcon(true); });
+      widget.bind(SC.Widget.Events.PAUSE, function () { setIcon(false); });
+    });
+  }
+  btn.addEventListener("click", function () {
+    if (!ready || !widget) return;
+    try { widget.toggle(); } catch (e) {}
+  });
+  if (document.readyState === "complete") init();
+  else window.addEventListener("load", init);
+})();
+</script>
+</body>
+</html>
