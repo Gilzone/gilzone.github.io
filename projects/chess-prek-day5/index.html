@@ -39,10 +39,10 @@
   #gstars { text-align: center; font-size: 34px; letter-spacing: 6px; min-height: 48px; overflow-wrap: anywhere; }
   #gprog { text-align: center; color: #5b6472; font-size: 14px; margin-bottom: 4px; }
   .btnrow { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-  button.big { padding: 13px 34px; font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #2b6bff; border: 0; border-radius: 12px; box-shadow: 0 4px 0 #1a46b0; cursor: pointer; font-family: inherit; }
-  button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a46b0; }
-  button.big.green { background: #31a24c; box-shadow: 0 4px 0 #237a38; }
-  button.big.gold { background: #d9a400; box-shadow: 0 4px 0 #a87c00; }
+  button.big, a.big { padding: 13px 34px; font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #2b6bff; border: 0; border-radius: 12px; box-shadow: 0 4px 0 #1a46b0; cursor: pointer; font-family: inherit; }
+  button.big:active, a.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a46b0; }
+  button.big.green, a.big.green { background: #31a24c; box-shadow: 0 4px 0 #237a38; }
+  button.big.gold, a.big.gold { background: #d9a400; box-shadow: 0 4px 0 #a87c00; }
   nav.days { display: flex; justify-content: space-between; margin-top: 26px; font-size: 15px; font-weight: 600; }
   nav.days a { color: #2b6bff; text-decoration: none; }
   footer { margin-top: 40px; color: #8a93a6; font-size: 13px; text-align: center; line-height: 1.7; }
@@ -84,6 +84,12 @@
     <div class="board" id="board3"></div>
     <div class="btnrow"><button class="big gold" id="matedemo">SHOW ME CHECKMATE</button></div>
     <p id="matemsg" style="text-align:center;font-size:16px;font-weight:700;color:#2b3a9e;min-height:28px"></p>
+  </div>
+
+  <div class="card">
+    <h2 class="part">Bonus &mdash; Play a real game</h2>
+    <p class="partsub">You&rsquo;ve met the whole team and saved the king. Now play a full game of chess against the computer!</p>
+    <div class="btnrow"><a class="big green" href="../chess-game/" style="display:inline-block;text-decoration:none;">PLAY VS COMPUTER</a></div>
   </div>
 
   <nav class="days">
