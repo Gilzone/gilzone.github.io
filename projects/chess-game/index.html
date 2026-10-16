@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHESS_GAME</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/chessboard-1.0.0.min.css">
+    <link rel="icon" href="icon/chess-board.png" type="image/x-icon">
+</head>
+<body>
+    <a href="../../" style="display:inline-block;margin:12px 0 0 12px;font-family:sans-serif;color:#1d4ed8;text-decoration:none;font-weight:600;">&larr; All lessons</a>
+    <div class="container">
+        <h1>CHESS GAME</h1>
+        <div class="board" id="board"></div>
+        <div class="buttons">
+            <button class="play-again">Play Again</button>
+            <button class="set-pos">Set position</button>
+            <button class="flip-board">Flip board</button>
+        </div>
+        <div id="move-history" class="move-history"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="js/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="script.js"></script>
+    <!--
+    FEN string:rnbqkb1r/ppp1pppp/5n2/3p4/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4
+    -->
+</body>
+</html>
